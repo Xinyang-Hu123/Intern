@@ -35,7 +35,7 @@ git config --global core.autocrlf input
 ### 2. Clone 仓库
 
 ```bash
-git clone https://github.com/你们的组织名/Intern-Delivery.git
+git clone https://github.com/Xinyang-Hu123/Intern.git
 cd Intern-Delivery
 git checkout dev
 ```
