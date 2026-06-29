@@ -176,7 +176,7 @@ mvn clean verify
 
 **必须看到 `BUILD SUCCESS` 才能 push，红了就本地修好再推。**
 
-前端或小程序改动还需要补充对应检查：
+管理端前端（project-rjwm-admin-vue-ts）改动还需要补充对应检查：
 
 ```bash
 # 在 project-rjwm-admin-vue-ts/ 目录下执行
