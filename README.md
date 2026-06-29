@@ -1,6 +1,6 @@
 # 团队协同开发规范
 
-> 技术栈：Java 17（团队统一版本，CI 使用 JDK 17）+ Spring Boot 2.7.3 + MyBatis + MySQL 8.0 + Redis + Vue 2 + 微信小程序
+> 技术栈：JDK 17（团队统一运行时版本；CI 使用 JDK 17）+ Spring Boot 2.7.3 + MyBatis + MySQL 8.0 + Redis + Vue 2 + 微信小程序
 
 ---
 
