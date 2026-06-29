@@ -1,4 +1,4 @@
-# 团队协同开发规范
+# 团队协同开发规范（更加具体的可以点击上面的Wiki进行查询）
 
 > 技术栈需求：Java 17 + Spring Boot 3.x （暂定）
 
@@ -35,7 +35,7 @@ git config --global core.autocrlf input
 ### 2. Clone 仓库
 
 ```bash
-git clone https://github.com/你们的组织名/Intern-Delivery.git
+git clone https://github.com/Xinyang-Hu123/Intern.git
 cd Intern-Delivery
 git checkout dev
 ```

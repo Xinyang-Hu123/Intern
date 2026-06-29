@@ -10,19 +10,19 @@ sky:
     endpoint: oss-cn-hangzhou.aliyuncs.com
     access-key-id: your-aliyun-access-key-id
     access-key-secret: your-aliyun-access-key-secret
-    bucket-name: sky-take-out
+    bucket-name: your-bucket-name
   redis:
-    host: 192.168.8.128
+    host: localhost
     port: 6379
-    password:
+    password: your-redis-password
     database: 10
   wechat:
     appid: your-wechat-appid
     secret: your-wechat-secret
     mchid: your-wechat-mchid
     mchSerialNo: your-wechat-mch-serial-no
-    privateKeyFilePath: D:\apiclient_key.pem
+    privateKeyFilePath: /path/to/apiclient_key.pem
     apiV3Key: your-wechat-api-v3-key
-    weChatPayCertFilePath: D:\wechatpay_166D96F876F45C7D07CE98952A96EC980368ACFC.pem
-    notifyUrl: https://www.weixin.qq.com/wxpay/pay.php
-    refundNotifyUrl: https://www.weixin.qq.com/wxpay/pay.php
+    weChatPayCertFilePath: /path/to/wechatpay_cert.pem
+    notifyUrl: https://your-domain.com/notify/paySuccess
+    refundNotifyUrl: https://your-domain.com/notify/refundSuccess
