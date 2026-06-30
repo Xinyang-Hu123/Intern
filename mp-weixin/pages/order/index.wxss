@@ -108,7 +108,7 @@
 /* 透明度 */
 /* 文章场景相关 */
 .infoTip.data-v-0ca91b30 {
-  color: #f58c21;
+  color: #0b8f67;
 }
 .order_content.data-v-0ca91b30 {
   height: calc(100vh - 20rpx);
@@ -235,7 +235,7 @@
 }
 .order_content .new_address .address_image text.data-v-0ca91b30 {
   font-size: 24rpx;
-  color: #f58c21;
+  color: #0b8f67;
 }
 .order_content .new_address .address_image .to_right.data-v-0ca91b30 {
   width: 32rpx;
@@ -251,7 +251,7 @@
   line-height: 50rpx;
   font-family: PingFangSC, PingFangSC-Regular;
   font-weight: 400;
-  color: #f58c21;
+  color: #0b8f67;
   align-self: center;
 }
 .order_content .new_address .infoTip.data-v-0ca91b30 {
@@ -741,7 +741,7 @@
   justify-content: center;
 }
 .orderInfoTip .time text.data-v-0ca91b30 {
-  color: #f58c21;
+  color: #0b8f67;
 }
 .orderInfoTip .againBtn.data-v-0ca91b30 {
   padding-bottom: 26rpx;

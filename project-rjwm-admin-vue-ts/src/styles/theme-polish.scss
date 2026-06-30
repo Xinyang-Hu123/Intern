@@ -1,14 +1,16 @@
-/* Unified admin theme for the front-end beautification task. */
+/* Unified 老宋速达 admin theme. */
 :root {
   --rjwm-primary: #16b57f;
+  --rjwm-primary-glow: #7dffcf;
   --rjwm-primary-soft: #eafbf4;
-  --rjwm-ink: #252d35;
+  --rjwm-ink: #10231f;
   --rjwm-muted: #697586;
   --rjwm-success: #1dc779;
   --rjwm-danger: #e94e3c;
   --rjwm-line: #e8edf3;
-  --rjwm-bg: #f7f8fa;
-  --rjwm-card-shadow: 0 12px 30px rgba(37, 45, 53, 0.08);
+  --rjwm-bg: #f3f7f6;
+  --rjwm-deep: #071f1b;
+  --rjwm-card-shadow: 0 14px 34px rgba(16, 35, 31, 0.1);
 }
 
 body {
@@ -19,8 +21,11 @@ body {
 .main-container,
 .app-main {
   background:
-    radial-gradient(circle at 18% 0%, rgba(22, 181, 127, 0.12), transparent 28%),
-    linear-gradient(180deg, #fffaf0 0%, var(--rjwm-bg) 260px);
+    linear-gradient(90deg, rgba(22, 181, 127, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(22, 181, 127, 0.06) 1px, transparent 1px),
+    radial-gradient(circle at 18% 0%, rgba(22, 181, 127, 0.18), transparent 30%),
+    linear-gradient(180deg, #eefbf6 0%, var(--rjwm-bg) 320px);
+  background-size: 44px 44px, 44px 44px, auto, auto;
 }
 
 .dashboard-container {
@@ -30,6 +35,7 @@ body {
 .dashboard-container .container {
   border: 1px solid rgba(232, 237, 243, 0.9);
   border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.96);
   box-shadow: var(--rjwm-card-shadow);
 }
 
@@ -68,8 +74,10 @@ body {
 .orderviewBox li {
   border: 1px solid rgba(22, 181, 127, 0.16);
   border-radius: 8px !important;
-  background: linear-gradient(135deg, #fff9ec 0%, #ffffff 72%) !important;
-  box-shadow: 0 8px 18px rgba(37, 45, 53, 0.05);
+  background:
+    linear-gradient(135deg, rgba(22, 181, 127, 0.12) 0%, rgba(255, 255, 255, 0.98) 52%),
+    linear-gradient(90deg, rgba(125, 255, 207, 0.18) 0 2px, transparent 2px 100%) !important;
+  box-shadow: 0 10px 24px rgba(16, 35, 31, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -104,8 +112,9 @@ body {
 
 .conTab li.active,
 .title-index .month ul .active {
-  background: var(--rjwm-primary);
-  color: var(--rjwm-ink);
+  background: linear-gradient(135deg, var(--rjwm-primary) 0%, #29d696 100%);
+  color: #08231d;
+  box-shadow: 0 8px 18px rgba(22, 181, 127, 0.24);
 }
 
 .right-el-button,
@@ -118,9 +127,9 @@ body {
 .el-button--primary,
 .login-btn,
 .right-el-button.el-button--primary {
-  background: var(--rjwm-primary) !important;
+  background: linear-gradient(135deg, var(--rjwm-primary) 0%, #29d696 100%) !important;
   border-color: var(--rjwm-primary) !important;
-  color: var(--rjwm-ink) !important;
+  color: #08231d !important;
 }
 
 .el-button--primary:hover,
@@ -137,20 +146,22 @@ body {
 }
 
 .el-table th {
-  background: #faf7ef !important;
+  background: #edf9f4 !important;
   color: var(--rjwm-ink);
 }
 
 .navbar {
-  background: linear-gradient(90deg, var(--rjwm-primary) 0%, #43d3a6 100%) !important;
-  box-shadow: 0 8px 22px rgba(22, 181, 127, 0.22);
+  background:
+    linear-gradient(90deg, #071f1b 0%, #0e634b 54%, #16b57f 100%) !important;
+  box-shadow: 0 10px 28px rgba(7, 31, 27, 0.22);
+  color: #eafff7 !important;
 }
 
 .navbar .businessBtn {
   border: 0 !important;
   border-radius: 999px !important;
-  background: var(--rjwm-success) !important;
-  box-shadow: 0 4px 10px rgba(29, 199, 121, 0.24);
+  background: linear-gradient(135deg, #18d58f 0%, #0b8f67 100%) !important;
+  box-shadow: 0 4px 14px rgba(29, 199, 121, 0.3);
 }
 
 .navbar .businessBtn.closing {
@@ -160,17 +171,18 @@ body {
 
 .navbar .right-menu span:hover,
 .navbar .avatar-wrapper .el-button--primary {
-  background: rgba(255, 255, 255, 0.55) !important;
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #eafff7 !important;
 }
 
 .logo {
-  background: linear-gradient(180deg, var(--rjwm-primary) 0%, #35c99a 100%) !important;
+  background: linear-gradient(135deg, #071f1b 0%, #0f5f49 64%, #16b57f 100%) !important;
 }
 
 .sidebar-container,
 .el-scrollbar,
 .el-menu {
-  background: var(--rjwm-ink) !important;
+  background: linear-gradient(180deg, #071f1b 0%, #142820 100%) !important;
 }
 
 .el-menu-item,
@@ -179,10 +191,23 @@ body {
   margin-bottom: 8px;
 }
 
+.sidebar-container .router-link-active .el-menu-item,
+.sidebar-container .el-menu-item:hover {
+  background: rgba(22, 181, 127, 0.16) !important;
+  color: #ffffff !important;
+  box-shadow: inset 3px 0 0 var(--rjwm-primary-glow);
+}
+
+.sidebar-container .router-link-active .el-menu-item span,
+.sidebar-container .el-menu-item:hover span {
+  color: #ffffff !important;
+}
+
 .login {
   background:
-    radial-gradient(circle at 24% 18%, rgba(22, 181, 127, 0.3), transparent 30%),
-    linear-gradient(135deg, #252d35 0%, #3e4651 58%, #eafbf4 100%) !important;
+    linear-gradient(135deg, rgba(14, 74, 59, 0.94) 0%, rgba(8, 24, 22, 0.96) 52%, rgba(18, 226, 152, 0.24) 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 56px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 56px) !important;
 }
 
 .login-box {

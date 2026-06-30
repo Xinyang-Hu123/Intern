@@ -11,7 +11,7 @@ import '@/styles/home.scss'
 import 'vue-area-linkage/dist/index.css'
 
 import * as echarts from 'echarts'
-// 瑞吉外卖样式表
+// 老宋速达样式表
 import '@/styles/newRJWMsystem.scss'
 import '@/styles/theme-polish.scss'
 import '@/styles/icon/iconfont.css'

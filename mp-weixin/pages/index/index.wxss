@@ -71,6 +71,18 @@
   width: 86rpx;
   height: 86rpx;
 }
+.home_content .restaurant_info_box .restaurant_info .info_top .info_top_left .brand-badge.data-v-57280228 {
+  width: 86rpx;
+  height: 86rpx;
+  border-radius: 22rpx;
+  line-height: 86rpx;
+  text-align: center;
+  color: #07231d;
+  font-size: 28rpx;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7dffcf 0%, #16b57f 100%);
+  box-shadow: 0 12rpx 28rpx rgba(22, 181, 127, 0.28);
+}
 .home_content .restaurant_info_box .restaurant_info .info_top .info_top_right.data-v-57280228 {
   flex: 1;
 }

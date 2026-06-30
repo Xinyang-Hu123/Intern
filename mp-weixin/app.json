@@ -16,8 +16,8 @@
   "window": {
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "老宋速达",
-    "navigationBarBackgroundColor": "#E95F3C",
-    "backgroundColor": "#F8F8F8"
+    "navigationBarBackgroundColor": "#0B5F48",
+    "backgroundColor": "#F3F7F6"
   },
   "usingComponents": {},
   "sitemapLocation": "sitemap.json"
