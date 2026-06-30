@@ -559,7 +559,7 @@ export default class extends Vue {
     }
     .el-radio-group {
       & > .is-checked {
-        border: 1px solid #ffc200;
+        border: 1px solid #16b57f;
       }
     }
     .el-radio {

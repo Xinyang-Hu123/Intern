@@ -109,7 +109,7 @@ export default class extends Vue {
     }
   }
   .active {
-    background-color: #ffc200;
+    background-color: #16b57f;
     font-weight: bold;
   }
   .tab-item:first-child {

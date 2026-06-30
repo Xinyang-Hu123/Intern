@@ -1,7 +1,7 @@
 /* Unified admin theme for the front-end beautification task. */
 :root {
-  --rjwm-primary: #f6b21a;
-  --rjwm-primary-soft: #fff4dd;
+  --rjwm-primary: #16b57f;
+  --rjwm-primary-soft: #eafbf4;
   --rjwm-ink: #252d35;
   --rjwm-muted: #697586;
   --rjwm-success: #1dc779;
@@ -19,7 +19,7 @@ body {
 .main-container,
 .app-main {
   background:
-    radial-gradient(circle at 18% 0%, rgba(246, 178, 26, 0.12), transparent 28%),
+    radial-gradient(circle at 18% 0%, rgba(22, 181, 127, 0.12), transparent 28%),
     linear-gradient(180deg, #fffaf0 0%, var(--rjwm-bg) 260px);
 }
 
@@ -66,7 +66,7 @@ body {
 
 .overviewBox li,
 .orderviewBox li {
-  border: 1px solid rgba(246, 178, 26, 0.16);
+  border: 1px solid rgba(22, 181, 127, 0.16);
   border-radius: 8px !important;
   background: linear-gradient(135deg, #fff9ec 0%, #ffffff 72%) !important;
   box-shadow: 0 8px 18px rgba(37, 45, 53, 0.05);
@@ -126,8 +126,8 @@ body {
 .el-button--primary:hover,
 .login-btn:hover,
 .login-btn:focus {
-  background: #f8c64b !important;
-  border-color: #f8c64b !important;
+  background: #35c99a !important;
+  border-color: #35c99a !important;
   color: var(--rjwm-ink) !important;
 }
 
@@ -142,8 +142,8 @@ body {
 }
 
 .navbar {
-  background: linear-gradient(90deg, var(--rjwm-primary) 0%, #f7c85a 100%) !important;
-  box-shadow: 0 8px 22px rgba(246, 178, 26, 0.22);
+  background: linear-gradient(90deg, var(--rjwm-primary) 0%, #43d3a6 100%) !important;
+  box-shadow: 0 8px 22px rgba(22, 181, 127, 0.22);
 }
 
 .navbar .businessBtn {
@@ -164,7 +164,7 @@ body {
 }
 
 .logo {
-  background: linear-gradient(180deg, var(--rjwm-primary) 0%, #f8c64b 100%) !important;
+  background: linear-gradient(180deg, var(--rjwm-primary) 0%, #35c99a 100%) !important;
 }
 
 .sidebar-container,
@@ -181,8 +181,8 @@ body {
 
 .login {
   background:
-    radial-gradient(circle at 24% 18%, rgba(246, 178, 26, 0.3), transparent 30%),
-    linear-gradient(135deg, #252d35 0%, #3e4651 58%, #fff4dd 100%) !important;
+    radial-gradient(circle at 24% 18%, rgba(22, 181, 127, 0.3), transparent 30%),
+    linear-gradient(135deg, #252d35 0%, #3e4651 58%, #eafbf4 100%) !important;
 }
 
 .login-box {
@@ -201,5 +201,5 @@ body {
 .login-btn {
   height: 40px;
   border-radius: 20px !important;
-  box-shadow: 0 8px 16px rgba(246, 178, 26, 0.28);
+  box-shadow: 0 8px 16px rgba(22, 181, 127, 0.28);
 }
