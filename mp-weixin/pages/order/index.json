@@ -2,7 +2,7 @@
   "navigationStyle": "custom",
   "navigationBarTitleText": "提交订单",
   "enablePullDownRefresh": false,
-  "navigationBarBackgroundColor": "#333333",
+  "navigationBarBackgroundColor": "#0B5F48",
   "usingComponents": {
     "uni-nav-bar": "/components/uni-nav-bar/uni-nav-bar",
     "uni-list": "/uni_modules/uni-list/components/uni-list/uni-list",

@@ -26,16 +26,35 @@
 /* 文章场景相关 */
 .navBar {
   position: fixed;
-  display: flex;
   z-index: 9;
   top: 0;
   left: 0;
-  height: 160rpx;
   width: 100vw;
   box-sizing: border-box;
   height: 304rpx;
   opacity: 1;
-  background: linear-gradient(184deg, rgba(0, 0, 0, 0.35) 25%, rgba(51, 51, 51, 0) 96%);
+  background:
+    radial-gradient(circle at 80% 18%, rgba(125, 255, 207, 0.38), transparent 28%),
+    linear-gradient(135deg, #071f1b 0%, #0b5f48 60%, #16b57f 100%);
+  overflow: hidden;
+}
+.navBar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1rpx, transparent 1rpx),
+    linear-gradient(0deg, rgba(255,255,255,0.05) 1rpx, transparent 1rpx);
+  background-size: 42rpx 42rpx;
+}
+.navBar::after {
+  content: '';
+  position: absolute;
+  left: 32rpx;
+  right: 32rpx;
+  bottom: 34rpx;
+  height: 1rpx;
+  background: linear-gradient(90deg, transparent, rgba(125,255,207,0.7), transparent);
 }
 .navBar .leftNav .back {
   width: 88rpx;
@@ -56,17 +75,57 @@
   width: 750rpx;
   height: 304rpx;
 }
+.navBar .brand-box {
+  position: fixed;
+  left: 38rpx;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+}
+.navBar .brand-mark {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 18rpx;
+  line-height: 64rpx;
+  text-align: center;
+  color: #07231d;
+  font-size: 24rpx;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7dffcf 0%, #16b57f 100%);
+  box-shadow: 0 12rpx 26rpx rgba(22, 181, 127, 0.36);
+}
+.navBar .brand-copy {
+  margin-left: 16rpx;
+  color: #ffffff;
+}
+.navBar .brand-title {
+  display: block;
+  font-size: 34rpx;
+  font-weight: 700;
+  line-height: 38rpx;
+}
+.navBar .brand-sub {
+  display: block;
+  margin-top: 6rpx;
+  color: rgba(234, 255, 247, 0.75);
+  font-size: 20rpx;
+  line-height: 28rpx;
+}
 .navBar .test_image {
-  height: 56rpx;
-  width: 56rpx;
+  height: 46rpx;
+  width: 46rpx;
 }
 .navBar .person-box {
   position: fixed;
-  left: 38rpx;
+  right: 38rpx;
   z-index: 9999;
   top: 100rpx;
   display: flex;
   align-items: center;
+  padding: 10rpx 16rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.18);
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.12);
 }
 .navBar .person-title {
   flex: 1;
@@ -78,6 +137,6 @@
   color: #ffffff;
   line-height: 36rpx;
   letter-spacing: 0px;
-  margin-left: 14rpx;
+  margin-left: 10rpx;
 }
 

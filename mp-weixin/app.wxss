@@ -1,3 +1,95 @@
 @import './common/main.wxss';
 
 [data-custom-hidden="true"],[bind-data-custom-hidden="true"]{display: none !important;}
+
+page {
+  background:
+    linear-gradient(90deg, rgba(22, 181, 127, 0.06) 1rpx, transparent 1rpx),
+    linear-gradient(0deg, rgba(22, 181, 127, 0.05) 1rpx, transparent 1rpx),
+    #f3f7f6;
+  background-size: 48rpx 48rpx;
+  color: #10231f;
+}
+
+.box,
+.order_list,
+.new_address,
+.payBox,
+.address_liests,
+.address_order,
+.order_lists,
+.recent_orders .box,
+.success_info,
+.dish_detail_pop,
+.more_norm_pop,
+.cart_pop {
+  border: 1rpx solid rgba(22, 181, 127, 0.16) !important;
+  border-radius: 18rpx !important;
+  background: rgba(255, 255, 255, 0.97) !important;
+  box-shadow: 0 14rpx 34rpx rgba(7, 31, 27, 0.1) !important;
+}
+
+.add_btn,
+.new_btn.btn,
+.order_but,
+.order_but_rit,
+.dish_card_add,
+.check_but,
+.btns view:last-child {
+  border: 0 !important;
+  color: #08231d !important;
+  background: linear-gradient(135deg, #7dffcf 0%, #16b57f 100%) !important;
+  box-shadow: 0 12rpx 28rpx rgba(22, 181, 127, 0.24) !important;
+}
+
+.new_btn,
+.btns view:first-child {
+  border-color: rgba(22, 181, 127, 0.28) !important;
+  color: #0b5f48 !important;
+  background: #ecfbf5 !important;
+}
+
+.footer_order_buttom {
+  border: 1rpx solid rgba(125, 255, 207, 0.24) !important;
+  border-radius: 999rpx !important;
+  background: linear-gradient(135deg, #071f1b 0%, #122821 100%) !important;
+  box-shadow: 0 18rpx 44rpx rgba(7, 31, 27, 0.28) !important;
+}
+
+.footer_order_buttom .order_price,
+.dish_price,
+.price,
+.totalMoney .text,
+.money {
+  color: #16b57f !important;
+}
+
+.word_style,
+.popupTitle,
+.success_title,
+.orderInfoTip .tit,
+.right_title text,
+.dish_name,
+.order_line {
+  color: #10231f !important;
+  letter-spacing: 0 !important;
+}
+
+.businessStatus,
+.tag,
+.status {
+  border-radius: 999rpx !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #16b57f 0%, #0b8f67 100%) !important;
+}
+
+.close,
+.businessStatus.close {
+  background: #64748b !important;
+}
+
+.uni-navbar__header,
+.uni-navbar,
+.uni-navbar--fixed {
+  background: #0b5f48 !important;
+}

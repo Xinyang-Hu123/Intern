@@ -176,7 +176,7 @@ page {
   float: right;
 }
 .recent_orders .order_lists .date_type .status {
-  color: #f58c21;
+  color: #0b8f67;
 }
 .recent_orders .order_lists .orderBox {
   position: relative;
@@ -291,7 +291,7 @@ page {
   border-radius: 8rpx 8rpx 0 0;
 }
 .popupBox .popupTitle text {
-  color: #f58c21;
+  color: #0b8f67;
 }
 .popupBox .popupCon {
   padding: 30rpx 0;
@@ -433,7 +433,7 @@ page {
   border-right: 2rpx solid #efefef;
 }
 .comPopupBox .popup-content .btn > view:last-child {
-  color: #f58c21;
+  color: #0b8f67;
 }
 .tag {
   width: 68rpx;

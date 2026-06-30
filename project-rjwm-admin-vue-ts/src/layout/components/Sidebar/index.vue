@@ -12,13 +12,15 @@
         style="width: 120px; height: 31px"
       /> -->
       <div v-if="!isCollapse"
-           class="sidebar-logo">
-        <img src="@/assets/login/logo.png"
-             style="width: 120px; height: 31px">
+           class="sidebar-logo"
+      >
+        <span class="brand-mark">LS</span>
+        <span class="brand-name">老宋速达</span>
       </div>
       <div v-else
-           class="sidebar-logo-mini">
-        <img src="@/assets/login/mini-logo.png">
+           class="sidebar-logo-mini"
+      >
+        <span class="brand-mark mini">LS</span>
       </div>
     </div>
     <el-scrollbar wrap-class="scrollbar-wrapper">
@@ -30,12 +32,14 @@
                :active-text-color="variables.menuActiveText"
                :unique-opened="false"
                :collapse-transition="false"
-               mode="vertical">
+               mode="vertical"
+      >
         <sidebar-item v-for="route in routes"
                       :key="route.path"
                       :item="route"
                       :base-path="route.path"
-                      :is-collapse="isCollapse" />
+                      :is-collapse="isCollapse"
+        />
         <!-- <div class="sub-menu">
           <div class="avatarName">
             {{ name }}
@@ -135,23 +139,46 @@ export default class extends Vue {
 <style lang="scss" scoped>
 .logo {
   text-align: center;
-  background-color: #16b57f;
-  padding: 15px 0 0;
+  background:
+    linear-gradient(135deg, #071f1b 0%, #0f5f49 64%, #16b57f 100%);
+  padding: 12px 0 0;
   height: 60px;
-  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.2);
-  img {
-    display: inline-block;
-  }
+  box-shadow: inset 0 -1px 0 rgba(120, 255, 208, 0.2);
+}
+.sidebar-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: #07231d;
+  background: linear-gradient(135deg, #7dffcf 0%, #19d58d 100%);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  box-shadow: 0 8px 20px rgba(22, 181, 127, 0.28);
+}
+.brand-name {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 34px;
 }
 .sidebar-logo-mini {
-  img {
-    width: 30px;
-    height: 30px;
+  .brand-mark {
+    width: 32px;
+    height: 32px;
   }
 }
 .el-scrollbar {
   height: 100%;
-  background-color: #252d35;
+  background: linear-gradient(180deg, #071f1b 0%, #142820 100%);
 }
 
 .el-menu {

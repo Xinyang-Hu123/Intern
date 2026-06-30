@@ -1,4 +1,4 @@
-# 瑞吉外卖
+# 老宋速达
 
 ## 1 pc 端需求概述
 
@@ -146,14 +146,14 @@ yarn build:uat/npm run build:uat
 ## 5 相关资料
 
 前端
-瑞吉外卖 - 后台：
+老宋速达 - 后台：
 git 分支 ：http://git.itcast.cn/development/project-rjwm-admin-vue-ts/tree/master
 
 pip 分支 1.0 的上线版本（22.4 修复套餐管理 Bug） 前端负责人： 李小刚
 
 master 分支 2.0 的教学版本（大改） - 前端负责人： 司文强
 
-瑞吉外卖 - 微信小程序：
+老宋速达 - 微信小程序：
 git 分支：http://git.itcast.cn/development/project-rjwm-weixin-uniapp
 
 master（pip 线上版本，22.4 修复总金额计算问题）：pip 线上版本 前端负责人： 娄江华
