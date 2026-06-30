@@ -1,0 +1,51 @@
+digraph BusinessFlowOrder {
+  graph [
+    charset="UTF-8",
+    rankdir=TB,
+    bgcolor="white",
+    fontname="Microsoft YaHei",
+    labelloc="t",
+    label="用户下单与商家履约业务流程图",
+    nodesep=0.28,
+    ranksep=0.42
+  ];
+  node [fontname="Microsoft YaHei", fontsize=10, shape=rect, style="rounded,filled", color="#506070", fillcolor="#F8FAFC"];
+  edge [fontname="Microsoft YaHei", fontsize=9, color="#526173", arrowsize=0.7];
+
+  start [shape=circle, width=0.28, label="", fillcolor="#2F80ED", color="#2F80ED"];
+  browse [label="浏览商品"];
+  cart [label="加入购物车"];
+  address [label="选择地址"];
+  submit [label="提交订单"];
+  validate [shape=diamond, label="营业/地址/购物车\n校验通过？", fillcolor="#FFF7E6"];
+  create [label="创建订单\n生成明细\n清空购物车"];
+  pay [label="支付订单"];
+  paid [shape=diamond, label="支付成功？", fillcolor="#FFF7E6"];
+  notify [label="WebSocket\n通知商家"];
+  confirm [shape=diamond, label="商家接单？", fillcolor="#FFF7E6"];
+  delivery [label="派送中"];
+  complete [label="订单完成"];
+  history [label="历史订单\n催单/再来一单"];
+  fail [label="提示失败原因\n不创建订单", fillcolor="#FDECEA", color="#D93025"];
+  unpaid [label="保留待付款\n可取消/重试", fillcolor="#FDECEA", color="#D93025"];
+  reject [label="拒单/取消\n记录原因/退款", fillcolor="#FDECEA", color="#D93025"];
+  end [shape=doublecircle, width=0.36, label="", fillcolor="#27AE60", color="#27AE60"];
+
+  { rank=same; start; browse; cart; address; submit; validate; fail; }
+  { rank=same; create; pay; paid; notify; confirm; reject; }
+  { rank=same; unpaid; delivery; complete; history; end; }
+
+  start -> browse -> cart -> address -> submit -> validate;
+  validate -> create [label="是"];
+  validate -> fail [label="否"];
+  create -> pay -> paid;
+  paid -> notify [label="是"];
+  paid -> unpaid [label="否/超时"];
+  notify -> confirm;
+  confirm -> delivery [label="接单"];
+  confirm -> reject [label="拒单"];
+  delivery -> complete -> history -> end;
+  fail -> end;
+  unpaid -> history;
+  reject -> history;
+}

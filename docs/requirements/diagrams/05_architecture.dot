@@ -1,0 +1,62 @@
+digraph Architecture {
+  graph [
+    charset="UTF-8",
+    rankdir=TB,
+    bgcolor="white",
+    fontname="Microsoft YaHei",
+    labelloc="t",
+    label="系统总体架构图",
+    nodesep=0.55,
+    ranksep=0.75
+  ];
+  node [fontname="Microsoft YaHei", fontsize=11, shape=rect, style="rounded,filled", color="#506070", fillcolor="#F8FAFC"];
+  edge [fontname="Microsoft YaHei", fontsize=10, color="#526173", arrowsize=0.8];
+
+  subgraph cluster_client {
+    label="表现层";
+    style="rounded";
+    color="#AAB7C4";
+    adminVue [label="Vue 管理端\n员工/分类/菜品/套餐/订单/报表"];
+    miniProgram [label="微信小程序\n浏览/购物车/下单/支付/历史订单"];
+  }
+
+  nginx [label="Nginx\n静态资源 + 反向代理\n/api -> /admin\n/user -> /user\n/ws -> WebSocket", fillcolor="#FFF2CC"];
+
+  subgraph cluster_server {
+    label="应用服务层（Spring Boot）";
+    style="rounded";
+    color="#AAB7C4";
+    controller [label="Controller\nadmin/user/notify"];
+    interceptor [label="JWT 拦截器\n管理端 token / 用户 authentication"];
+    service [label="Service\n业务规则、状态流转、事务边界"];
+    mapper [label="Mapper + XML\nMyBatis 数据访问"];
+    websocket [label="WebSocket\n新订单/催单提醒"];
+    task [label="Task\n定时任务"];
+  }
+
+  subgraph cluster_data {
+    label="数据与外部服务";
+    style="rounded";
+    color="#AAB7C4";
+    mysql [shape=cylinder, label="MySQL 8.0\n业务数据"];
+    redis [shape=cylinder, label="Redis\n缓存/营业状态"];
+    oss [label="Ali OSS\n图片文件"];
+    wxpay [label="微信登录/支付\n当前支付为模拟实现"];
+    baidu [label="百度地图\n配送范围校验"];
+  }
+
+  adminVue -> nginx [label="HTTP / WebSocket"];
+  miniProgram -> nginx [label="HTTP"];
+  nginx -> controller [label="反向代理"];
+  nginx -> websocket [label="/ws"];
+  controller -> interceptor [label="鉴权"];
+  interceptor -> service [label="放行请求"];
+  service -> mapper;
+  mapper -> mysql;
+  service -> redis;
+  service -> oss;
+  service -> wxpay;
+  service -> baidu;
+  service -> websocket [label="业务事件推送"];
+  task -> service;
+}

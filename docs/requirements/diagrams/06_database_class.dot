@@ -1,0 +1,159 @@
+digraph DatabaseClass {
+  graph [
+    charset="UTF-8",
+    rankdir=LR,
+    bgcolor="white",
+    fontname="Microsoft YaHei",
+    labelloc="t",
+    label="数据库类图 / 核心实体关系图",
+    nodesep=0.55,
+    ranksep=0.8
+  ];
+  node [fontname="Microsoft YaHei", fontsize=10, shape=plain];
+  edge [fontname="Microsoft YaHei", fontsize=9, color="#526173", arrowsize=0.8];
+
+  Employee [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#E8F3FF"><B>employee 员工</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id: bigint PK</TD></TR>
+      <TR><TD ALIGN="LEFT">username: varchar</TD></TR>
+      <TR><TD ALIGN="LEFT">name: varchar</TD></TR>
+      <TR><TD ALIGN="LEFT">password: varchar</TD></TR>
+      <TR><TD ALIGN="LEFT">phone, sex, id_number</TD></TR>
+      <TR><TD ALIGN="LEFT">status: int</TD></TR>
+      <TR><TD ALIGN="LEFT">create_time, update_time</TD></TR>
+      <TR><TD ALIGN="LEFT">create_user, update_user</TD></TR>
+    </TABLE>
+  >];
+
+  Category [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#E8F3FF"><B>category 分类</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id: bigint PK</TD></TR>
+      <TR><TD ALIGN="LEFT">type: 1菜品/2套餐</TD></TR>
+      <TR><TD ALIGN="LEFT">name, sort, status</TD></TR>
+      <TR><TD ALIGN="LEFT">create_time, update_time</TD></TR>
+      <TR><TD ALIGN="LEFT">create_user, update_user</TD></TR>
+    </TABLE>
+  >];
+
+  Dish [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#FFF2CC"><B>dish 菜品</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id: bigint PK</TD></TR>
+      <TR><TD ALIGN="LEFT">category_id: bigint FK</TD></TR>
+      <TR><TD ALIGN="LEFT">name, price, image</TD></TR>
+      <TR><TD ALIGN="LEFT">description, status</TD></TR>
+      <TR><TD ALIGN="LEFT">create_time, update_time</TD></TR>
+      <TR><TD ALIGN="LEFT">create_user, update_user</TD></TR>
+    </TABLE>
+  >];
+
+  DishFlavor [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#FFF2CC"><B>dish_flavor 菜品口味</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id: bigint PK</TD></TR>
+      <TR><TD ALIGN="LEFT">dish_id: bigint FK</TD></TR>
+      <TR><TD ALIGN="LEFT">name: varchar</TD></TR>
+      <TR><TD ALIGN="LEFT">value: varchar/json</TD></TR>
+    </TABLE>
+  >];
+
+  Setmeal [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#FFF2CC"><B>setmeal 套餐</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id: bigint PK</TD></TR>
+      <TR><TD ALIGN="LEFT">category_id: bigint FK</TD></TR>
+      <TR><TD ALIGN="LEFT">name, price, status</TD></TR>
+      <TR><TD ALIGN="LEFT">description, image</TD></TR>
+      <TR><TD ALIGN="LEFT">create_time, update_time</TD></TR>
+    </TABLE>
+  >];
+
+  SetmealDish [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#FFF2CC"><B>setmeal_dish 套餐菜品</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id: bigint PK</TD></TR>
+      <TR><TD ALIGN="LEFT">setmeal_id: bigint FK</TD></TR>
+      <TR><TD ALIGN="LEFT">dish_id: bigint FK</TD></TR>
+      <TR><TD ALIGN="LEFT">name, price, copies</TD></TR>
+    </TABLE>
+  >];
+
+  User [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#EAF7EA"><B>user 用户</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id: bigint PK</TD></TR>
+      <TR><TD ALIGN="LEFT">openid: varchar</TD></TR>
+      <TR><TD ALIGN="LEFT">name, phone, sex</TD></TR>
+      <TR><TD ALIGN="LEFT">id_number, avatar</TD></TR>
+      <TR><TD ALIGN="LEFT">create_time</TD></TR>
+    </TABLE>
+  >];
+
+  AddressBook [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#EAF7EA"><B>address_book 地址簿</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id: bigint PK</TD></TR>
+      <TR><TD ALIGN="LEFT">user_id: bigint FK</TD></TR>
+      <TR><TD ALIGN="LEFT">consignee, phone, sex</TD></TR>
+      <TR><TD ALIGN="LEFT">province/city/district</TD></TR>
+      <TR><TD ALIGN="LEFT">detail, label, is_default</TD></TR>
+    </TABLE>
+  >];
+
+  ShoppingCart [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#EAF7EA"><B>shopping_cart 购物车</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id: bigint PK</TD></TR>
+      <TR><TD ALIGN="LEFT">user_id: bigint FK</TD></TR>
+      <TR><TD ALIGN="LEFT">dish_id / setmeal_id</TD></TR>
+      <TR><TD ALIGN="LEFT">name, dish_flavor</TD></TR>
+      <TR><TD ALIGN="LEFT">number, amount, image</TD></TR>
+      <TR><TD ALIGN="LEFT">create_time</TD></TR>
+    </TABLE>
+  >];
+
+  Orders [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#F6EAFE"><B>orders 订单</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id: bigint PK</TD></TR>
+      <TR><TD ALIGN="LEFT">number: varchar</TD></TR>
+      <TR><TD ALIGN="LEFT">status, pay_status, pay_method</TD></TR>
+      <TR><TD ALIGN="LEFT">user_id, address_book_id</TD></TR>
+      <TR><TD ALIGN="LEFT">amount, remark</TD></TR>
+      <TR><TD ALIGN="LEFT">user_name, phone, address</TD></TR>
+      <TR><TD ALIGN="LEFT">order_time, checkout_time</TD></TR>
+      <TR><TD ALIGN="LEFT">cancel/rejection/delivery fields</TD></TR>
+    </TABLE>
+  >];
+
+  OrderDetail [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6">
+      <TR><TD BGCOLOR="#F6EAFE"><B>order_detail 订单明细</B></TD></TR>
+      <TR><TD ALIGN="LEFT">id: bigint PK</TD></TR>
+      <TR><TD ALIGN="LEFT">order_id: bigint FK</TD></TR>
+      <TR><TD ALIGN="LEFT">dish_id / setmeal_id</TD></TR>
+      <TR><TD ALIGN="LEFT">name, dish_flavor</TD></TR>
+      <TR><TD ALIGN="LEFT">number, amount, image</TD></TR>
+    </TABLE>
+  >];
+
+  Category -> Dish [label="1 对多"];
+  Category -> Setmeal [label="1 对多"];
+  Dish -> DishFlavor [label="1 对多"];
+  Setmeal -> SetmealDish [label="1 对多"];
+  Dish -> SetmealDish [label="1 对多"];
+  User -> AddressBook [label="1 对多"];
+  User -> ShoppingCart [label="1 对多"];
+  User -> Orders [label="1 对多"];
+  AddressBook -> Orders [label="1 对多"];
+  Orders -> OrderDetail [label="1 对多"];
+  Dish -> ShoppingCart [style=dashed, label="可选引用"];
+  Setmeal -> ShoppingCart [style=dashed, label="可选引用"];
+  Dish -> OrderDetail [style=dashed, label="可选引用"];
+  Setmeal -> OrderDetail [style=dashed, label="可选引用"];
+  Employee -> Category [style=dashed, label="创建/更新"];
+  Employee -> Dish [style=dashed, label="创建/更新"];
+  Employee -> Setmeal [style=dashed, label="创建/更新"];
+}
