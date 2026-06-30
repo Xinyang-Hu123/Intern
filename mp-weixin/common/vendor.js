@@ -4185,6 +4185,7 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
       // 添加一个右侧number更新以后重新刷新接口的id --- 这个id来自左侧菜品分类的id
       rightIdAndType: {},
       phoneData: '',
+      shopInfo: {},
       tablewareNumber: 0,
       shopStatus: null,
       scrollTop: 0,
@@ -4264,7 +4265,7 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
   (0, _vuex.mapMutations)(['setShopInfo', 'setShopPhone', 'setShopStatus', 'initdishListMut', 'setStoreInfo',
   'setBaseUserInfo', 'setLodding', 'setToken'])),
 
-  (0, _vuex.mapState)(['shopInfo', 'shopPhone', 'orderListData', 'baseUserInfo', 'lodding', 'sessionId', 'token'])), {}, {
+  (0, _vuex.mapState)(['shopPhone', 'orderListData', 'baseUserInfo', 'lodding', 'sessionId', 'token'])), {}, {
     loginSync: function loginSync() {
       return new Promise(function (resolve, reject) {
         uni.login({
@@ -4470,6 +4471,14 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
                     _this8.shopStatus = res.data;
                     // console.log(res.data)
                     _this8.setShopStatus(res.data);
+                    (0, _api.getShopInfo)().then(function (res) {
+                      if (res.code === 1) {
+                        _this8.shopInfo = res.data;
+                        _this8.phoneData = res.data.phone || '';
+                        _this8.setShopInfo(res.data);
+                        _this8.setShopPhone(_this8.phoneData);
+                      }
+                    }).catch(function (err) {});
                   }).catch(function (err) {}));case 2:case "end":return _context5.stop();}}}, _callee5);}))();
     },
     // 获取店铺电话
@@ -19948,7 +19957,7 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.default = 
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.repetitionOrder = exports.paymentOrder = exports.reminderOrder = exports.cancelOrder = exports.getOrderDetail = exports.getOrderPage = exports.getShopPhone = exports.getShopStatus = exports.querySetmealDishById = exports.getAddressBookDefault = exports.oneOrderAgain = exports.queryAddressBookById = exports.delAddressBook = exports.editAddressBook = exports.addAddressBook = exports.putAddressBookDefault = exports.queryAddressBookList = exports.submitOrderSubmit = exports.queryOrderUserPage = exports.delShoppingCart = exports.newShoppingCartSub = exports.newAddShoppingCartAdd = exports.editHoppingCart = exports.getShoppingCartList = exports.querySetmeaList = exports.addShoppingCart = exports.commonDownload = exports.dishListByCategoryId = exports.getCategoryList = exports.userLogin = exports.payOrder = exports.clearOrder = exports.delDish = exports.addDish = exports.getDishList = exports.getDishDetail = exports.getList = exports.getMoreNorm = exports.getTableOrderDishList = exports.getTableState = exports.openTable = void 0;var _request = __webpack_require__(/*! ../../utils/request.js */ 25);
+Object.defineProperty(exports, "__esModule", { value: true });exports.repetitionOrder = exports.paymentOrder = exports.reminderOrder = exports.cancelOrder = exports.getOrderDetail = exports.getOrderPage = exports.getShopPhone = exports.getShopInfo = exports.getShopStatus = exports.querySetmealDishById = exports.getAddressBookDefault = exports.oneOrderAgain = exports.queryAddressBookById = exports.delAddressBook = exports.editAddressBook = exports.addAddressBook = exports.putAddressBookDefault = exports.queryAddressBookList = exports.submitOrderSubmit = exports.queryOrderUserPage = exports.delShoppingCart = exports.newShoppingCartSub = exports.newAddShoppingCartAdd = exports.editHoppingCart = exports.getShoppingCartList = exports.querySetmeaList = exports.addShoppingCart = exports.commonDownload = exports.dishListByCategoryId = exports.getCategoryList = exports.userLogin = exports.payOrder = exports.clearOrder = exports.delDish = exports.addDish = exports.getDishList = exports.getDishDetail = exports.getList = exports.getMoreNorm = exports.getTableOrderDishList = exports.getTableState = exports.openTable = void 0;var _request = __webpack_require__(/*! ../../utils/request.js */ 25);
 
 // 开桌
 var openTable = function openTable(params) {return (
@@ -20253,7 +20262,14 @@ exports.querySetmealDishById = querySetmealDishById;var getShopStatus = function
 
 };
 // 获取店铺电话
-exports.getShopStatus = getShopStatus;var getShopPhone = function getShopPhone(params) {
+exports.getShopStatus = getShopStatus;var getShopInfo = function getShopInfo(params) {
+  return (0, _request.request)({
+    url: "/user/shop/info",
+    method: 'GET' });
+
+};
+// 获取店铺电话
+exports.getShopInfo = getShopInfo;var getShopPhone = function getShopPhone(params) {
   return (0, _request.request)({
     url: "/user/shop/phone",
     method: 'GET' });
