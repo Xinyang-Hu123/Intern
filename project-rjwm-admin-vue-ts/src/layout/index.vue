@@ -53,11 +53,12 @@ export default class extends mixins(ResizeMixin) {
   min-width: 1366px;
   overflow-x: auto;
   overflow-y: hidden;
+  background: #f7f8fa;
 }
 
 .main-container {
   height: 100%;
-  background: #f3f4f7;
+  background: #f7f8fa;
   position: relative;
   width: calc(100% - 190px);
 }

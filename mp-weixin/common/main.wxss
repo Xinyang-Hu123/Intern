@@ -43,7 +43,7 @@
 
 	/* 以下样式用于 hello uni-app 演示所需 */
 page {
-	        background-color: #efeff4;
+	        background-color: #f7f8fa;
 	        height: 100%;
 	        font-size: 28rpx;
 	        line-height: 1.8;
@@ -485,4 +485,3 @@ radio .wx-radio-input.wx-radio-input-checked::before {
   font-size: 20rpx;
   color: #666;
 }
-
