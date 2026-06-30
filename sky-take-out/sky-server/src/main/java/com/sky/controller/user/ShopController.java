@@ -44,9 +44,9 @@ public class ShopController {
     @ApiOperation("获取店铺信息")
     public Result<ShopInfoVO> getInfo() {
         ShopInfoVO info = ShopInfoVO.builder()
-                .name("苍穹外卖")
+                .name("老宋速达")
                 .address("北京市朝阳区新街大道一号楼8层")
-                .slogan("苍穹餐厅为顾客打造专业的大众化美食外送餐饮")
+                .slogan("老宋速达为顾客打造专业的大众化美食外送餐饮")
                 .phone("13800138000")
                 .deliveryFee(new BigDecimal("6"))
                 .estimatedTime(12)

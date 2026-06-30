@@ -32,14 +32,14 @@
   padding-top: 160rpx;
   position: relative;
   background:
-    linear-gradient(180deg, #fff4dd 0%, #f7f8fa 380rpx),
+    linear-gradient(180deg, #eafbf4 0%, #f7f8fa 380rpx),
     #f7f8fa;
 }
 .home_content .restaurant_info_box.data-v-57280228 {
   position: relative;
   color: #20232a;
   width: 100%;
-  background: linear-gradient(184deg, rgba(246, 178, 26, 0.38) 0%, rgba(246, 178, 26, 0) 96%);
+  background: linear-gradient(184deg, rgba(22, 181, 127, 0.38) 0%, rgba(22, 181, 127, 0) 96%);
 }
 .home_content .restaurant_info_box .restaurant_info.data-v-57280228 {
   position: absolute;
@@ -54,7 +54,7 @@
   border-radius: 16rpx;
   padding: 18rpx 22rpx 24rpx 18rpx;
   box-sizing: border-box;
-  border: 1rpx solid rgba(246, 178, 26, 0.16);
+  border: 1rpx solid rgba(22, 181, 127, 0.16);
 }
 .home_content .restaurant_info_box .restaurant_info .info_top.data-v-57280228 {
   flex: 1;
@@ -208,7 +208,7 @@
   position: relative;
   font-family: PingFangSC, PingFangSC-Medium;
   font-weight: 500;
-  box-shadow: inset 8rpx 0 0 #f6b21a;
+  box-shadow: inset 8rpx 0 0 #16b57f;
 }
 .home_content .restaurant_menu_list .type_list .active.data-v-57280228::after {
   background-color: #eef2f7;
@@ -312,7 +312,7 @@
   line-height: 48rpx;
   text-align: center;
   opacity: 1;
-  background: #f6b21a;
+  background: #16b57f;
   border-radius: 24rpx;
   font-size: 12px;
   font-family: PingFangSC, PingFangSC-Medium;
@@ -408,7 +408,7 @@
   font-family: PingFangSC, PingFangSC-Medium;
   font-weight: 500;
   color: #252d35;
-  background: #f6b21a;
+  background: #16b57f;
 }
 .home_content .pop_mask.data-v-57280228 {
   position: fixed;
@@ -676,7 +676,7 @@
   font-weight: 500;
   font-size: 28rpx;
   opacity: 1;
-  background: #f6b21a;
+  background: #16b57f;
   border-radius: 30rpx;
 }
 .home_content .pop_mask .more_norm_pop.data-v-57280228 {
@@ -725,7 +725,7 @@
   flex-wrap: wrap;
 }
 .home_content .pop_mask .more_norm_pop .items_cont .item_row .flavor_item .item.data-v-57280228 {
-  border: 1px solid #f6b21a;
+  border: 1px solid #16b57f;
   border-radius: 16rpx;
   margin: 20rpx 10rpx;
   padding: 0 26rpx;
@@ -736,8 +736,8 @@
   color: #252d35;
 }
 .home_content .pop_mask .more_norm_pop .items_cont .item_row .flavor_item .act.data-v-57280228 {
-  background: #f6b21a;
-  border: 1px solid #f6b21a;
+  background: #16b57f;
+  border: 1px solid #16b57f;
   font-family: PingFangSC, PingFangSC-Medium;
   font-weight: 500;
 }
@@ -787,7 +787,7 @@
   font-weight: 500;
   font-size: 28rpx;
   opacity: 1;
-  background: #f6b21a;
+  background: #16b57f;
   border-radius: 30rpx;
 }
 .home_content .pop_mask .lodding.data-v-57280228 {
