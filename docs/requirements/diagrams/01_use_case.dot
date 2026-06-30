@@ -1,0 +1,87 @@
+digraph UseCase {
+  graph [
+    charset="UTF-8",
+    rankdir=TB,
+    bgcolor="white",
+    fontname="Microsoft YaHei",
+    labelloc="t",
+    label="苍穹外卖系统用例图",
+    nodesep=0.32,
+    ranksep=0.42
+  ];
+  node [fontname="Microsoft YaHei", fontsize=10, color="#2f3a4a"];
+  edge [fontname="Microsoft YaHei", fontsize=9, color="#526173", arrowsize=0.65];
+
+  customer [shape=box, style="rounded,filled", fillcolor="#E8F3FF", label="用户\n微信小程序"];
+  admin [shape=box, style="rounded,filled", fillcolor="#FFF2CC", label="商家员工\n管理端"];
+  operator [shape=box, style="rounded,filled", fillcolor="#EAF7EA", label="店长/运营"];
+
+  subgraph cluster_user {
+    label="用户端用例";
+    style="rounded";
+    color="#AAB7C4";
+    u_login [shape=ellipse, label="微信登录"];
+    u_goods [shape=ellipse, label="浏览菜品/套餐"];
+    u_cart [shape=ellipse, label="维护购物车"];
+    u_address [shape=ellipse, label="管理收货地址"];
+    u_order [shape=ellipse, label="提交/支付订单"];
+    u_history [shape=ellipse, label="历史订单/催单/再来一单"];
+    u_shop [shape=ellipse, label="查看店铺状态/信息"];
+    { rank=same; u_login; u_goods; u_cart; }
+    { rank=same; u_address; u_order; u_history; u_shop; }
+    u_login -> u_address [style=invis, weight=4];
+  }
+
+  subgraph cluster_admin {
+    label="管理端用例";
+    style="rounded";
+    color="#AAB7C4";
+    a_login [shape=ellipse, label="员工登录/退出"];
+    a_basic [shape=ellipse, label="员工/分类管理"];
+    a_goods [shape=ellipse, label="菜品/套餐管理"];
+    a_order [shape=ellipse, label="订单接单/拒单/派送/完成"];
+    a_shop [shape=ellipse, label="营业状态管理"];
+    a_report [shape=ellipse, label="工作台/数据统计/导出"];
+    a_notice [shape=ellipse, label="新订单/催单提醒"];
+    { rank=same; a_login; a_basic; a_goods; a_order; }
+    { rank=same; a_shop; a_report; a_notice; }
+    a_login -> a_shop [style=invis, weight=4];
+  }
+
+  subgraph cluster_external {
+    label="外部系统";
+    style="rounded";
+    color="#AAB7C4";
+    pay [shape=box, style="rounded,filled", fillcolor="#F6EAFE", label="微信支付/模拟支付"];
+    oss [shape=box, style="rounded,filled", fillcolor="#F5F5F5", label="对象存储 OSS"];
+    map [shape=box, style="rounded,filled", fillcolor="#F5F5F5", label="百度地图服务"];
+    ws [shape=box, style="rounded,filled", fillcolor="#F5F5F5", label="WebSocket"];
+    { rank=same; pay; map; ws; oss; }
+  }
+
+  { rank=same; customer; admin; operator; }
+
+  customer -> u_login;
+  customer -> u_goods;
+  customer -> u_cart;
+  customer -> u_address;
+  customer -> u_order;
+  customer -> u_history;
+  customer -> u_shop;
+
+  admin -> a_login;
+  admin -> a_basic;
+  admin -> a_goods;
+  admin -> a_order;
+  admin -> a_shop;
+  admin -> a_notice;
+  operator -> a_report;
+  operator -> a_shop;
+
+  u_order -> pay [label="支付"];
+  u_order -> map [label="配送校验"];
+  a_goods -> oss [label="图片上传"];
+  u_order -> ws [label="新单事件"];
+  u_history -> ws [label="催单事件"];
+  ws -> a_notice [label="推送"];
+}

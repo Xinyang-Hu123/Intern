@@ -1,0 +1,41 @@
+digraph SequenceOrderFulfillment {
+  graph [
+    charset="UTF-8",
+    rankdir=LR,
+    bgcolor="white",
+    fontname="Microsoft YaHei",
+    labelloc="t",
+    label="支付成功与商家履约时序图",
+    nodesep=0.55,
+    ranksep=0.65
+  ];
+  node [fontname="Microsoft YaHei", fontsize=10, shape=rect, style="rounded,filled", color="#506070", fillcolor="#F8FAFC"];
+  edge [fontname="Microsoft YaHei", fontsize=9, color="#526173", arrowsize=0.75];
+
+  user [label="用户"];
+  mp [label="微信小程序"];
+  payApi [label="支付服务\n当前为模拟支付"];
+  userOrderController [label="用户订单接口\n/user/order/payment"];
+  orderService [label="OrderService"];
+  websocket [label="WebSocketServer"];
+  adminUi [label="管理端工作台"];
+  adminOrderController [label="管理端订单接口\n/admin/order/*"];
+  orderMapper [label="OrderMapper"];
+  db [shape=cylinder, label="MySQL"];
+
+  user -> mp [label="点击支付"];
+  mp -> userOrderController [label="PUT /user/order/payment"];
+  userOrderController -> payApi [label="发起支付/模拟支付"];
+  payApi -> userOrderController [label="支付参数/成功结果"];
+  userOrderController -> orderService [label="payment(dto)"];
+  orderService -> orderMapper [label="按订单号更新状态\n待接单/已支付"];
+  orderMapper -> db [label="UPDATE orders"];
+  orderService -> websocket [label="推送 type=1 新订单"];
+  websocket -> adminUi [label="订单语音/弹窗提醒"];
+  adminUi -> adminOrderController [label="接单/拒单/派送/完成"];
+  adminOrderController -> orderService [label="confirm/rejection/delivery/complete"];
+  orderService -> orderMapper [label="校验状态并更新订单"];
+  orderMapper -> db [label="UPDATE orders"];
+  adminOrderController -> adminUi [label="返回处理结果"];
+  adminUi -> websocket [style=dashed, label="持续接收催单/新单消息"];
+}

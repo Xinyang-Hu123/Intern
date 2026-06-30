@@ -1,0 +1,49 @@
+digraph SequenceSubmitOrder {
+  graph [
+    charset="UTF-8",
+    rankdir=LR,
+    bgcolor="white",
+    fontname="Microsoft YaHei",
+    labelloc="t",
+    label="用户提交订单时序图",
+    nodesep=0.55,
+    ranksep=0.65
+  ];
+  node [fontname="Microsoft YaHei", fontsize=10, shape=rect, style="rounded,filled", color="#506070", fillcolor="#F8FAFC"];
+  edge [fontname="Microsoft YaHei", fontsize=9, color="#526173", arrowsize=0.75];
+
+  user [label="用户"];
+  mp [label="微信小程序"];
+  orderController [label="OrderController\n/user/order/submit"];
+  orderService [label="OrderService"];
+  addressMapper [label="AddressBookMapper"];
+  mapService [label="百度地图服务"];
+  cartMapper [label="ShoppingCartMapper"];
+  orderMapper [label="OrderMapper"];
+  detailMapper [label="OrderDetailMapper"];
+  db [shape=cylinder, label="MySQL"];
+
+  user -> mp [label="确认订单并提交"];
+  mp -> orderController [label="POST /user/order/submit\n订单金额、地址、备注等"];
+  orderController -> orderService [label="submitOrder(dto)"];
+  orderService -> addressMapper [label="getById(addressBookId)"];
+  addressMapper -> db [label="查询收货地址"];
+  db -> addressMapper [label="AddressBook"];
+  addressMapper -> orderService [label="返回地址"];
+  orderService -> mapService [label="解析店铺/用户地址\n计算配送距离"];
+  mapService -> orderService [label="距离结果"];
+  orderService -> cartMapper [label="list(currentUserId)"];
+  cartMapper -> db [label="查询购物车"];
+  db -> cartMapper [label="购物车列表"];
+  cartMapper -> orderService [label="返回列表"];
+  orderService -> orderMapper [label="insert(order)\n待付款/未支付"];
+  orderMapper -> db [label="写入订单主表"];
+  db -> orderMapper [label="订单ID"];
+  orderService -> detailMapper [label="insertBatch(orderDetails)"];
+  detailMapper -> db [label="写入订单明细"];
+  orderService -> cartMapper [label="deleteByUserId(userId)"];
+  cartMapper -> db [label="清空购物车"];
+  orderService -> orderController [label="OrderSubmitVO"];
+  orderController -> mp [label="订单ID、订单号、金额、下单时间"];
+  mp -> user [label="进入支付页"];
+}
