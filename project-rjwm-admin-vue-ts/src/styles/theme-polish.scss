@@ -1,0 +1,205 @@
+/* Unified admin theme for the front-end beautification task. */
+:root {
+  --rjwm-primary: #f6b21a;
+  --rjwm-primary-soft: #fff4dd;
+  --rjwm-ink: #252d35;
+  --rjwm-muted: #697586;
+  --rjwm-success: #1dc779;
+  --rjwm-danger: #e94e3c;
+  --rjwm-line: #e8edf3;
+  --rjwm-bg: #f7f8fa;
+  --rjwm-card-shadow: 0 12px 30px rgba(37, 45, 53, 0.08);
+}
+
+body {
+  background: var(--rjwm-bg);
+  color: var(--rjwm-ink);
+}
+
+.main-container,
+.app-main {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(246, 178, 26, 0.12), transparent 28%),
+    linear-gradient(180deg, #fffaf0 0%, var(--rjwm-bg) 260px);
+}
+
+.dashboard-container {
+  padding: 24px !important;
+}
+
+.dashboard-container .container {
+  border: 1px solid rgba(232, 237, 243, 0.9);
+  border-radius: 8px !important;
+  box-shadow: var(--rjwm-card-shadow);
+}
+
+.homeTitle {
+  color: var(--rjwm-ink);
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+.homeTitle::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 18px;
+  margin-right: 10px;
+  border-radius: 4px;
+  background: var(--rjwm-primary);
+  vertical-align: -3px;
+}
+
+.homeTitle span {
+  color: var(--rjwm-muted);
+  background: none;
+  padding-right: 0;
+}
+
+.homeTitle span a {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid var(--rjwm-line);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.overviewBox li,
+.orderviewBox li {
+  border: 1px solid rgba(246, 178, 26, 0.16);
+  border-radius: 8px !important;
+  background: linear-gradient(135deg, #fff9ec 0%, #ffffff 72%) !important;
+  box-shadow: 0 8px 18px rgba(37, 45, 53, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.overviewBox li:hover,
+.orderviewBox li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(37, 45, 53, 0.1);
+}
+
+.overviewBox .tit,
+.orderviewBox .status {
+  color: var(--rjwm-muted);
+}
+
+.overviewBox .num,
+.orderviewBox .num {
+  color: var(--rjwm-ink);
+  letter-spacing: 0;
+}
+
+.orderviewBox .tip,
+.dish_price,
+.price {
+  color: var(--rjwm-danger) !important;
+}
+
+.conTab {
+  border-color: var(--rjwm-line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.conTab li.active,
+.title-index .month ul .active {
+  background: var(--rjwm-primary);
+  color: var(--rjwm-ink);
+}
+
+.right-el-button,
+.el-input__inner,
+.el-textarea__inner {
+  border-color: var(--rjwm-line);
+  border-radius: 8px;
+}
+
+.el-button--primary,
+.login-btn,
+.right-el-button.el-button--primary {
+  background: var(--rjwm-primary) !important;
+  border-color: var(--rjwm-primary) !important;
+  color: var(--rjwm-ink) !important;
+}
+
+.el-button--primary:hover,
+.login-btn:hover,
+.login-btn:focus {
+  background: #f8c64b !important;
+  border-color: #f8c64b !important;
+  color: var(--rjwm-ink) !important;
+}
+
+.el-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.el-table th {
+  background: #faf7ef !important;
+  color: var(--rjwm-ink);
+}
+
+.navbar {
+  background: linear-gradient(90deg, var(--rjwm-primary) 0%, #f7c85a 100%) !important;
+  box-shadow: 0 8px 22px rgba(246, 178, 26, 0.22);
+}
+
+.navbar .businessBtn {
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--rjwm-success) !important;
+  box-shadow: 0 4px 10px rgba(29, 199, 121, 0.24);
+}
+
+.navbar .businessBtn.closing {
+  background: #8792a2 !important;
+  box-shadow: none;
+}
+
+.navbar .right-menu span:hover,
+.navbar .avatar-wrapper .el-button--primary {
+  background: rgba(255, 255, 255, 0.55) !important;
+}
+
+.logo {
+  background: linear-gradient(180deg, var(--rjwm-primary) 0%, #f8c64b 100%) !important;
+}
+
+.sidebar-container,
+.el-scrollbar,
+.el-menu {
+  background: var(--rjwm-ink) !important;
+}
+
+.el-menu-item,
+.el-submenu__title {
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.login {
+  background:
+    radial-gradient(circle at 24% 18%, rgba(246, 178, 26, 0.3), transparent 30%),
+    linear-gradient(135deg, #252d35 0%, #3e4651 58%, #fff4dd 100%) !important;
+}
+
+.login-box {
+  overflow: hidden;
+  box-shadow: 0 28px 70px rgba(18, 24, 32, 0.26);
+}
+
+.login-form {
+  box-shadow: inset 1px 0 0 rgba(232, 237, 243, 0.8);
+}
+
+.login-form .el-input__inner:focus {
+  border-color: var(--rjwm-primary) !important;
+}
+
+.login-btn {
+  height: 40px;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 16px rgba(246, 178, 26, 0.28);
+}
