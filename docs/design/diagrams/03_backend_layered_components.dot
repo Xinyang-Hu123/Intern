@@ -1,0 +1,60 @@
+digraph G {
+  graph [fontname="Microsoft YaHei", rankdir=LR, bgcolor="white", pad=0.25, nodesep=0.45, ranksep=0.7, splines=ortho];
+  node [fontname="Microsoft YaHei", shape=box, style="rounded,filled", color="#344054", fillcolor="#f8fafc"];
+  edge [fontname="Microsoft YaHei", color="#475467", arrowsize=0.8];
+
+  subgraph cluster_api {
+    label="接口层";
+    color="#98a2b3";
+    admin_ctl [label="admin Controller\nEmployee / Category / Dish / Setmeal\nOrder / Report / Workspace / Shop / Common", fillcolor="#ecfdf3"];
+    user_ctl [label="user Controller\nUser / Shop / Category / Dish / Setmeal\nShoppingCart / AddressBook / Order", fillcolor="#eff8ff"];
+    notify_ctl [label="notify Controller\nPayNotifyController", fillcolor="#fff7ed"];
+  }
+
+  subgraph cluster_service {
+    label="业务层";
+    color="#98a2b3";
+    base_svc [label="基础资料服务\n员工、分类、菜品、套餐、地址、购物车"];
+    order_svc [label="订单服务\n下单、支付、履约、取消、催单、再来一单", fillcolor="#fef3f2"];
+    report_svc [label="经营统计服务\n工作台、报表、Top10", fillcolor="#f4f3ff"];
+  }
+
+  subgraph cluster_domain {
+    label="领域对象";
+    color="#98a2b3";
+    dto [label="DTO\n接收请求参数", fillcolor="#eef4ff"];
+    entity [label="Entity\n数据库表映射", fillcolor="#f8fafc"];
+    vo [label="VO\n接口响应模型", fillcolor="#ecfdf3"];
+    result [label="Result / PageResult\n统一响应包装", fillcolor="#fff7ed"];
+  }
+
+  subgraph cluster_infra {
+    label="基础设施";
+    color="#98a2b3";
+    mapper [label="Mapper\nMyBatis 数据访问"];
+    exception [label="GlobalExceptionHandler\n业务异常统一返回"];
+    jwt [label="JWT Interceptor + BaseContext\n登录态解析与当前用户上下文"];
+    util [label="Utils\nOSS / JWT / HTTP / 微信支付"];
+  }
+
+  admin_ctl -> dto;
+  user_ctl -> dto;
+  notify_ctl -> order_svc;
+  admin_ctl -> base_svc;
+  user_ctl -> base_svc;
+  admin_ctl -> order_svc;
+  user_ctl -> order_svc;
+  admin_ctl -> report_svc;
+  base_svc -> mapper;
+  order_svc -> mapper;
+  report_svc -> mapper;
+  mapper -> entity;
+  base_svc -> vo;
+  order_svc -> vo;
+  report_svc -> vo;
+  vo -> result;
+  exception -> result;
+  jwt -> admin_ctl [style=dashed];
+  jwt -> user_ctl [style=dashed];
+  order_svc -> util;
+}

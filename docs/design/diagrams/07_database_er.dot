@@ -1,0 +1,30 @@
+digraph G {
+  graph [fontname="Microsoft YaHei", rankdir=LR, bgcolor="white", pad=0.25, nodesep=0.45, ranksep=0.65, splines=ortho];
+  node [fontname="Microsoft YaHei", shape=record, style="rounded,filled", color="#344054", fillcolor="#f8fafc"];
+  edge [fontname="Microsoft YaHei", color="#475467", arrowsize=0.8];
+
+  employee [label="{employee|id PK\lusername\lname\lphone\lstatus\lcreate_time\lupdate_time\l}"];
+  user [label="{user|id PK\lopenid\lname\lphone\lcreate_time\l}"];
+  category [label="{category|id PK\lname\ltype\lsort\lstatus\l}"];
+  dish [label="{dish|id PK\lname\lcategory_id FK\lprice\limage\lstatus\l}"];
+  dish_flavor [label="{dish_flavor|id PK\ldish_id FK\lname\lvalue\l}"];
+  setmeal [label="{setmeal|id PK\lcategory_id FK\lname\lprice\lstatus\limage\l}"];
+  setmeal_dish [label="{setmeal_dish|id PK\lsetmeal_id FK\ldish_id FK\lcopies\l}"];
+  address [label="{address_book|id PK\luser_id FK\lconsignee\lphone\ldetail\lis_default\l}"];
+  cart [label="{shopping_cart|id PK\luser_id FK\ldish_id/setmeal_id\lname\lnumber\lamount\l}"];
+  orders [label="{orders|id PK\lnumber\luser_id FK\laddress_book_id FK\lstatus\lpay_status\lamount\laddress snapshot\l}"];
+  detail [label="{order_detail|id PK\lorder_id FK\ldish_id/setmeal_id\lname\lnumber\lamount\l}"];
+
+  category -> dish [label="1:N 菜品分类"];
+  category -> setmeal [label="1:N 套餐分类"];
+  dish -> dish_flavor [label="1:N 口味"];
+  setmeal -> setmeal_dish [label="1:N"];
+  dish -> setmeal_dish [label="1:N"];
+  user -> address [label="1:N"];
+  user -> cart [label="1:N"];
+  user -> orders [label="1:N"];
+  address -> orders [label="1:N 地址快照"];
+  orders -> detail [label="1:N"];
+  dish -> detail [label="历史冗余"];
+  setmeal -> detail [label="历史冗余"];
+}

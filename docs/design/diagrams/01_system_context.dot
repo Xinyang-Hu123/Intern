@@ -1,0 +1,39 @@
+digraph G {
+  graph [fontname="Microsoft YaHei", rankdir=LR, bgcolor="white", pad=0.25, nodesep=0.55, ranksep=0.75, splines=ortho];
+  node [fontname="Microsoft YaHei", shape=box, style="rounded,filled", color="#2f3b52", fillcolor="#f7f9fc", penwidth=1.2];
+  edge [fontname="Microsoft YaHei", color="#52606d", arrowsize=0.8];
+
+  user [label="小程序用户\n浏览商品 / 下单 / 支付 / 催单", fillcolor="#e8f3ff"];
+  staff [label="商家员工\n菜品套餐 / 订单履约 / 工作台", fillcolor="#e8fff3"];
+  pm [label="项目经理 / 测试\n需求验收 / 缺陷跟踪 / 版本冻结", fillcolor="#fff7e8"];
+
+  subgraph cluster_system {
+    label="苍穹外卖系统";
+    color="#9aa6b2";
+    style="rounded,dashed";
+    miniprogram [label="微信小程序端\nmp-weixin"];
+    admin [label="Vue 管理端\nproject-rjwm-admin-vue-ts"];
+    server [label="Spring Boot 服务端\nsky-server"];
+    common [label="公共与数据模块\nsky-common / sky-pojo"];
+  }
+
+  mysql [label="MySQL 8.0\n业务数据持久化", fillcolor="#f2edff"];
+  redis [label="Redis\n营业状态 / 缓存", fillcolor="#fff0f0"];
+  oss [label="阿里云 OSS\n菜品图片存储", fillcolor="#fff8d6"];
+  wechat [label="微信接口\n登录 / 支付扩展", fillcolor="#edf7ed"];
+  baidu [label="百度地图 API\n配送范围校验", fillcolor="#eef5ff"];
+  github [label="GitHub\nIssue / PR / Milestone / CI", fillcolor="#f4f4f4"];
+
+  user -> miniprogram [label="使用"];
+  staff -> admin [label="使用"];
+  pm -> github [label="管理过程"];
+  miniprogram -> server [label="HTTP JSON\n/user/**"];
+  admin -> server [label="HTTP JSON + WebSocket\n/admin/** /ws"];
+  server -> common [label="依赖"];
+  server -> mysql [label="MyBatis"];
+  server -> redis [label="Spring Data Redis"];
+  server -> oss [label="上传图片"];
+  server -> wechat [label="code2session / 支付"];
+  server -> baidu [label="地理编码 / 路线规划"];
+  github -> server [label="CI 构建验证", style=dashed];
+}

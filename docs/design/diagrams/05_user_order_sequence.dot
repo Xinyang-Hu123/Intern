@@ -1,0 +1,36 @@
+digraph G {
+  graph [fontname="Microsoft YaHei", rankdir=LR, bgcolor="white", pad=0.25, nodesep=0.4, ranksep=0.65, splines=ortho];
+  node [fontname="Microsoft YaHei", shape=box, style="rounded,filled", color="#344054", fillcolor="#f8fafc"];
+  edge [fontname="Microsoft YaHei", color="#475467", arrowsize=0.8];
+
+  user [label="用户"];
+  wx [label="微信小程序"];
+  order_ctl [label="User OrderController\n/user/order"];
+  order_svc [label="OrderServiceImpl"];
+  address [label="AddressBookMapper"];
+  cart [label="ShoppingCartMapper"];
+  order_mapper [label="OrderMapper"];
+  detail_mapper [label="OrderDetailMapper"];
+  map_api [label="百度地图 API"];
+  ws [label="WebSocketServer"];
+  admin [label="管理端"];
+
+  user -> wx [label="选择商品和地址"];
+  wx -> order_ctl [label="POST /submit\nOrdersSubmitDTO"];
+  order_ctl -> order_svc [label="submitOrder(dto)"];
+  order_svc -> address [label="getById(addressBookId)"];
+  order_svc -> map_api [label="校验配送范围"];
+  order_svc -> cart [label="list(currentUser)"];
+  order_svc -> order_mapper [label="insert(orders)\n状态=待付款"];
+  order_svc -> detail_mapper [label="insertBatch(details)"];
+  order_svc -> cart [label="deleteByUserId"];
+  order_svc -> order_ctl [label="OrderSubmitVO"];
+  order_ctl -> wx [label="Result.success"];
+  wx -> order_ctl [label="PUT /payment\nOrdersPaymentDTO"];
+  order_ctl -> order_svc [label="payment(dto)"];
+  order_svc -> order_mapper [label="update\n状态=待接单, 已支付"];
+  order_svc -> ws [label="type=1 新订单"];
+  ws -> admin [label="/ws 推送提醒"];
+  order_svc -> order_ctl [label="OrderPaymentVO(fake)"];
+  order_ctl -> wx [label="支付结果"];
+}

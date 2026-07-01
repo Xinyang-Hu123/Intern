@@ -1,0 +1,47 @@
+digraph G {
+  graph [fontname="Microsoft YaHei", rankdir=TB, bgcolor="white", pad=0.25, nodesep=0.5, ranksep=0.65, splines=ortho];
+  node [fontname="Microsoft YaHei", shape=box, style="rounded,filled", color="#344054", fillcolor="#f8fafc"];
+  edge [fontname="Microsoft YaHei", color="#475467", arrowsize=0.8];
+
+  subgraph cluster_front {
+    label="前端容器";
+    color="#98a2b3";
+    admin_ui [label="管理端 Vue 2 + TypeScript\n视图、路由、状态、接口封装", fillcolor="#ecfdf3"];
+    wx_ui [label="微信小程序\n页面、组件、登录态、购物车交互", fillcolor="#eff8ff"];
+    nginx [label="Nginx 1.20\n静态资源 / 反向代理 / WebSocket 转发", fillcolor="#fff7ed"];
+  }
+
+  subgraph cluster_backend {
+    label="后端容器";
+    color="#98a2b3";
+    controller [label="Controller\n参数接收、鉴权后分发、统一响应"];
+    service [label="Service\n业务规则、事务、状态流转、外部服务编排"];
+    mapper [label="Mapper + XML\nSQL、分页、批量写入"];
+    websocket [label="WebSocketServer\n新订单 / 催单提醒", fillcolor="#fef3f2"];
+    task [label="Scheduled Task\n超时订单、定时统计/提醒", fillcolor="#fefbe8"];
+    config [label="Config / Interceptor / Handler\nJWT、Knife4j、异常处理、JSON 转换", fillcolor="#f4f3ff"];
+  }
+
+  subgraph cluster_data {
+    label="数据与外部服务";
+    color="#98a2b3";
+    mysql [label="MySQL\nemployee/user/category/dish/orders 等"];
+    redis [label="Redis\n店铺营业状态等"];
+    oss [label="OSS\n图片对象"];
+    ext [label="微信 / 百度地图\n登录、支付、配送距离"];
+  }
+
+  admin_ui -> nginx [label="访问"];
+  wx_ui -> nginx [label="接口请求"];
+  nginx -> controller [label="转发 /admin/** /user/**"];
+  controller -> service;
+  service -> mapper;
+  service -> websocket [label="推送订单事件"];
+  task -> mapper [label="定时查询/更新"];
+  mapper -> mysql;
+  service -> redis;
+  service -> oss;
+  service -> ext;
+  websocket -> admin_ui [label="/ws 实时消息"];
+  config -> controller [label="拦截与异常处理", style=dashed];
+}
