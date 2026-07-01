@@ -1,0 +1,23 @@
+digraph G {
+  graph [fontname="Microsoft YaHei", rankdir=LR, bgcolor="white", pad=0.25, nodesep=0.55, ranksep=0.75];
+  node [fontname="Microsoft YaHei", shape=ellipse, style="filled", color="#344054", fillcolor="#f8fafc"];
+  edge [fontname="Microsoft YaHei", color="#475467", arrowsize=0.8];
+
+  start [label="开始", shape=circle, width=0.45, fillcolor="#ecfdf3"];
+  pending_payment [label="1 待付款\nPENDING_PAYMENT"];
+  to_confirm [label="2 待接单\nTO_BE_CONFIRMED"];
+  confirmed [label="3 已接单\nCONFIRMED"];
+  delivering [label="4 派送中\nDELIVERY_IN_PROGRESS"];
+  completed [label="5 已完成\nCOMPLETED", fillcolor="#ecfdf3"];
+  cancelled [label="6 已取消\nCANCELLED", fillcolor="#fef3f2"];
+
+  start -> pending_payment [label="用户提交订单"];
+  pending_payment -> to_confirm [label="支付成功\npayStatus=PAID"];
+  pending_payment -> cancelled [label="用户取消\n无需退款"];
+  to_confirm -> confirmed [label="商家接单"];
+  to_confirm -> cancelled [label="商家拒单 / 用户取消\n已支付需退款"];
+  confirmed -> delivering [label="商家派送"];
+  delivering -> completed [label="商家完成\n记录送达时间"];
+  confirmed -> cancelled [label="商家取消\n按支付状态退款"];
+  delivering -> cancelled [label="商家取消\n记录原因"];
+}

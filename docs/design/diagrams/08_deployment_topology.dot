@@ -1,0 +1,31 @@
+digraph G {
+  graph [fontname="Microsoft YaHei", rankdir=LR, bgcolor="white", pad=0.25, nodesep=0.55, ranksep=0.75, splines=ortho];
+  node [fontname="Microsoft YaHei", shape=box, style="rounded,filled", color="#344054", fillcolor="#f8fafc"];
+  edge [fontname="Microsoft YaHei", color="#475467", arrowsize=0.8];
+
+  dev [label="开发成员本机\nJDK17 / Maven / Node / 微信开发者工具", fillcolor="#eff8ff"];
+  github [label="GitHub 仓库\nIssue / PR / Actions", fillcolor="#f4f4f4"];
+  server [label="演示服务器或本机\nWindows/Linux", fillcolor="#ecfdf3"];
+
+  subgraph cluster_server {
+    label="运行时拓扑";
+    color="#98a2b3";
+    browser [label="浏览器\n管理端访问"];
+    wx [label="微信客户端/开发者工具\n小程序访问"];
+    nginx [label="Nginx\n80: 静态资源 + 反代"];
+    app [label="Java 进程\nsky-server.jar\n8080"];
+    mysql [label="MySQL 8.0\nsky_take_out"];
+    redis [label="Redis 6+\ndatabase 10"];
+    oss [label="OSS / 图片服务"];
+  }
+
+  dev -> github [label="push feature / PR"];
+  github -> dev [label="review / CI 反馈"];
+  github -> server [label="发布版本 tag / 源码"];
+  browser -> nginx [label="HTTP"];
+  wx -> nginx [label="HTTP"];
+  nginx -> app [label="/admin /user /notify /ws"];
+  app -> mysql [label="JDBC"];
+  app -> redis [label="Redis"];
+  app -> oss [label="HTTP SDK"];
+}

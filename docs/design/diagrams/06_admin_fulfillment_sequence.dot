@@ -1,0 +1,41 @@
+digraph G {
+  graph [fontname="Microsoft YaHei", rankdir=LR, bgcolor="white", pad=0.25, nodesep=0.4, ranksep=0.65, splines=ortho];
+  node [fontname="Microsoft YaHei", shape=box, style="rounded,filled", color="#344054", fillcolor="#f8fafc"];
+  edge [fontname="Microsoft YaHei", color="#475467", arrowsize=0.8];
+
+  staff [label="商家员工"];
+  admin [label="Vue 管理端"];
+  interceptor [label="JWT Admin Interceptor"];
+  ctl [label="Admin OrderController\n/admin/order"];
+  svc [label="OrderServiceImpl"];
+  mapper [label="OrderMapper"];
+  detail [label="OrderDetailMapper"];
+  pay [label="WeChatPayUtil\n退款扩展"];
+
+  staff -> admin [label="查看订单/处理订单"];
+  admin -> interceptor [label="携带 token"];
+  interceptor -> ctl [label="放行并写入 BaseContext"];
+  admin -> ctl [label="GET /conditionSearch"];
+  ctl -> svc [label="conditionSearch(dto)"];
+  svc -> mapper [label="pageQuery"];
+  svc -> detail [label="按需查询订单菜品"];
+  svc -> ctl [label="PageResult<OrderVO>"];
+  ctl -> admin [label="订单列表"];
+
+  admin -> ctl [label="PUT /confirm"];
+  ctl -> svc [label="confirm(id)"];
+  svc -> mapper [label="状态: 待接单 -> 已接单"];
+
+  admin -> ctl [label="PUT /delivery/{id}"];
+  ctl -> svc [label="delivery(id)"];
+  svc -> mapper [label="状态: 已接单 -> 派送中"];
+
+  admin -> ctl [label="PUT /complete/{id}"];
+  ctl -> svc [label="complete(id)"];
+  svc -> mapper [label="状态: 派送中 -> 已完成"];
+
+  admin -> ctl [label="PUT /rejection 或 /cancel"];
+  ctl -> svc [label="rejection/cancel"];
+  svc -> pay [label="已支付订单退款"];
+  svc -> mapper [label="状态 -> 已取消\n记录原因/时间"];
+}
