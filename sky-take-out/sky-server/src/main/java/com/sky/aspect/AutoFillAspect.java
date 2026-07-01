@@ -6,12 +6,10 @@ import com.sky.context.BaseContext;
 import com.sky.enumeration.OperationType;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -67,16 +65,10 @@ public class AutoFillAspect {
         if (operationType == OperationType.INSERT) {
 //            为4个公共字段赋值
             try {
-                Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
-                Method setCreateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_USER, Long.class);
-                Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
-                Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
-
-//              通过反射为对象赋值
-                setCreateTime.invoke(entity, now);
-                setCreateUser.invoke(entity, currentId);
-                setUpdateTime.invoke(entity, now);
-                setUpdateUser.invoke(entity, currentId);
+                setValue(entity, AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class, now);
+                setValue(entity, AutoFillConstant.SET_CREATE_USER, Long.class, currentId);
+                setValue(entity, AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class, now);
+                setValue(entity, AutoFillConstant.SET_UPDATE_USER, Long.class, currentId);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -84,17 +76,22 @@ public class AutoFillAspect {
         } else if (operationType == operationType.UPDATE) {
 //            为2个公共字段赋值
             try {
-                Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
-                Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
-
-//              通过反射为对象赋值
-                setUpdateTime.invoke(entity, now);
-                setUpdateUser.invoke(entity, currentId);
+                setValue(entity, AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class, now);
+                setValue(entity, AutoFillConstant.SET_UPDATE_USER, Long.class, currentId);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
 
+    }
+
+    private void setValue(Object entity, String methodName, Class<?> paramType, Object value) throws Exception {
+        try {
+            Method method = entity.getClass().getDeclaredMethod(methodName, paramType);
+            method.invoke(entity, value);
+        } catch (NoSuchMethodException e) {
+            log.warn("实体 {} 缺少方法 {}({})，已跳过自动填充", entity.getClass().getSimpleName(), methodName, paramType.getSimpleName());
+        }
     }
 }

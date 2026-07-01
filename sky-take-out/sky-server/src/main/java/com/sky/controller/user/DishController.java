@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +27,20 @@ public class DishController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    private String getImageUrl(String image) {
+        if (image == null || image.isEmpty()) return image;
+        if (image.contains("download?name=")) {
+            image = image.substring(image.lastIndexOf("=") + 1);
+        } else if (image.contains("/")) {
+            image = image.substring(image.lastIndexOf("/") + 1);
+        }
+        String base = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        return base + "/common/download?name=" + image;
+    }
 
     /**
      * 根据分类id查询菜品
@@ -43,6 +58,7 @@ public class DishController {
         List<DishVO> list = (List<DishVO>) redisTemplate.opsForValue().get(key);
         if (list != null && list.size() > 0) {
 //            如果存在，直接返回，无需查询数据库
+            list.forEach(d -> d.setImage(getImageUrl(d.getImage())));
             return Result.success(list);
         }
 
@@ -53,6 +69,9 @@ public class DishController {
         dish.setStatus(StatusConstant.ENABLE);//查询起售中的菜品
 
         list = dishService.listWithFlavor(dish);
+
+//        转换图片路径
+        list.forEach(d -> d.setImage(getImageUrl(d.getImage())));
 
 //        放入redis
         redisTemplate.opsForValue().set(key, list);

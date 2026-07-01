@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,20 @@ public class DishController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    private String getImageUrl(String image) {
+        if (image == null || image.isEmpty()) return image;
+        if (image.contains("download?name=")) {
+            image = image.substring(image.lastIndexOf("=") + 1);
+        } else if (image.contains("/")) {
+            image = image.substring(image.lastIndexOf("/") + 1);
+        }
+        String base = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        return base + "/common/download?name=" + image;
+    }
 
     /**
      * 新增菜品
@@ -60,7 +75,11 @@ public class DishController {
     @ApiOperation("菜品分页查询")
     public Result<PageResult> page(DishPageQueryDTO dishPageQueryDTO) {
         log.info("菜品分页查询:{}", dishPageQueryDTO);
-        PageResult pageResult = dishService.pageQuery(dishPageQueryDTO);//后绪步骤定义
+        PageResult pageResult = dishService.pageQuery(dishPageQueryDTO);
+        pageResult.getRecords().forEach(record -> {
+            DishVO vo = (DishVO) record;
+            vo.setImage(getImageUrl(vo.getImage()));
+        });
         return Result.success(pageResult);
     }
 
@@ -92,6 +111,7 @@ public class DishController {
     public Result<DishVO> getById(@PathVariable Long id) {
         log.info("根据id查询菜品：{}", id);
         DishVO dishVO = dishService.getByIdWithFlavor(id);
+        dishVO.setImage(getImageUrl(dishVO.getImage()));
         return Result.success(dishVO);
     }
 
@@ -134,7 +154,7 @@ public class DishController {
      */
     @PostMapping("/status/{status}")
     @ApiOperation("菜品起售停售")
-    public Result<String> startOrStop(@PathVariable Integer status, Long id) {
+    public Result<String> startOrStop(@PathVariable Integer status, @RequestParam Long id) {
         dishService.startOrStop(status, id);
 
         //将所有的菜品缓存数据清理掉，所有以dish_开头的key

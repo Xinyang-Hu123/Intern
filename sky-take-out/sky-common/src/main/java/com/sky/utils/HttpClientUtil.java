@@ -52,6 +52,9 @@ public class HttpClientUtil {
             //创建GET请求
             HttpGet httpGet = new HttpGet(uri);
 
+            //设置超时配置
+            httpGet.setConfig(builderRequestConfig());
+
             //发送请求
             response = httpClient.execute(httpGet);
 

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController("userSetmealController")
@@ -21,6 +23,20 @@ import java.util.List;
 public class SetmealController {
     @Autowired
     private SetmealService setmealService;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    private String getImageUrl(String image) {
+        if (image == null || image.isEmpty()) return image;
+        if (image.contains("download?name=")) {
+            image = image.substring(image.lastIndexOf("=") + 1);
+        } else if (image.contains("/")) {
+            image = image.substring(image.lastIndexOf("/") + 1);
+        }
+        String base = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        return base + "/common/download?name=" + image;
+    }
 
     /**
      * 条件查询
@@ -37,6 +53,7 @@ public class SetmealController {
         setmeal.setStatus(StatusConstant.ENABLE);
 
         List<Setmeal> list = setmealService.list(setmeal);
+        list.forEach(s -> s.setImage(getImageUrl(s.getImage())));
         return Result.success(list);
     }
 
@@ -50,6 +67,7 @@ public class SetmealController {
     @ApiOperation("根据套餐id查询包含的菜品列表")
     public Result<List<DishItemVO>> dishList(@PathVariable("id") Long id) {
         List<DishItemVO> list = setmealService.getDishItemById(id);
+        list.forEach(d -> d.setImage(getImageUrl(d.getImage())));
         return Result.success(list);
     }
 }

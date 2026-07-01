@@ -81,6 +81,7 @@ public class WeChatPayUtil {
      */
     private String post(String url, String body) throws Exception {
         CloseableHttpClient httpClient = getClient();
+        if (httpClient == null) throw new Exception("微信支付客户端初始化失败，请检查证书配置");
 
         HttpPost httpPost = new HttpPost(url);
         httpPost.addHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.toString());

@@ -1,6 +1,6 @@
 {
-  "name": "瑞吉外卖",
-  "short_name": "Vue Ts Admin",
+  "name": "老宋速达后台管理系统",
+  "short_name": "老宋速达",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",
@@ -16,5 +16,5 @@
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#fff",
-  "theme_color": "#4DBA87"
+  "theme_color": "#16B57F"
 }

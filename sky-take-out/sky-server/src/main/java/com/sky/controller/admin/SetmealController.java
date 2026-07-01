@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -27,6 +28,20 @@ public class SetmealController {
 
     @Autowired
     private SetmealService setmealService;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    private String getImageUrl(String image) {
+        if (image == null || image.isEmpty()) return image;
+        if (image.contains("download?name=")) {
+            image = image.substring(image.lastIndexOf("=") + 1);
+        } else if (image.contains("/")) {
+            image = image.substring(image.lastIndexOf("/") + 1);
+        }
+        String base = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        return base + "/common/download?name=" + image;
+    }
 
     /**
      * 新增套餐
@@ -50,6 +65,10 @@ public class SetmealController {
     @ApiOperation("分页查询")
     public Result<PageResult> page(SetmealPageQueryDTO setmealPageQueryDTO) {
         PageResult pageResult = setmealService.pageQuery(setmealPageQueryDTO);
+        pageResult.getRecords().forEach(record -> {
+            SetmealVO vo = (SetmealVO) record;
+            vo.setImage(getImageUrl(vo.getImage()));
+        });
         return Result.success(pageResult);
     }
 
@@ -75,6 +94,7 @@ public class SetmealController {
     @ApiOperation("根据id查询套餐")
     public Result<SetmealVO> getById(@PathVariable Long id) {
         SetmealVO setmealVO = setmealService.getByIdWithDish(id);
+        setmealVO.setImage(getImageUrl(setmealVO.getImage()));
         return Result.success(setmealVO);
     }
 
@@ -100,7 +120,7 @@ public class SetmealController {
     @PostMapping("/status/{status}")
     @ApiOperation("套餐起售停售")
     @CacheEvict(cacheNames = "setmealCache",allEntries = true)
-    public Result startOrStop(@PathVariable Integer status, Long id) {
+    public Result startOrStop(@PathVariable Integer status, @RequestParam Long id) {
         setmealService.startOrStop(status, id);
         return Result.success();
     }

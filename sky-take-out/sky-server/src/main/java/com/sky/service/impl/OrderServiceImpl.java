@@ -79,8 +79,8 @@ public class OrderServiceImpl implements OrderService {
             throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
         }
 
-//        检查用户的收货地址是否超出配送范围
-        checkOutOfRange(addressBook.getCityName() + addressBook.getDistrictName() + addressBook.getDetail());
+//        检查用户的收货地址是否超出配送范围（暂时跳过，百度地图 AK 未配置）
+//        checkOutOfRange(addressBook.getCityName() + addressBook.getDistrictName() + addressBook.getDetail());
 
         Long currentId = BaseContext.getCurrentId();
 
@@ -211,9 +211,9 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     @Override
-    public PageResult pageQueryForUser(int pageNum, int pageSize, Integer status) {
+    public PageResult pageQueryForUser(Integer pageNum, Integer pageSize, Integer status) {
 //        设置分页
-        PageHelper.startPage(pageNum, pageSize);
+        PageHelper.startPage(pageNum == null ? 1 : pageNum, pageSize == null ? 10 : pageSize);
 
         OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
         ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
@@ -291,8 +291,8 @@ public class OrderServiceImpl implements OrderService {
             weChatPayUtil.refund(
                     orderDB.getNumber(),
                     orderDB.getNumber(),
-                    orders.getAmount(),
-                    orders.getAmount()
+                    orderDB.getAmount(),
+                    orderDB.getAmount()
             );
 
 //            支付状态修改为 退款
@@ -401,13 +401,17 @@ public class OrderServiceImpl implements OrderService {
         Integer payStatus = ordersDB.getPayStatus();
         if (payStatus == Orders.PAID) {
 //            用户已支付，需要退款
-            String refund = weChatPayUtil.refund(
-                    ordersDB.getNumber(),
-                    ordersDB.getNumber(),
-                    ordersDB.getAmount(),
-                    ordersDB.getAmount()
-            );
-            log.info("申请退款：{}", refund);
+            try {
+                String refund = weChatPayUtil.refund(
+                        ordersDB.getNumber(),
+                        ordersDB.getNumber(),
+                        ordersDB.getAmount(),
+                        ordersDB.getAmount()
+                );
+                log.info("申请退款：{}", refund);
+            } catch (Exception e) {
+                log.error("退款失败：{}", e.getMessage());
+            }
         }
 
 //        拒单需要退款，根据订单id更新订单状态，拒单原因，取消时间
@@ -433,13 +437,17 @@ public class OrderServiceImpl implements OrderService {
         Integer payStatus = orderDB.getPayStatus();
         if (payStatus == 1) {
 //            用于已支付，需要退款
-            String refund = weChatPayUtil.refund(
-                    orderDB.getNumber(),
-                    orderDB.getNumber(),
-                    orderDB.getAmount(),
-                    orderDB.getAmount()
-            );
-            log.info("申请退款：{}", refund);
+            try {
+                String refund = weChatPayUtil.refund(
+                        orderDB.getNumber(),
+                        orderDB.getNumber(),
+                        orderDB.getAmount(),
+                        orderDB.getAmount()
+                );
+                log.info("申请退款：{}", refund);
+            } catch (Exception e) {
+                log.error("退款失败：{}", e.getMessage());
+            }
         }
 
 //      管理端取消订单需要退款，根据订单id更新订单状态、取消原因、取消时间
@@ -489,10 +497,10 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Orders orders = new Orders();
-        orders.setId(orders.getId());
+        orders.setId(orderDB.getId());
 
 //        更新订单状态，状态转为完成
-        orders.setStatus(Orders.CONFIRMED);
+        orders.setStatus(Orders.COMPLETED);
         orders.setDeliveryTime(LocalDateTime.now());
 
         orderMapper.update(orders);
@@ -589,7 +597,7 @@ public class OrderServiceImpl implements OrderService {
         String userCoordinate = HttpClientUtil.doGet("https://api.map.baidu.com/geocoding/v3", map);
 
 //        数据解析
-        location = JSON.parseObject("result").getJSONObject("location");
+        location = JSON.parseObject(userCoordinate).getJSONObject("result").getJSONObject("location");
         lat = location.getString("lat");
         lng = location.getString("lng");
 

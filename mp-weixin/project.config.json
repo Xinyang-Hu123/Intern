@@ -33,15 +33,20 @@
     "showES6CompileOption": false,
     "useCompilerPlugins": false,
     "minifyWXML": true,
-    "condition": false
+    "condition": false,
+    "compileWorklet": false,
+    "localPlugins": false,
+    "swc": false,
+    "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.24.2",
-  "appid": "wx9e8dde9d2df9df58",
+  "libVersion": "3.16.2",
+  "appid": "wxbc507647fb6b2171",
   "projectname": "sky-take-out",
   "condition": {},
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  }
+  },
+  "simulatorPluginLibVersion": {}
 }
