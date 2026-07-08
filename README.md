@@ -4,6 +4,44 @@
 
 ---
 
+## 项目目录结构
+
+```text
+backend/
+└── sky-take-out/                 后端 Spring Boot + MyBatis 项目
+    ├── sky-server/               接口服务，包含 controller/service/mapper
+    ├── sky-pojo/                 DTO、Entity、VO 等数据对象
+    └── sky-common/               公共常量、工具类、异常、配置属性
+
+frontend/
+├── admin-vue/                    管理后台前端 Vue 项目
+└── mp-weixin/                    微信小程序前端项目
+
+deploy/
+└── nginx-1.20.2/                 Nginx 部署目录
+
+docs/                             文档和需求材料
+```
+
+### 本地启动入口
+
+```bash
+# 后端，默认端口 8081
+cd backend/sky-take-out/sky-server
+mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
+
+# 管理后台前端，默认端口 8082
+cd frontend/admin-vue
+npm run serve
+```
+
+浏览器访问：
+
+- 管理后台页面：http://localhost:8082
+- 后端接口文档：http://localhost:8081/doc.html
+
+---
+
 ## 一、团队成员与分工（6人实训团队）
 
 | 角色 | 人数 | 主要职责 | GitHub 责任 |
@@ -79,7 +117,7 @@ git checkout dev
 java -version
 
 # 后端
-cd sky-take-out
+cd backend/sky-take-out
 mvn clean verify
 ```
 
@@ -169,17 +207,17 @@ git commit -m "feat(order): #12 实现历史订单查询接口"
 ### Step 5：push 前本地预检
 
 ```bash
-# 在 sky-take-out/ 目录下执行
-cd sky-take-out
+# 在 backend/sky-take-out/ 目录下执行
+cd backend/sky-take-out
 mvn clean verify
 ```
 
 **必须看到 `BUILD SUCCESS` 才能 push，红了就本地修好再推。**
 
-管理端前端（project-rjwm-admin-vue-ts）改动还需要补充对应检查：
+管理端前端（frontend/admin-vue）改动还需要补充对应检查：
 
 ```bash
-# 在 project-rjwm-admin-vue-ts/ 目录下执行
+# 在 frontend/admin-vue/ 目录下执行
 npm run lint
 npm run test:unit
 ```
@@ -279,7 +317,7 @@ Intern/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                       # CI 配置，不要随意改动
-├── sky-take-out/                        # 后端 Java 项目（Maven 多模块）
+├── backend/sky-take-out/                        # 后端 Java 项目（Maven 多模块）
 │   ├── pom.xml                          # 父 POM，版本管理
 │   ├── sky-common/                      # 公共模块：工具类、异常、常量
 │   ├── sky-pojo/                        # 数据模块：Entity / DTO / VO
@@ -293,14 +331,14 @@ Intern/
 │           ├── task/                    # 定时任务
 │           ├── websocket/               # WebSocket 实时推送
 │           └── config/                  # Spring 配置类
-├── project-rjwm-admin-vue-ts/           # 管理端前端（Vue 2 + TypeScript）
+├── frontend/admin-vue/           # 管理端前端（Vue 2 + TypeScript）
 │   └── src/
 │       ├── views/                       # 页面组件
 │       ├── api/                         # 接口封装
 │       └── router.ts                    # 路由配置
-├── mp-weixin/                           # 微信小程序
+├── frontend/mp-weixin/                           # 微信小程序
 │   └── pages/
-├── nginx-1.20.2/                        # Nginx 服务器（含配置和前端静态文件）
+├── deploy/nginx-1.20.2/                        # Nginx 服务器（含配置和前端静态文件）
 │   ├── conf/nginx.conf                  # Nginx 配置
 │   └── html/                            # 前端打包产物
 ├── .gitignore
@@ -496,7 +534,7 @@ git commit -m "fix: 解决与 dev 的合并冲突"
 
 部署前必须修改以下文件的配置项（当前均为占位符）：
 
-**后端 `sky-take-out/sky-server/src/main/resources/application-dev.yml`：**
+**后端 `backend/sky-take-out/sky-server/src/main/resources/application-dev.yml`：**
 
 ```yaml
 sky:
@@ -522,7 +560,7 @@ sky:
     # ... 其余微信支付配置按需填写
 ```
 
-**后端 `sky-take-out/sky-server/src/main/resources/application.yml`：**
+**后端 `backend/sky-take-out/sky-server/src/main/resources/application.yml`：**
 
 ```yaml
 sky:
@@ -535,7 +573,7 @@ sky:
     ak: 你的百度地图AK
 ```
 
-**管理端前端 `project-rjwm-admin-vue-ts/.env.production`：**
+**管理端前端 `frontend/admin-vue/.env.production`：**
 
 ```env
 VUE_APP_URL = 'http://你的服务器IP:8080/admin'
@@ -545,7 +583,7 @@ VUE_APP_SOCKET_URL = 'ws://你的服务器IP:8080/ws/'
 ### 2. 后端打包部署
 
 ```bash
-# 在 sky-take-out/ 目录下
+# 在 backend/sky-take-out/ 目录下
 mvn clean package -DskipTests
 
 # 将 jar 包上传至服务器
@@ -558,7 +596,7 @@ nohup java -jar sky-server-1.0-SNAPSHOT.jar --spring.profiles.active=dev > app.l
 ### 3. 管理端前端部署
 
 ```bash
-# 在 project-rjwm-admin-vue-ts/ 目录下
+# 在 frontend/admin-vue/ 目录下
 npm install
 npm run build
 
@@ -568,7 +606,7 @@ scp -r dist/* user@服务器IP:/path/to/nginx/html/sky/
 
 ### 4. Nginx 配置
 
-修改 `nginx-1.20.2/conf/nginx.conf`：
+修改 `deploy/nginx-1.20.2/conf/nginx.conf`：
 
 ```nginx
 upstream webservers {
@@ -604,13 +642,13 @@ server {
 启动 Nginx：
 
 ```bash
-cd nginx-1.20.2
+cd deploy/nginx-1.20.2
 ./nginx -c conf/nginx.conf
 ```
 
 ### 5. 微信小程序部署
 
-1. 微信开发者工具打开 `mp-weixin/` 目录
+1. 微信开发者工具打开 `frontend/mp-weixin/` 目录
 2. 修改 `project.config.json` 中的 `appid` 为你的小程序 AppID
 3. 在工具中点击「上传」即可发布
 
@@ -672,7 +710,7 @@ cd nginx-1.20.2
 - [ ] 执行换行符配置命令
 - [ ] Clone 仓库，切到 `dev` 分支
 - [ ] 本地 Java 使用 JDK 17
-- [ ] 本地 `cd sky-take-out && mvn clean verify` 看到 `BUILD SUCCESS`
+- [ ] 本地 `cd backend/sky-take-out && mvn clean verify` 看到 `BUILD SUCCESS`
 - [ ] 在 GitHub 上建一个测试 Issue（Title 写"测试-你的名字"）
 - [ ] 走完一次完整流程：建分支 → commit → push → 发 PR → 请人 Review → 合并
 - [ ] 确认自己在仓库的 Settings → Collaborators 里有权限

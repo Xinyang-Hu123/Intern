@@ -1,5 +1,19 @@
 
 target/
+**/target/
+node_modules/
+**/node_modules/
+node-modules/
+**/node-modules/
+dist/
+**/dist/
+*.log
+*.pid
+admin-vue-run.*.log
+sky-server*.log
+/project.config.json
+/project.private.config.json
+/project.config.json.bak-*
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

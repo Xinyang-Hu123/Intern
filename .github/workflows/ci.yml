@@ -22,5 +22,5 @@ jobs:
           cache: 'maven'
 
       - name: Build with Maven and Run Tests
-        working-directory: sky-take-out
+        working-directory: backend/sky-take-out
         run: mvn -B clean verify
