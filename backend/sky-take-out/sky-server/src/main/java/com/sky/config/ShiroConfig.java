@@ -50,6 +50,10 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/user/shop/status", "anon");
         filterChainDefinitionMap.put("/user/shop/info", "anon");
         filterChainDefinitionMap.put("/user/shop/phone", "anon");
+        filterChainDefinitionMap.put("/user/category/list", "anon");
+        filterChainDefinitionMap.put("/user/dish/list", "anon");
+        filterChainDefinitionMap.put("/user/dish/recommend", "anon");
+        filterChainDefinitionMap.put("/user/dish/column", "anon");
         filterChainDefinitionMap.put("/doc.html", "anon");
         filterChainDefinitionMap.put("/webjars/**", "anon");
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");
@@ -63,3 +67,4 @@ public class ShiroConfig {
         return factoryBean;
     }
 }
+
