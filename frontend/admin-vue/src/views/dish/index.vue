@@ -33,6 +33,22 @@
                      :label="item.label"
                      :value="item.value" />
         </el-select>
+        <label style="margin-right: 10px; margin-left: 20px">首页推荐：</label>
+        <el-select v-model="recommend"
+                   style="width: 12%"
+                   placeholder="请选择"
+                   clearable>
+          <el-option label="推荐" :value="1" />
+          <el-option label="不推荐" :value="0" />
+        </el-select>
+        <label style="margin-right: 10px; margin-left: 20px">栏目主页：</label>
+        <el-select v-model="columnShow"
+                   style="width: 12%"
+                   placeholder="请选择"
+                   clearable>
+          <el-option label="展示" :value="1" />
+          <el-option label="隐藏" :value="0" />
+        </el-select>
         <el-button class="normal-btn continue"
                    @click="init(true)">
           查询
@@ -79,6 +95,21 @@
         </el-table-column>
         <el-table-column prop="categoryName"
                          label="菜品分类" />
+        <el-table-column prop="sort"
+                         label="排序"
+                         width="80" />
+        <el-table-column label="首页推荐"
+                         width="100">
+          <template slot-scope="scope">
+            {{ scope.row.recommend === 1 ? '是' : '否' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="栏目主页"
+                         width="100">
+          <template slot-scope="scope">
+            {{ scope.row.columnShow === 0 ? '隐藏' : '展示' }}
+          </template>
+        </el-table-column>
         <el-table-column label="售价">
           <template slot-scope="scope">
             <span style="margin-right: 10px">￥{{ (scope.row.price ).toFixed(2)*100/100 }}</span>
@@ -170,6 +201,8 @@ export default class extends Vue {
   private dishCategoryList = []
   private categoryId = ''
   private dishStatus = ''
+  private recommend: any = ''
+  private columnShow: any = ''
   private isSearch: boolean = false
   private saleStatus: any = [
     {
@@ -204,7 +237,9 @@ export default class extends Vue {
       pageSize: this.pageSize,
       name: this.input || undefined,
       categoryId: this.categoryId || undefined,
-      status: this.dishStatus
+      status: this.dishStatus,
+      recommend: this.recommend === '' ? undefined : this.recommend,
+      columnShow: this.columnShow === '' ? undefined : this.columnShow
     })
       .then(res => {
         if (res.data.code === 1) {

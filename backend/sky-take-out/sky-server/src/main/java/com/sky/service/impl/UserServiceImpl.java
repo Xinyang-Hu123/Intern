@@ -52,6 +52,10 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             user = User.builder()
                     .openid(openid)
+                    .status(1)
+                    .totalOrderCount(0)
+                    .totalAmount(java.math.BigDecimal.ZERO)
+                    .lastLoginTime(LocalDateTime.now())
                     .createTime(LocalDateTime.now()).build();
             userMapper.insert(user);
         }

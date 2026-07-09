@@ -78,5 +78,21 @@ public class DishController {
         return Result.success(list);
     }
 
+    @GetMapping("/recommend")
+    @ApiOperation("首页推荐菜品")
+    public Result<List<DishVO>> recommend() {
+        List<DishVO> list = dishService.recommendList();
+        list.forEach(d -> d.setImage(getImageUrl(d.getImage())));
+        return Result.success(list);
+    }
+
+    @GetMapping("/column")
+    @ApiOperation("栏目主页菜品")
+    public Result<List<DishVO>> column(Long categoryId) {
+        List<DishVO> list = dishService.columnList(categoryId);
+        list.forEach(d -> d.setImage(getImageUrl(d.getImage())));
+        return Result.success(list);
+    }
+
 
 }

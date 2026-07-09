@@ -33,6 +33,23 @@
             <el-input v-model="ruleForm.price"
                       placeholder="请设置菜品价格" />
           </el-form-item>
+          <el-form-item label="商品排序:">
+            <el-input-number v-model="ruleForm.sort"
+                             :min="0"
+                             :max="9999" />
+          </el-form-item>
+        </div>
+        <div>
+          <el-form-item label="首页推荐:">
+            <el-switch v-model="ruleForm.recommend"
+                       :active-value="1"
+                       :inactive-value="0" />
+          </el-form-item>
+          <el-form-item label="栏目主页展示:">
+            <el-switch v-model="ruleForm.columnShow"
+                       :active-value="1"
+                       :inactive-value="0" />
+          </el-form-item>
         </div>
         <el-form-item label="口味做法配置:">
           <el-form-item>
@@ -89,6 +106,22 @@
                           @imageChange="imageChange">
               图片大小不超过2M<br>仅能上传 PNG JPEG JPG类型图片<br>建议上传200*200或300*300尺寸的图片
             </image-upload>
+          </el-form-item>
+        </div>
+        <div>
+          <el-form-item label="详情描述图:">
+            <image-upload :prop-image-url="detailImageUrl"
+                          @imageChange="detailImageChange">
+              可上传商品详情页描述图<br>用于展示商品细节、规格或活动说明
+            </image-upload>
+          </el-form-item>
+        </div>
+        <div class="address">
+          <el-form-item label="商品多图:">
+            <el-input v-model="ruleForm.images"
+                      type="textarea"
+                      :rows="2"
+                      placeholder="多个图片地址用英文逗号分隔" />
           </el-form-item>
         </div>
         <div class="address">
@@ -149,6 +182,7 @@ export default class extends Vue {
   private textarea: string = ''
   private value: string = ''
   private imageUrl: string = ''
+  private detailImageUrl: string = ''
   private actionType: string = ''
   private dishList: string[] = []
   private dishFlavorsData: any[] = [] //原始口味数据
@@ -166,7 +200,12 @@ export default class extends Vue {
     price: '',
     code: '',
     image: '',
+    detailImage: '',
+    images: '',
     description: '',
+    sort: 0,
+    recommend: 0,
+    columnShow: 1,
     dishFlavors: [],
     status: true,
     categoryId: ''
@@ -273,6 +312,7 @@ export default class extends Vue {
         let arr = []
         this.getLeftDishFlavors()
         this.imageUrl = res.data.data.image
+        this.detailImageUrl = res.data.data.detailImage
       } else {
         this.$message.error(res.data.msg)
       }
@@ -353,6 +393,9 @@ export default class extends Vue {
           this.actionType === 'add' ? 0 : this.ruleForm.status ? 1 : 0
         // params.price *= 100
         params.categoryId = this.ruleForm.categoryId
+        params.sort = this.ruleForm.sort || 0
+        params.recommend = this.ruleForm.recommend || 0
+        params.columnShow = this.ruleForm.columnShow === 0 ? 0 : 1
         params.flavors = this.dishFlavors.map(obj => ({
           ...obj,
           value: JSON.stringify(obj.value)
@@ -376,7 +419,12 @@ export default class extends Vue {
                     price: '',
                     code: '',
                     image: '',
+                    detailImage: '',
+                    images: '',
                     description: '',
+                    sort: 0,
+                    recommend: 0,
+                    columnShow: 1,
                     dishFlavors: [],
                     status: true,
                     categoryId: ''
@@ -420,6 +468,10 @@ export default class extends Vue {
 
   imageChange(value: any) {
     this.ruleForm.image = value
+  }
+
+  detailImageChange(value: any) {
+    this.ruleForm.detailImage = value
   }
 }
 </script>

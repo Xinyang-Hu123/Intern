@@ -56,6 +56,19 @@ public interface DishService {
     List<DishVO> listWithFlavor(Dish dish);
 
     /**
+     * 首页推荐商品
+     * @return
+     */
+    List<DishVO> recommendList();
+
+    /**
+     * 栏目主页商品
+     * @param categoryId
+     * @return
+     */
+    List<DishVO> columnList(Long categoryId);
+
+    /**
      * 菜品起售停售
      * @param status
      * @param id

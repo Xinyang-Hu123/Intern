@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.MemberCommentMapper">
+    <select id="pageQuery" resultType="com.sky.vo.MemberCommentVO">
+        select mc.*, u.name as memberName, u.phone,
+               coalesce(d.name, s.name) as goodsName
+        from member_comment mc
+                 left join user u on mc.user_id = u.id
+                 left join dish d on mc.dish_id = d.id
+                 left join setmeal s on mc.setmeal_id = s.id
+        <where>
+            <if test="memberName != null and memberName != ''">
+                and u.name like concat('%', #{memberName}, '%')
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and coalesce(d.name, s.name) like concat('%', #{goodsName}, '%')
+            </if>
+            <if test="rating != null">
+                and mc.rating = #{rating}
+            </if>
+            <if test="status != null">
+                and mc.status = #{status}
+            </if>
+        </where>
+        order by mc.create_time desc
+    </select>
+
+    <update id="updateStatus">
+        update member_comment set status = #{status}, update_time = now() where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from member_comment where id = #{id}
+    </delete>
+</mapper>

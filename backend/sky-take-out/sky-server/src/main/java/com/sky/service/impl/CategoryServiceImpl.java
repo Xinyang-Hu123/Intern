@@ -43,6 +43,9 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = new Category();
         //属性拷贝
         BeanUtils.copyProperties(categoryDTO, category);
+        if (category.getParentId() == null) {
+            category.setParentId(0L);
+        }
 
         //分类状态默认为禁用状态0
         category.setStatus(StatusConstant.DISABLE);
