@@ -1,6 +1,9 @@
 package com.sky.mapper;
 
 import com.sky.entity.User;
+import com.github.pagehelper.Page;
+import com.sky.dto.MemberPageQueryDTO;
+import com.sky.vo.MemberVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,6 +17,8 @@ public interface UserMapper {
      * @return
      */
     User getById(String id);
+
+    MemberVO getMemberById(Long id);
 
     /**
      * 根据openid获取当前用户
@@ -34,4 +39,8 @@ public interface UserMapper {
      * @return
      */
     Integer countByMap(Map map);
+
+    Page<MemberVO> pageQuery(MemberPageQueryDTO memberPageQueryDTO);
+
+    void updateStatus(@Param("id") Long id, @Param("status") Integer status);
 }

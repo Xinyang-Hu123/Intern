@@ -37,6 +37,18 @@ public class User implements Serializable {
     //头像
     private String avatar;
 
+    //状态 0禁用 1启用
+    private Integer status;
+
+    //累计订单数
+    private Integer totalOrderCount;
+
+    //累计消费金额
+    private java.math.BigDecimal totalAmount;
+
+    //最后登录时间
+    private LocalDateTime lastLoginTime;
+
     //注册时间
     private LocalDateTime createTime;
 }

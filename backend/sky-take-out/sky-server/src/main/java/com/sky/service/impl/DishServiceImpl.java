@@ -50,6 +50,7 @@ public class DishServiceImpl implements DishService {
     public void saveWithFlavor(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
+        fillGoodsDefaults(dish);
 
 //        向菜品表插入1条数据
         dishMapper.insert(dish);
@@ -139,6 +140,7 @@ public class DishServiceImpl implements DishService {
     public void updateWithFlavor(DishDTO dishDTO) {
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
+        fillGoodsDefaults(dish);
 
 //        修改菜品基本信息
         dishMapper.update(dish);
@@ -194,6 +196,37 @@ public class DishServiceImpl implements DishService {
         });
 
         return dishVOArrayList;
+    }
+
+    @Override
+    public List<DishVO> recommendList() {
+        Dish dish = Dish.builder()
+                .status(StatusConstant.ENABLE)
+                .recommend(1)
+                .build();
+        return listWithFlavor(dish);
+    }
+
+    @Override
+    public List<DishVO> columnList(Long categoryId) {
+        Dish dish = Dish.builder()
+                .categoryId(categoryId)
+                .status(StatusConstant.ENABLE)
+                .columnShow(1)
+                .build();
+        return listWithFlavor(dish);
+    }
+
+    private void fillGoodsDefaults(Dish dish) {
+        if (dish.getSort() == null) {
+            dish.setSort(0);
+        }
+        if (dish.getRecommend() == null) {
+            dish.setRecommend(0);
+        }
+        if (dish.getColumnShow() == null) {
+            dish.setColumnShow(1);
+        }
     }
 
     /**

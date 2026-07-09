@@ -58,6 +58,7 @@ CREATE TABLE employee (
 -- 分类表
 CREATE TABLE category (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    parent_id BIGINT DEFAULT 0 COMMENT '父分类ID 0表示一级分类',
     type INT COMMENT '类型 1菜品分类 2套餐分类',
     name VARCHAR(32) COMMENT '分类名称',
     sort INT DEFAULT 0 COMMENT '排序',
@@ -70,17 +71,25 @@ CREATE TABLE category (
 ) COMMENT '分类';
 
 -- 初始化菜品分类
-INSERT IGNORE INTO category (type, name, sort, status, create_time, update_time, create_user, update_user) VALUES
-(1, '热销推荐', 1, 1, NOW(), NOW(), 1, 1),
-(1, '主食盖饭', 2, 1, NOW(), NOW(), 1, 1),
-(1, '特色小炒', 3, 1, NOW(), NOW(), 1, 1),
-(1, '面食粉类', 4, 1, NOW(), NOW(), 1, 1),
-(1, '汉堡炸鸡', 5, 1, NOW(), NOW(), 1, 1),
-(1, '烧烤夜宵', 6, 1, NOW(), NOW(), 1, 1),
-(1, '凉菜卤味', 7, 1, NOW(), NOW(), 1, 1),
-(1, '汤粥炖品', 8, 1, NOW(), NOW(), 1, 1),
-(1, '甜品小吃', 9, 1, NOW(), NOW(), 1, 1),
-(1, '饮品奶茶', 10, 1, NOW(), NOW(), 1, 1);
+INSERT IGNORE INTO category (parent_id, type, name, sort, status, create_time, update_time, create_user, update_user) VALUES
+(0, 1, '热销推荐', 1, 1, NOW(), NOW(), 1, 1),
+(0, 1, '主食盖饭', 2, 1, NOW(), NOW(), 1, 1),
+(0, 1, '特色小炒', 3, 1, NOW(), NOW(), 1, 1),
+(0, 1, '面食粉类', 4, 1, NOW(), NOW(), 1, 1),
+(0, 1, '汉堡炸鸡', 5, 1, NOW(), NOW(), 1, 1),
+(0, 1, '烧烤夜宵', 6, 1, NOW(), NOW(), 1, 1),
+(0, 1, '凉菜卤味', 7, 1, NOW(), NOW(), 1, 1),
+(0, 1, '汤粥炖品', 8, 1, NOW(), NOW(), 1, 1),
+(0, 1, '甜品小吃', 9, 1, NOW(), NOW(), 1, 1),
+(0, 1, '饮品奶茶', 10, 1, NOW(), NOW(), 1, 1);
+
+-- 初始化套餐分类
+INSERT IGNORE INTO category (parent_id, type, name, sort, status, create_time, update_time, create_user, update_user) VALUES
+(0, 2, '人气套餐', 11, 1, NOW(), NOW(), 1, 1),
+(0, 2, '商务套餐', 12, 1, NOW(), NOW(), 1, 1),
+(0, 2, '单人套餐', 13, 1, NOW(), NOW(), 1, 1),
+(0, 2, '双人套餐', 14, 1, NOW(), NOW(), 1, 1),
+(0, 2, '家庭套餐', 15, 1, NOW(), NOW(), 1, 1);
 
 -- 菜品表
 CREATE TABLE dish (
@@ -89,7 +98,12 @@ CREATE TABLE dish (
     category_id BIGINT COMMENT '分类ID',
     price DECIMAL(10,2) COMMENT '价格',
     image VARCHAR(255) COMMENT '图片',
+    detail_image VARCHAR(255) COMMENT '详情描述图',
+    images VARCHAR(1000) COMMENT '商品多图，逗号分隔',
     description VARCHAR(255) COMMENT '描述',
+    sort INT DEFAULT 0 COMMENT '商品排序',
+    recommend INT DEFAULT 0 COMMENT '是否推荐首页 0否 1是',
+    column_show INT DEFAULT 1 COMMENT '是否展示在栏目主页 0否 1是',
     status INT DEFAULT 1 COMMENT '状态 0停售 1起售',
     create_time DATETIME,
     update_time DATETIME,
@@ -139,8 +153,37 @@ CREATE TABLE user (
     sex VARCHAR(2) COMMENT '性别',
     id_number VARCHAR(18) COMMENT '身份证号',
     avatar VARCHAR(255) COMMENT '头像',
+    status INT DEFAULT 1 COMMENT '状态 0禁用 1启用',
+    total_order_count INT DEFAULT 0 COMMENT '累计订单数',
+    total_amount DECIMAL(10,2) DEFAULT 0 COMMENT '累计消费金额',
+    last_login_time DATETIME COMMENT '最后登录时间',
     create_time DATETIME COMMENT '注册时间'
 ) COMMENT '用户';
+
+-- 会员评论表
+CREATE TABLE member_comment (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL COMMENT '会员ID',
+    dish_id BIGINT COMMENT '菜品ID',
+    setmeal_id BIGINT COMMENT '套餐ID',
+    content VARCHAR(500) NOT NULL COMMENT '评论内容',
+    rating INT DEFAULT 5 COMMENT '评分 1-5',
+    images VARCHAR(1000) COMMENT '评论图片，逗号分隔',
+    status INT DEFAULT 1 COMMENT '状态 0隐藏 1展示',
+    create_time DATETIME COMMENT '创建时间',
+    update_time DATETIME COMMENT '更新时间'
+) COMMENT '会员评论';
+
+-- 会员收藏表
+CREATE TABLE member_favorite (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL COMMENT '会员ID',
+    dish_id BIGINT COMMENT '菜品ID',
+    setmeal_id BIGINT COMMENT '套餐ID',
+    create_time DATETIME COMMENT '收藏时间',
+    UNIQUE KEY idx_member_favorite_dish (user_id, dish_id),
+    UNIQUE KEY idx_member_favorite_setmeal (user_id, setmeal_id)
+) COMMENT '会员收藏';
 
 -- 地址簿表
 CREATE TABLE address_book (

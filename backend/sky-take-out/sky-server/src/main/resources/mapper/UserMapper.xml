@@ -4,8 +4,8 @@
 <mapper namespace="com.sky.mapper.UserMapper">
 <!--    创建新用户-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into user(openid, name, phone, sex, id_number, avatar, create_time)
-        VALUES (#{openid},#{name},#{phone},#{sex},#{idNumber},#{avatar},#{createTime})
+        insert into user(openid, name, phone, sex, id_number, avatar, status, total_order_count, total_amount, last_login_time, create_time)
+        VALUES (#{openid},#{name},#{phone},#{sex},#{idNumber},#{avatar},#{status},#{totalOrderCount},#{totalAmount},#{lastLoginTime},#{createTime})
     </insert>
 
 <!--    根据openid获取当前用户-->
@@ -21,6 +21,14 @@
         where id = #{id};
     </select>
 
+    <select id="getMemberById" resultType="com.sky.vo.MemberVO">
+        select u.*,
+               (select count(1) from member_comment mc where mc.user_id = u.id) as commentCount,
+               (select count(1) from member_favorite mf where mf.user_id = u.id) as favoriteCount
+        from user u
+        where u.id = #{id}
+    </select>
+
 <!--    根据动态条件统计用户数量-->
     <select id="countByMap" resultType="java.lang.Integer">
         select count(id) from user
@@ -33,4 +41,27 @@
             </if>
         </where>
     </select>
+
+    <select id="pageQuery" resultType="com.sky.vo.MemberVO">
+        select u.*,
+               (select count(1) from member_comment mc where mc.user_id = u.id) as commentCount,
+               (select count(1) from member_favorite mf where mf.user_id = u.id) as favoriteCount
+        from user u
+        <where>
+            <if test="name != null and name != ''">
+                and u.name like concat('%', #{name}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                and u.phone like concat('%', #{phone}, '%')
+            </if>
+            <if test="status != null">
+                and u.status = #{status}
+            </if>
+        </where>
+        order by u.create_time desc
+    </select>
+
+    <update id="updateStatus">
+        update user set status = #{status} where id = #{id}
+    </update>
 </mapper>

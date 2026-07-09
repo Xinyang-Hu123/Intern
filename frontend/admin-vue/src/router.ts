@@ -80,6 +80,33 @@ const router = new Router({
           }
         },
         {
+          path: 'member',
+          component: () =>
+            import(/* webpackChunkName: "shopTable" */ '@/views/member/index.vue'),
+          meta: {
+            title: '会员管理',
+            icon: 'vip'
+          }
+        },
+        {
+          path: 'member/comment',
+          component: () =>
+            import(/* webpackChunkName: "shopTable" */ '@/views/member/comments.vue'),
+          meta: {
+            title: '会员评论',
+            icon: 'inform'
+          }
+        },
+        {
+          path: 'member/favorite',
+          component: () =>
+            import(/* webpackChunkName: "shopTable" */ '@/views/member/favorites.vue'),
+          meta: {
+            title: '会员收藏',
+            icon: 'shop'
+          }
+        },
+        {
           path: '/dish/add',
           component: () =>
             import(/* webpackChunkName: "shopTable" */ '@/views/dish/addDishtype.vue'),
