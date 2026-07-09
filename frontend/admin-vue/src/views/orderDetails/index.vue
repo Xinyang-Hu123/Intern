@@ -50,6 +50,34 @@
         class="tableBox"
       >
         <el-table-column key="number" prop="number" label="订单号" />
+        <el-table-column key="memberId" prop="memberId" label="会员ID" width="90" />
+        <el-table-column
+          key="memberName"
+          prop="memberName"
+          label="会员姓名"
+          width="110"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          key="productNames"
+          prop="productNames"
+          label="商品名称"
+          min-width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column key="productImages" label="商品图片" min-width="120">
+          <template slot-scope="{ row }">
+            <div class="product-images">
+              <img
+                v-for="(image, index) in row.productImages || []"
+                :key="index"
+                :src="image"
+                class="product-img"
+              />
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column key="productStatus" prop="productStatus" label="商品状态" width="100" />
         <el-table-column
           v-if="[2, 3, 4].includes(orderStatus)"
           key="orderDishes"
@@ -87,6 +115,14 @@
           :class-name="orderStatus === 6 ? 'address' : ''"
         />
         <el-table-column
+          key="receiverAddress"
+          prop="receiverAddress"
+          label="收货地址"
+          min-width="150"
+          show-overflow-tooltip
+        />
+        <el-table-column key="contactPhone" prop="contactPhone" label="联系电话" width="120" />
+        <el-table-column
           v-if="[0, 6].includes(orderStatus)"
           key="orderTime"
           prop="orderTime"
@@ -94,6 +130,27 @@
           class-name="orderTime"
           min-width="110"
         />
+        <el-table-column key="placedAt" prop="placedAt" label="下单时间" min-width="150" />
+        <el-table-column
+          key="marketingActivity"
+          prop="marketingActivity"
+          label="营销活动"
+          min-width="110"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          key="couponActivity"
+          prop="couponActivity"
+          label="优惠券活动"
+          min-width="110"
+          show-overflow-tooltip
+        />
+        <el-table-column key="plannedAmount" label="计划金额" width="100" align="center">
+          <template slot-scope="{ row }">￥{{ formatAmount(row.plannedAmount) }}</template>
+        </el-table-column>
+        <el-table-column key="actualAmount" label="实际金额" width="100" align="center">
+          <template slot-scope="{ row }">￥{{ formatAmount(row.actualAmount || row.amount) }}</template>
+        </el-table-column>
         <el-table-column
           v-if="[6].includes(orderStatus)"
           key="cancelTime"
@@ -189,6 +246,22 @@
               >
                 完成
               </el-button>
+              <el-button
+                v-if="row.status === 5"
+                type="text"
+                class="blueBug"
+                @click="cancelOrDeliveryOrComplete(5, row.id)"
+              >
+                签收
+              </el-button>
+              <el-button
+                v-if="row.status === 7"
+                type="text"
+                class="blueBug"
+                @click="cancelOrDeliveryOrComplete(7, row.id)"
+              >
+                评价
+              </el-button>
             </div>
             <div class="middle">
               <el-button
@@ -200,7 +273,7 @@
                 拒单
               </el-button>
               <el-button
-                v-if="[1, 3, 4, 5].includes(row.status)"
+                v-if="[1, 3, 4].includes(row.status)"
                 type="text"
                 class="delBut"
                 @click="cancelOrder(row)"
@@ -292,6 +365,22 @@
                 <label>地址：</label>
                 <span>{{ diaForm.address }}</span>
               </div>
+              <div class="user-address">
+                <label>会员ID：</label>
+                <span>{{ diaForm.memberId }}</span>
+              </div>
+              <div class="user-getTime">
+                <label>商品状态：</label>
+                <span>{{ diaForm.productStatus }}</span>
+              </div>
+              <div class="user-address">
+                <label>营销活动：</label>
+                <span>{{ diaForm.marketingActivity || '-' }}</span>
+              </div>
+              <div class="user-phone">
+                <label>优惠券：</label>
+                <span>{{ diaForm.couponActivity || '-' }}</span>
+              </div>
             </div>
             <div
               class="user-remark"
@@ -363,7 +452,19 @@
                 >
               </div>
               <div class="all-amount">
-                <span class="amount-name">合计：</span>
+                <span class="amount-name">计划金额：</span>
+                <span class="amount-price"
+                  >￥{{ formatAmount(diaForm.plannedAmount || diaForm.amount) }}</span
+                >
+              </div>
+              <div class="send-amount">
+                <span class="amount-name">优惠金额：</span>
+                <span class="amount-price"
+                  >￥{{ formatAmount(diaForm.discountAmount) }}</span
+                >
+              </div>
+              <div class="all-amount">
+                <span class="amount-name">实际金额：</span>
                 <span class="amount-price"
                   >￥{{
                     diaForm.amount
@@ -405,7 +506,7 @@
         >
 
         <el-button
-          v-if="[1, 3, 4, 5].includes(dialogOrderStatus)"
+          v-if="[1, 3, 4, 5, 7, 8].includes(dialogOrderStatus)"
           @click="dialogVisible = false"
           >返 回</el-button
         >
@@ -420,6 +521,18 @@
           type="primary"
           @click="cancelOrDeliveryOrComplete(4, row.id)"
           >完 成</el-button
+        >
+        <el-button
+          v-if="dialogOrderStatus === 5"
+          type="primary"
+          @click="cancelOrDeliveryOrComplete(5, row.id)"
+          >签 收</el-button
+        >
+        <el-button
+          v-if="dialogOrderStatus === 7"
+          type="primary"
+          @click="cancelOrDeliveryOrComplete(7, row.id)"
+          >评 价</el-button
         >
         <el-button
           v-if="[1].includes(dialogOrderStatus)"
@@ -483,6 +596,8 @@ import {
   queryOrderDetailById,
   completeOrder,
   deliveryOrder,
+  signOrder,
+  reviewOrder,
   orderCancel,
   orderReject,
   orderAccept,
@@ -590,6 +705,14 @@ export default class extends Vue {
     {
       label: '已取消',
       value: 6,
+    },
+    {
+      label: '已签收',
+      value: 7,
+    },
+    {
+      label: '已评价',
+      value: 8,
     },
   ]
 
@@ -700,9 +823,18 @@ export default class extends Vue {
       return '已完成'
     } else if (row.status === 6) {
       return '已取消'
+    } else if (row.status === 7) {
+      return '已签收'
+    } else if (row.status === 8) {
+      return '已评价'
     } else {
       return '退款'
     }
+  }
+
+  formatAmount(value: any) {
+    const amount = Number(value || 0)
+    return amount.toFixed(2)
   }
 
   // 查看详情
@@ -791,13 +923,21 @@ export default class extends Vue {
       })
   }
 
-  // 派送，完成
+  // 派送，完成，签收，评价
   cancelOrDeliveryOrComplete(status: number, id: string) {
     const params = {
       status,
       id,
     }
-    ;(status === 3 ? deliveryOrder : completeOrder)(params)
+    const request =
+      status === 3
+        ? deliveryOrder
+        : status === 4
+          ? completeOrder
+          : status === 5
+            ? signOrder
+            : reviewOrder
+    request(params)
       .then((res) => {
         if (res.data.code === 1) {
           this.$message.success('操作成功')
@@ -866,6 +1006,21 @@ export default class extends Vue {
         width: 100%;
         border: 1px solid $gray-5;
         border-bottom: 0;
+      }
+
+      .product-images {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 36px;
+      }
+
+      .product-img {
+        width: 34px;
+        height: 34px;
+        border-radius: 4px;
+        object-fit: cover;
+        border: 1px solid #e5e4e4;
       }
 
       .pageList {

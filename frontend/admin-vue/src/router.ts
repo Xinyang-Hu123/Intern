@@ -16,6 +16,8 @@ import store from '@/store';
 
 Vue.use(Router);
 
+const RouterView = { render: (h: any) => h('router-view') };
+
 const router = new Router({
   scrollBehavior: (to, from, savedPosition) => {
     if (savedPosition) {
@@ -150,6 +152,62 @@ const router = new Router({
             title: '员工管理',
             icon: 'icon-employee'
           }
+        },
+        {
+          path: 'activity',
+          component: RouterView,
+          meta: {
+            title: '活动管理',
+            icon: 'icon-inform'
+          },
+          children: [
+            {
+              path: 'marketing',
+              component: () =>
+                import(/* webpackChunkName: "shopTable" */ '@/views/management/ResourceList.vue'),
+              meta: {
+                title: '营销管理',
+                resource: 'marketing'
+              }
+            }
+          ]
+        },
+        {
+          path: 'system',
+          component: RouterView,
+          meta: {
+            title: '系统管理',
+            icon: 'icon-employee'
+          },
+          children: [
+            {
+              path: 'user',
+              component: () =>
+                import(/* webpackChunkName: "shopTable" */ '@/views/management/ResourceList.vue'),
+              meta: {
+                title: '用户管理',
+                resource: 'user'
+              }
+            },
+            {
+              path: 'role',
+              component: () =>
+                import(/* webpackChunkName: "shopTable" */ '@/views/management/ResourceList.vue'),
+              meta: {
+                title: '角色管理',
+                resource: 'role'
+              }
+            },
+            {
+              path: 'menu',
+              component: () =>
+                import(/* webpackChunkName: "shopTable" */ '@/views/management/ResourceList.vue'),
+              meta: {
+                title: '菜单权限',
+                resource: 'menu'
+              }
+            }
+          ]
         },
 
         {
