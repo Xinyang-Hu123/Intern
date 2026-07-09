@@ -102,6 +102,18 @@ public interface OrderService {
     void complete(Long id);
 
     /**
+     * 签收订单
+     * @param id
+     */
+    void sign(Long id);
+
+    /**
+     * 评价订单
+     * @param id
+     */
+    void review(Long id);
+
+    /**
      * 用户催单
      * @param id
      */

@@ -9,7 +9,7 @@
       <el-badge :class="{'special-item':item.num<10}"
                 class="item"
                 :value="item.num > 99 ? '99+' : item.num"
-                :hidden="!([2, 3, 4].includes(item.value) && item.num)">
+                :hidden="!([2, 3, 4, 7, 8].includes(item.value) && item.num)">
         {{ item.label }}
       </el-badge>
     </div>
@@ -57,6 +57,16 @@ export default class extends Vue {
       {
         label: '已完成',
         value: 5
+      },
+      {
+        label: '已签收',
+        value: 7,
+        num: this.orderStatics.signed
+      },
+      {
+        label: '已评价',
+        value: 8,
+        num: this.orderStatics.reviewed
       },
       {
         label: '已取消',

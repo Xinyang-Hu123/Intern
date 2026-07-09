@@ -32,6 +32,22 @@ export const completeOrder = (params: any) => {
   })
 }
 
+// 签收接口
+export const signOrder = (params: any) => {
+  return request({
+    url: `/order/sign/${params.id}`,
+    method: 'put'
+  })
+}
+
+// 评价接口
+export const reviewOrder = (params: any) => {
+  return request({
+    url: `/order/review/${params.id}`,
+    method: 'put'
+  })
+}
+
 //订单取消
 export const orderCancel = (params: any) => {
   return request({
