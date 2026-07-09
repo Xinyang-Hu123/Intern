@@ -25,7 +25,7 @@ public interface CategoryService {
      * 根据id删除分类
      * @param id
      */
-    void deleteById(Long id);
+    void deleteById(Long id, Integer type);
 
     /**
      * 修改分类
@@ -38,7 +38,7 @@ public interface CategoryService {
      * @param status
      * @param id
      */
-    void startOrStop(Integer status, Long id);
+    void startOrStop(Integer status, Long id, Integer type);
 
     /**
      * 根据类型查询分类

@@ -15,11 +15,11 @@ export const getCategoryPage = (params: any) => {
 };
 
 // 删除当前列的接口
-export const deleCategory = (ids: string) => {
+export const deleCategory = (params: any) => {
   return request({
     url: '/category',
     method: 'delete',
-    params: { id:ids }
+    params
   });
 };
 
@@ -46,6 +46,6 @@ export const enableOrDisableEmployee = (params: any) => {
   return request({
     url: `/category/status/${params.status}`,
     method: 'post',
-    params: { id:params.id }
+    params: { id: params.id, type: params.type }
   })
 }

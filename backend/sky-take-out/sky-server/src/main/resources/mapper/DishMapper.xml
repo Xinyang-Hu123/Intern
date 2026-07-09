@@ -38,7 +38,7 @@
 <!--    菜品分页查询-->
     <select id="pageQuery" resultType="com.sky.vo.DishVO">
         select d.*,c.name as categoryName
-        from dish d left join category c on d.category_id = c.id
+        from dish d left join dish_category c on d.category_id = c.id
         <where>
             <if test="name!=null">
                 and d.name like concat('%',#{name},'%')

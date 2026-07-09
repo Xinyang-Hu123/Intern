@@ -1,11 +1,12 @@
 -- ============================================
--- 老宋速达 (sky-take-out) 数据库初始化脚本
+-- demo 数据库 - 点餐项目完整业务表结构
+-- 用途：后台管理端和小程序端共用 demo 库。
+-- 注意：demo 中可能已有其他项目的 admin 等表，本脚本只补齐缺失表，不删除、不覆盖已有表。
 -- ============================================
 
 CREATE DATABASE IF NOT EXISTS demo DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE demo;
 
--- 优惠券表
 CREATE TABLE IF NOT EXISTS coupon (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(64) NOT NULL COMMENT '优惠券名称',
@@ -19,23 +20,6 @@ CREATE TABLE IF NOT EXISTS coupon (
     update_user BIGINT COMMENT '修改人'
 ) COMMENT '优惠券';
 
--- 管理员表
-CREATE TABLE IF NOT EXISTS admin (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(64) NOT NULL COMMENT '用户名',
-    name VARCHAR(32) NOT NULL COMMENT '姓名',
-    password VARCHAR(64) NOT NULL COMMENT '密码(MD5)',
-    phone VARCHAR(20) COMMENT '手机号',
-    sex VARCHAR(2) COMMENT '性别',
-    status INT DEFAULT 1 COMMENT '状态 0禁用 1启用',
-    create_time DATETIME COMMENT '创建时间',
-    update_time DATETIME COMMENT '更新时间',
-    create_user BIGINT COMMENT '创建人',
-    update_user BIGINT COMMENT '修改人',
-    UNIQUE KEY idx_username (username)
-) COMMENT '管理员';
-
--- 员工表
 CREATE TABLE IF NOT EXISTS employee (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(64) NOT NULL COMMENT '用户名',
@@ -52,11 +36,9 @@ CREATE TABLE IF NOT EXISTS employee (
     UNIQUE KEY idx_username (username)
 ) COMMENT '员工';
 
--- 初始化后台登录账号 admin/123456 (MD5)，后台登录优先查 admin 表，查不到再查 employee 表
 INSERT IGNORE INTO employee (username, name, password, phone, sex, id_number, status, create_time, update_time, create_user, update_user)
 VALUES ('admin', '管理员', 'e10adc3949ba59abbe56e057f20f883e', '13800000000', '1', '110101199001010000', 1, NOW(), NOW(), 1, 1);
 
--- 菜品分类表
 CREATE TABLE IF NOT EXISTS dish_category (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     parent_id BIGINT DEFAULT 0 COMMENT '父分类ID 0表示一级分类',
@@ -71,7 +53,6 @@ CREATE TABLE IF NOT EXISTS dish_category (
     UNIQUE KEY idx_type_name (type, name)
 ) COMMENT '菜品分类';
 
--- 套餐分类表
 CREATE TABLE IF NOT EXISTS setmeal_category (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     parent_id BIGINT DEFAULT 0 COMMENT '父分类ID 0表示一级分类',
@@ -86,23 +67,6 @@ CREATE TABLE IF NOT EXISTS setmeal_category (
     UNIQUE KEY idx_type_name (type, name)
 ) COMMENT '套餐分类';
 
--- 初始化菜品分类
-INSERT IGNORE INTO dish_category (parent_id, type, name, sort, status, create_time, update_time, create_user, update_user) VALUES
-(0, 1, '蜀味烤鱼', 1, 1, NOW(), NOW(), 1, 1),
-(0, 1, '蜀味牛蛙', 2, 1, NOW(), NOW(), 1, 1),
-(0, 1, '特色蒸菜', 3, 1, NOW(), NOW(), 1, 1),
-(0, 1, '特色小炒', 4, 1, NOW(), NOW(), 1, 1),
-(0, 1, '新鲜时蔬', 5, 1, NOW(), NOW(), 1, 1),
-(0, 1, '水煮鱼', 6, 1, NOW(), NOW(), 1, 1),
-(0, 1, '传统主食', 7, 1, NOW(), NOW(), 1, 1),
-(0, 1, '酒水饮料', 8, 1, NOW(), NOW(), 1, 1);
-
--- 初始化套餐分类
-INSERT IGNORE INTO setmeal_category (parent_id, type, name, sort, status, create_time, update_time, create_user, update_user) VALUES
-(0, 2, '人气套餐', 1, 1, NOW(), NOW(), 1, 1),
-(0, 2, '商务套餐', 2, 1, NOW(), NOW(), 1, 1);
-
--- 菜品表
 CREATE TABLE IF NOT EXISTS dish (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(64) COMMENT '菜品名称',
@@ -122,7 +86,6 @@ CREATE TABLE IF NOT EXISTS dish (
     update_user BIGINT
 ) COMMENT '菜品';
 
--- 菜品口味表
 CREATE TABLE IF NOT EXISTS dish_flavor (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     dish_id BIGINT COMMENT '菜品ID',
@@ -130,7 +93,6 @@ CREATE TABLE IF NOT EXISTS dish_flavor (
     value VARCHAR(255) COMMENT '口味数据'
 ) COMMENT '菜品口味';
 
--- 套餐表
 CREATE TABLE IF NOT EXISTS setmeal (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     category_id BIGINT COMMENT '分类ID',
@@ -145,7 +107,6 @@ CREATE TABLE IF NOT EXISTS setmeal (
     update_user BIGINT
 ) COMMENT '套餐';
 
--- 套餐菜品关系表
 CREATE TABLE IF NOT EXISTS setmeal_dish (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     setmeal_id BIGINT COMMENT '套餐ID',
@@ -155,7 +116,6 @@ CREATE TABLE IF NOT EXISTS setmeal_dish (
     copies INT COMMENT '份数'
 ) COMMENT '套餐菜品关系';
 
--- 用户表
 CREATE TABLE IF NOT EXISTS user (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     openid VARCHAR(64) COMMENT '微信openid',
@@ -171,7 +131,6 @@ CREATE TABLE IF NOT EXISTS user (
     create_time DATETIME COMMENT '注册时间'
 ) COMMENT '用户';
 
--- 会员评论表
 CREATE TABLE IF NOT EXISTS member_comment (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL COMMENT '会员ID',
@@ -185,7 +144,6 @@ CREATE TABLE IF NOT EXISTS member_comment (
     update_time DATETIME COMMENT '更新时间'
 ) COMMENT '会员评论';
 
--- 会员收藏表
 CREATE TABLE IF NOT EXISTS member_favorite (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL COMMENT '会员ID',
@@ -196,7 +154,6 @@ CREATE TABLE IF NOT EXISTS member_favorite (
     UNIQUE KEY idx_member_favorite_setmeal (user_id, setmeal_id)
 ) COMMENT '会员收藏';
 
--- 地址簿表
 CREATE TABLE IF NOT EXISTS address_book (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT COMMENT '用户ID',
@@ -214,7 +171,6 @@ CREATE TABLE IF NOT EXISTS address_book (
     is_default INT DEFAULT 0 COMMENT '是否默认 0否 1是'
 ) COMMENT '地址簿';
 
--- 订单表
 CREATE TABLE IF NOT EXISTS orders (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     number VARCHAR(64) COMMENT '订单号',
@@ -242,7 +198,6 @@ CREATE TABLE IF NOT EXISTS orders (
     tableware_status INT COMMENT '餐具数量状态 1按餐量提供 0选择具体数量'
 ) COMMENT '订单';
 
--- 订单明细表
 CREATE TABLE IF NOT EXISTS order_detail (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(64) COMMENT '名称',
@@ -255,7 +210,6 @@ CREATE TABLE IF NOT EXISTS order_detail (
     image VARCHAR(255) COMMENT '图片'
 ) COMMENT '订单明细';
 
--- 购物车表
 CREATE TABLE IF NOT EXISTS shopping_cart (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(64) COMMENT '名称',

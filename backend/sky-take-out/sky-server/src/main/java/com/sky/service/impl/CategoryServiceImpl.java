@@ -8,6 +8,7 @@ import com.sky.context.BaseContext;
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
+import com.sky.exception.BaseException;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.CategoryMapper;
 import com.sky.mapper.DishMapper;
@@ -47,8 +48,8 @@ public class CategoryServiceImpl implements CategoryService {
             category.setParentId(0L);
         }
 
-        //分类状态默认为禁用状态0
-        category.setStatus(StatusConstant.DISABLE);
+        // 后台新增分类后，用户端小程序应立即可见。
+        category.setStatus(StatusConstant.ENABLE);
 
         //设置创建时间、修改时间、创建人、修改人
 //        category.setCreateTime(LocalDateTime.now());
@@ -75,23 +76,28 @@ public class CategoryServiceImpl implements CategoryService {
      * 根据id删除分类
      * @param id
      */
-    public void deleteById(Long id) {
+    public void deleteById(Long id, Integer type) {
+        Category category = type == null ? categoryMapper.getById(id) : categoryMapper.getByIdAndType(id, type);
+        if (category == null) {
+            throw new BaseException("分类不存在");
+        }
+
         //查询当前分类是否关联了菜品，如果关联了就抛出业务异常
-        Integer count = dishMapper.countByCategoryId(id);
+        Integer count = category.getType() == 1 ? dishMapper.countByCategoryId(id) : 0;
         if(count > 0){
             //当前分类下有菜品，不能删除
             throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_DISH);
         }
 
         //查询当前分类是否关联了套餐，如果关联了就抛出业务异常
-        count = setmealMapper.countByCategoryId(id);
+        count = category.getType() == 2 ? setmealMapper.countByCategoryId(id) : 0;
         if(count > 0){
             //当前分类下有菜品，不能删除
             throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL);
         }
 
         //删除分类数据
-        categoryMapper.deleteById(id);
+        categoryMapper.deleteByIdAndType(id, category.getType());
     }
 
     /**
@@ -101,6 +107,14 @@ public class CategoryServiceImpl implements CategoryService {
     public void update(CategoryDTO categoryDTO) {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO,category);
+
+        if (category.getType() == null && category.getId() != null) {
+            Category oldCategory = categoryMapper.getById(category.getId());
+            if (oldCategory == null) {
+                throw new BaseException("分类不存在");
+            }
+            category.setType(oldCategory.getType());
+        }
 
         //设置修改时间、修改人
 //        category.setUpdateTime(LocalDateTime.now());
@@ -114,9 +128,15 @@ public class CategoryServiceImpl implements CategoryService {
      * @param status
      * @param id
      */
-    public void startOrStop(Integer status, Long id) {
+    public void startOrStop(Integer status, Long id, Integer type) {
+        Category oldCategory = type == null ? categoryMapper.getById(id) : categoryMapper.getByIdAndType(id, type);
+        if (oldCategory == null) {
+            throw new BaseException("分类不存在");
+        }
+
         Category category = Category.builder()
                 .id(id)
+                .type(oldCategory.getType())
                 .status(status)
                 .updateTime(LocalDateTime.now())
                 .updateUser(BaseContext.getCurrentId())

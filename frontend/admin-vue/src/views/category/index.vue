@@ -79,7 +79,7 @@
             <el-button type="text"
                        size="small"
                        class="delBut"
-                       @click="deleteHandle(scope.row.id)">
+                       @click="deleteHandle(scope.row)">
               删除
             </el-button>
             <el-button type="text"
@@ -293,6 +293,7 @@ export default class extends Vue {
     this.classData.name = dat.name
     this.classData.sort = dat.sort
     this.classData.id = dat.id
+    this.classData.type = dat.type
     this.classData.dialogVisible = true
     this.actionType = 'edit'
   }
@@ -309,13 +310,14 @@ export default class extends Vue {
   private statusHandle(row: any) {
     this.id = row.id
     this.status = row.status
+    const nextStatus = String(row.status) === '1' ? 0 : 1
     this.$confirm('确认调整该分类的状态?', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning',
       customClass: 'customClass'
     }).then(() => {
-      enableOrDisableEmployee({ id: this.id, status: !this.status ? 1 : 0 })
+      enableOrDisableEmployee({ id: this.id, type: row.type, status: nextStatus })
         .then(res => {
           if (String(res.status) === '200') {
             this.$message.success('分类状态更改成功！')
@@ -329,13 +331,13 @@ export default class extends Vue {
   }
 
   //删除
-  private deleteHandle(id: any) {
+  private deleteHandle(row: any) {
     this.$confirm('此操作将永久删除该分类，是否继续？', '确定删除', {
       confirmButtonText: '删除',
       cancelButtonText: '取消',
       type: 'warning'
     }).then(() => {
-      deleCategory(id)
+      deleCategory({ id: row.id, type: row.type })
         .then(res => {
           if (res.data.code === 1) {
             this.$message.success('删除成功！')
@@ -386,6 +388,7 @@ export default class extends Vue {
         if (value) {
           editCategory({
             id: this.classData.id,
+            type: this.classData.type,
             name: this.classData.name,
             sort: this.classData.sort
           })

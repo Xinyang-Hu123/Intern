@@ -58,9 +58,9 @@ public class CategoryController {
      */
     @DeleteMapping
     @ApiOperation("删除分类")
-    public Result<String> deleteById(Long id){
-        log.info("删除分类：{}", id);
-        categoryService.deleteById(id);
+    public Result<String> deleteById(Long id, Integer type){
+        log.info("删除分类：{}, 类型：{}", id, type);
+        categoryService.deleteById(id, type);
         return Result.success();
     }
 
@@ -84,8 +84,8 @@ public class CategoryController {
      */
     @PostMapping("/status/{status}")
     @ApiOperation("启用禁用分类")
-    public Result<String> startOrStop(@PathVariable("status") Integer status, Long id){
-        categoryService.startOrStop(status,id);
+    public Result<String> startOrStop(@PathVariable("status") Integer status, Long id, Integer type){
+        categoryService.startOrStop(status,id,type);
         return Result.success();
     }
 

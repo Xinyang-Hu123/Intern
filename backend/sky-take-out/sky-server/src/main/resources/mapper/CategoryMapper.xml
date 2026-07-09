@@ -2,40 +2,109 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.CategoryMapper">
-<!--    插入数据-->
-    <insert id="insert">
-        insert into category(parent_id, type, name, sort, status, create_time, update_time, create_user, update_user)
-        VALUES (#{parentId}, #{type}, #{name}, #{sort}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
+    <sql id="categoryColumns">
+        id, parent_id, type, name, sort, status, create_time, update_time, create_user, update_user
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        <choose>
+            <when test="type == 2">
+                insert into setmeal_category(parent_id, type, name, sort, status, create_time, update_time, create_user, update_user)
+                values (#{parentId}, 2, #{name}, #{sort}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
+            </when>
+            <otherwise>
+                insert into dish_category(parent_id, type, name, sort, status, create_time, update_time, create_user, update_user)
+                values (#{parentId}, 1, #{name}, #{sort}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
+            </otherwise>
+        </choose>
     </insert>
 
-<!--    根据id删除分类-->
     <delete id="deleteById">
-        delete from category where id = #{id}
+        delete from dish_category where id = #{id}
     </delete>
 
-    <!--    分页查询-->
+    <delete id="deleteByIdAndType">
+        <choose>
+            <when test="type == 2">
+                delete from setmeal_category where id = #{id}
+            </when>
+            <otherwise>
+                delete from dish_category where id = #{id}
+            </otherwise>
+        </choose>
+    </delete>
+
+    <select id="getById" resultType="com.sky.entity.Category">
+        select <include refid="categoryColumns" /> from dish_category where id = #{id}
+        union all
+        select <include refid="categoryColumns" /> from setmeal_category where id = #{id}
+        limit 1
+    </select>
+
+    <select id="getByIdAndType" resultType="com.sky.entity.Category">
+        <choose>
+            <when test="type == 2">
+                select <include refid="categoryColumns" /> from setmeal_category where id = #{id}
+            </when>
+            <otherwise>
+                select <include refid="categoryColumns" /> from dish_category where id = #{id}
+            </otherwise>
+        </choose>
+    </select>
+
     <select id="pageQuery" resultType="com.sky.entity.Category">
-        select * from category
-        <where>
-            <if test="name != null and name != ''">
-                and name like concat('%',#{name},'%')
-            </if>
-            <if test="type != null">
-                and type = #{type}
-            </if>
-            <if test="parentId != null">
-                and parent_id = #{parentId}
-            </if>
-        </where>
-        order by sort asc , create_time desc
+        <choose>
+            <when test="type == 1">
+                select <include refid="categoryColumns" /> from dish_category
+                <where>
+                    <if test="name != null and name != ''">
+                        and name like concat('%', #{name}, '%')
+                    </if>
+                    <if test="parentId != null">
+                        and parent_id = #{parentId}
+                    </if>
+                </where>
+            </when>
+            <when test="type == 2">
+                select <include refid="categoryColumns" /> from setmeal_category
+                <where>
+                    <if test="name != null and name != ''">
+                        and name like concat('%', #{name}, '%')
+                    </if>
+                    <if test="parentId != null">
+                        and parent_id = #{parentId}
+                    </if>
+                </where>
+            </when>
+            <otherwise>
+                select * from (
+                    select <include refid="categoryColumns" /> from dish_category
+                    union all
+                    select <include refid="categoryColumns" /> from setmeal_category
+                ) category_all
+                <where>
+                    <if test="name != null and name != ''">
+                        and name like concat('%', #{name}, '%')
+                    </if>
+                    <if test="parentId != null">
+                        and parent_id = #{parentId}
+                    </if>
+                </where>
+            </otherwise>
+        </choose>
+        order by sort asc, create_time desc
     </select>
 
     <update id="update" parameterType="Category">
-        update category
+        <choose>
+            <when test="type == 2">
+                update setmeal_category
+            </when>
+            <otherwise>
+                update dish_category
+            </otherwise>
+        </choose>
         <set>
-            <if test="type != null">
-                type = #{type},
-            </if>
             <if test="parentId != null">
                 parent_id = #{parentId},
             </if>
@@ -52,18 +121,29 @@
                 update_time = #{updateTime},
             </if>
             <if test="updateUser != null">
-                update_user = #{updateUser}
+                update_user = #{updateUser},
             </if>
+            type = #{type}
         </set>
         where id = #{id}
     </update>
 
     <select id="list" resultType="Category">
-        select * from category
-        where status = 1
-        <if test="type != null">
-            and type = #{type}
-        </if>
-        order by sort asc,create_time desc
+        <choose>
+            <when test="type == 1">
+                select <include refid="categoryColumns" /> from dish_category where status = 1
+            </when>
+            <when test="type == 2">
+                select <include refid="categoryColumns" /> from setmeal_category where status = 1
+            </when>
+            <otherwise>
+                select * from (
+                    select <include refid="categoryColumns" /> from dish_category where status = 1
+                    union all
+                    select <include refid="categoryColumns" /> from setmeal_category where status = 1
+                ) category_all
+            </otherwise>
+        </choose>
+        order by sort asc, create_time desc
     </select>
 </mapper>

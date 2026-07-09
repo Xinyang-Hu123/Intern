@@ -20525,7 +20525,8 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.baseUrl = 
 // 服务器地址，优先从缓存读取。debugger控制台执行 wx.setStorageSync('serverUrl', 'http://你的IP:8080') 即可切换
 var baseUrl = '';
 try{baseUrl=wx.getStorageSync('serverUrl')||''}catch(e){}
-if(!baseUrl) baseUrl='http://localhost:8080';
+if(baseUrl==='http://localhost:8080') baseUrl='http://localhost:8088';
+if(!baseUrl) baseUrl='http://localhost:8088';
 //var baseUrl = 'https://c223c79.r2.cpolar.top';
 
 exports.baseUrl = baseUrl;

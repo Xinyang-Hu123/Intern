@@ -36,6 +36,28 @@ public interface CategoryMapper {
     void deleteById(@Param("id") Long id);
 
     /**
+     * 根据id和类型删除分类
+     * @param id
+     * @param type
+     */
+    void deleteByIdAndType(@Param("id") Long id, @Param("type") Integer type);
+
+    /**
+     * 根据id查询分类
+     * @param id
+     * @return
+     */
+    Category getById(@Param("id") Long id);
+
+    /**
+     * 根据id和类型查询分类
+     * @param id
+     * @param type
+     * @return
+     */
+    Category getByIdAndType(@Param("id") Long id, @Param("type") Integer type);
+
+    /**
      * 根据id修改分类
      * @param category
      */

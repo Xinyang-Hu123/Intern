@@ -11,6 +11,8 @@ dist/
 *.pid
 admin-vue-run.*.log
 sky-server*.log
+**/uploads/
+backend/sky-take-out/sky-server/src/main/resources/application-dev.yml
 /project.config.json
 /project.private.config.json
 /project.config.json.bak-*
