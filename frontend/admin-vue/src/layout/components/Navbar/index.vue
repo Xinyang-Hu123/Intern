@@ -512,12 +512,19 @@ export default class extends Vue {
     i {
       background: url('./../../../assets/icons/time.png') no-repeat;
       background-size: contain;
+      filter: brightness(0) invert(1);
     }
+    color: #eafff7;
   }
   .mesCenter {
     i {
       background: url('./../../../assets/icons/msg.png') no-repeat;
       background-size: contain;
+      filter: brightness(0) invert(1);
+    }
+    color: #eafff7;
+    a {
+      color: #eafff7;
     }
   }
   // .el-badge__content.is-fixed {
@@ -667,18 +674,31 @@ export default class extends Vue {
   }
 }
 
-.navbar .avatar-wrapper .userInfo,
-.navbar .avatar-wrapper .userInfo .el-button--primary,
-.navbar .avatar-wrapper .userInfo .el-button--primary span,
-.navbar .avatar-wrapper .userInfo .el-icon-arrow-down,
-.navbar .avatar-wrapper .userInfo .userList,
-.navbar .avatar-wrapper .userInfo .userList p {
-  color: #111827 !important;
-}
-
-.navbar .avatar-wrapper .userInfo .el-button--primary:hover,
-.navbar .avatar-wrapper .userInfo .userList p:hover {
-  color: #111827 !important;
+// Admin 下拉菜单：确保白色背景上文字和图标清晰可读
+.navbar .avatar-wrapper .userInfo {
+  background: #fff;
+  .el-button--primary {
+    color: #111827 !important;
+    background: #fff !important;
+    span { color: #111827 !important; }
+    &:hover { color: #111827 !important; background: #f3f4f6 !important; }
+  }
+  .el-icon-arrow-down {
+    filter: brightness(0);
+  }
+  .userList {
+    color: #111827;
+    p {
+      color: #111827 !important;
+      i {
+        filter: brightness(0);
+      }
+      &:hover {
+        color: #111827 !important;
+        background: #f3f4f6;
+      }
+    }
+  }
 }
 
 .msgTip {
