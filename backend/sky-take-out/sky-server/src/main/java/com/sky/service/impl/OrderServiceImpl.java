@@ -234,7 +234,7 @@ public class OrderServiceImpl implements OrderService {
 
                 OrderVO orderVO = new OrderVO();
                 BeanUtils.copyProperties(orders, orderVO);
-                orderVO.setOrderDetailList(orderDetailList);
+                enrichOrderVO(orderVO, orderDetailList);
                 list.add(orderVO);
             });
         }
@@ -258,7 +258,7 @@ public class OrderServiceImpl implements OrderService {
 //        将订单及其详情封装到OrderVo并返回
         OrderVO orderVO = new OrderVO();
         BeanUtils.copyProperties(orders, orderVO);
-        orderVO.setOrderDetailList(orderDetailList);
+        enrichOrderVO(orderVO, orderDetailList);
 
         return orderVO;
     }
@@ -360,12 +360,16 @@ public class OrderServiceImpl implements OrderService {
         Integer toBeConfirmed = orderMapper.countStatus(Orders.TO_BE_CONFIRMED);
         Integer confirmed = orderMapper.countStatus(Orders.CONFIRMED);
         Integer deliveryInProgress = orderMapper.countStatus(Orders.DELIVERY_IN_PROGRESS);
+        Integer signed = orderMapper.countStatus(Orders.SIGNED);
+        Integer reviewed = orderMapper.countStatus(Orders.REVIEWED);
 
 //        将查询出的数据封装
         OrderStatisticsVO orderStatisticsVO = new OrderStatisticsVO();
         orderStatisticsVO.setToBeConfirmed(toBeConfirmed);
         orderStatisticsVO.setConfirmed(confirmed);
         orderStatisticsVO.setDeliveryInProgress(deliveryInProgress);
+        orderStatisticsVO.setSigned(signed);
+        orderStatisticsVO.setReviewed(reviewed);
 
         return orderStatisticsVO;
     }
@@ -507,6 +511,38 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
+     * 签收订单
+     * @param id
+     */
+    @Override
+    public void sign(Long id) {
+        Orders orderDB = orderMapper.getById(id);
+        if (orderDB == null || !orderDB.getStatus().equals(Orders.COMPLETED)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders orders = new Orders();
+        orders.setId(orderDB.getId());
+        orders.setStatus(Orders.SIGNED);
+        orderMapper.update(orders);
+    }
+
+    /**
+     * 评价订单
+     * @param id
+     */
+    @Override
+    public void review(Long id) {
+        Orders orderDB = orderMapper.getById(id);
+        if (orderDB == null || !orderDB.getStatus().equals(Orders.SIGNED)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders orders = new Orders();
+        orders.setId(orderDB.getId());
+        orders.setStatus(Orders.REVIEWED);
+        orderMapper.update(orders);
+    }
+
+    /**
      * 用户催单
      * @param id
      */
@@ -543,6 +579,7 @@ public class OrderServiceImpl implements OrderService {
 
                 String orderDishStr = getOrderDishStr(orders);
                 orderVO.setOrderDishes(orderDishStr);
+                enrichOrderVO(orderVO, orderDetailMapper.getByOrderId(orders.getId()));
                 orderVOArrayList.add(orderVO);
             });
         }
@@ -563,6 +600,48 @@ public class OrderServiceImpl implements OrderService {
 
 //        将该订单对应的所有菜品信息拼接在一起
         return String.join("", ordewrDishList);
+    }
+
+    private void enrichOrderVO(OrderVO orderVO, List<OrderDetail> orderDetailList) {
+        List<OrderDetail> details = orderDetailList == null ? Collections.emptyList() : orderDetailList;
+        orderVO.setOrderDetailList(details);
+        orderVO.setMemberId(orderVO.getUserId());
+        orderVO.setMemberName(orderVO.getUserName() != null ? orderVO.getUserName() : orderVO.getConsignee());
+        orderVO.setProductNames(details.stream().map(OrderDetail::getName).filter(Objects::nonNull).collect(Collectors.joining("、")));
+        orderVO.setProductImages(details.stream().map(OrderDetail::getImage).filter(Objects::nonNull).collect(Collectors.toList()));
+        orderVO.setProductStatus(getAcceptanceStatus(orderVO.getStatus()));
+        orderVO.setReceiverAddress(orderVO.getAddress());
+        orderVO.setContactPhone(orderVO.getPhone());
+        orderVO.setPlacedAt(orderVO.getOrderTime());
+        orderVO.setMarketingActivity("新客满减");
+        orderVO.setCouponActivity("会员优惠券");
+        BigDecimal actualAmount = orderVO.getAmount() == null ? BigDecimal.ZERO : orderVO.getAmount();
+        BigDecimal discountAmount = new BigDecimal("5.00");
+        orderVO.setActualAmount(actualAmount);
+        orderVO.setDiscountAmount(discountAmount);
+        orderVO.setPlannedAmount(actualAmount.add(discountAmount));
+    }
+
+    private String getAcceptanceStatus(Integer status) {
+        if (Objects.equals(status, Orders.PENDING_PAYMENT)) {
+            return "待支付";
+        }
+        if (Objects.equals(status, Orders.TO_BE_CONFIRMED)) {
+            return "已支付";
+        }
+        if (Objects.equals(status, Orders.CONFIRMED) || Objects.equals(status, Orders.DELIVERY_IN_PROGRESS) || Objects.equals(status, Orders.COMPLETED)) {
+            return "已发货";
+        }
+        if (Objects.equals(status, Orders.SIGNED)) {
+            return "已签收";
+        }
+        if (Objects.equals(status, Orders.REVIEWED)) {
+            return "已评价";
+        }
+        if (Objects.equals(status, Orders.CANCELLED)) {
+            return "已取消";
+        }
+        return "未知状态";
     }
 
     /**

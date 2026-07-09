@@ -123,4 +123,28 @@ public class OrderController {
         return Result.success();
     }
 
+    /**
+     * 签收订单
+     * @param id
+     * @return
+     */
+    @PutMapping("/sign/{id}")
+    @ApiOperation("签收订单")
+    public Result sign(@PathVariable("id") Long id) {
+        orderService.sign(id);
+        return Result.success();
+    }
+
+    /**
+     * 评价订单
+     * @param id
+     * @return
+     */
+    @PutMapping("/review/{id}")
+    @ApiOperation("评价订单")
+    public Result review(@PathVariable("id") Long id) {
+        orderService.review(id);
+        return Result.success();
+    }
+
 }
