@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+﻿import request from '@/utils/request'
 // 营业额数据
 // export const getTurnoverDataes = (data) =>
 //   request({
@@ -95,3 +95,10 @@ request({
       responseType: "blob"
     })
   }
+
+// 座位概览
+export const getSeatOverview = () =>
+request({
+  'url': '/workspace/overviewSeats',
+  'method': 'get'
+})

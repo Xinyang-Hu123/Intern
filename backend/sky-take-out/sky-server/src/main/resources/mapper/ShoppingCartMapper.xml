@@ -5,7 +5,7 @@
 <!--    插入购物车数据-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into shopping_cart (name, image, user_id, dish_id, setmeal_id, dish_flavor, amount, create_time)
-        values (#{name}, #{image}, #{userId}, #{dishId}, #{setmealId}, #{dishFlavor}, #{amount}, #{createTime});
+        values (#{name}, #{image}, #{userId}, #{dishId}, #{setmealId}, #{dishFlavor}, #{amount}, #{createTime}, #{diningSessionId});
     </insert>
 
 <!--    将购物车对象批量添加到购物车-->
@@ -13,7 +13,7 @@
         insert into shopping_cart (name, image, user_id, dish_id, setmeal_id, dish_flavor, amount, create_time)
         values 
         <foreach collection="shoppingCartList" separator="," item="sc">
-            (#{sc.name},#{sc.image},#{sc.userId},#{sc.dishId},#{sc.setmealId},#{sc.dishFlavor},#{sc.amount},#{sc.createTime})
+            (#{sc.name},#{sc.image},#{sc.userId},#{sc.dishId},#{sc.setmealId},#{sc.dishFlavor},#{sc.amount},#{sc.createTime}, #{sc.diningSessionId})
         </foreach>
     </insert>
 
@@ -45,6 +45,7 @@
             <if test="dishId!=null">and dish_id=#{dishId}</if>
             <if test="setmealId!=null">and setmeal_id=#{setmealId}</if>
             <if test="dishFlavor!=null">and dish_flavor=#{dishFlavor}</if>
+            <if test="diningSessionId!=null">and dining_session_id=#{diningSessionId}</if>
         </where>
         order by create_time desc
     </select>

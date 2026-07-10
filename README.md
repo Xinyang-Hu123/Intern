@@ -25,12 +25,34 @@ docs/                             文档和需求材料
 
 ### 本地启动入口
 
-```bash
-# 后端，默认端口 8081
-cd backend/sky-take-out/sky-server
-mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
+后端实际目录是 `backend/sky-take-out/sky-server`，不是项目根目录下的 `sky-server`。首次运行先在 Maven 父工程安装各子模块，再进入服务模块启动。
+
+```powershell
+# 在项目根目录执行：首次运行、清理依赖或拉取新代码后执行一次
+cd backend\sky-take-out
+mvn clean install -DskipTests
+
+# 启动后端，默认端口 8088
+cd sky-server
+mvn spring-boot:run
+```
+
+后续仅需重启后端时，直接执行：
+
+```powershell
+cd backend\sky-take-out\sky-server
+mvn spring-boot:run
+```
+
+停止服务请在该终端按 `Ctrl+C`。若命令提示数据库或 Redis 连接失败，先检查 `sky-take-out/sky-server/src/main/resources/application-dev.yml` 的本机连接配置。项目建议使用 JDK 17；先通过 `java -version` 确认当前 Java 版本。
+
+```powershell
+# 可选：临时指定其他端口
+mvn spring-boot:run "-Dspring-boot.run.arguments=--server.port=8088"
+```
 
 # 管理后台前端，默认端口 8082
+```powershell
 cd frontend/admin-vue
 npm run serve
 ```
@@ -38,7 +60,7 @@ npm run serve
 浏览器访问：
 
 - 管理后台页面：http://localhost:8082
-- 后端接口文档：http://localhost:8081/doc.html
+- 后端接口文档：http://localhost:8088/doc.html
 
 ---
 

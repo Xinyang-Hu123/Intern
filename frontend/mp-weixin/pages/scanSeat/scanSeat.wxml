@@ -1,0 +1,24 @@
+<view class="scan-seat-page">
+  <!-- 座位信息展示 -->
+  <view class="seat-info" wx:if="{{seatInfo}}">
+    <view class="area-name">{{seatInfo.areaName}}</view>
+    <view class="seat-name">{{seatInfo.seatName}}</view>
+    <view class="seat-code">座位号：{{seatInfo.seatCode}}</view>
+  </view>
+
+  <!-- 错误提示 -->
+  <view class="error-msg" wx:if="{{errorMsg}}">
+    <text>{{errorMsg}}</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>正在识别座位...</text>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="actions" wx:if="{{seatInfo && !loading}}">
+    <button class="scan-btn" bindtap="goToOrder">开始点餐</button>
+    <button class="re-scan-btn" bindtap="reScan">重新扫码</button>
+  </view>
+</view>

@@ -263,8 +263,47 @@ CREATE TABLE IF NOT EXISTS shopping_cart (
     dish_id BIGINT COMMENT '菜品ID',
     setmeal_id BIGINT COMMENT '套餐ID',
     dish_flavor VARCHAR(255) COMMENT '口味',
-    number INT COMMENT '数量',
+    number INT NOT NULL DEFAULT 1 COMMENT '数量',
     amount DECIMAL(10,2) COMMENT '金额',
     image VARCHAR(255) COMMENT '图片',
     create_time DATETIME COMMENT '创建时间'
 ) COMMENT '购物车';
+
+-- ============================================
+-- 座位管理与扫码点餐 - 新增表结构
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS seat (
+  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
+  seat_code VARCHAR(16) NOT NULL COMMENT '座位编码全局唯一',
+  seat_name VARCHAR(64) NOT NULL COMMENT '展示名称',
+  area_name VARCHAR(32) NOT NULL COMMENT '区域名称',
+  capacity INT NOT NULL DEFAULT 4 COMMENT '建议容纳人数',
+  position_x DECIMAL(5,2) NOT NULL DEFAULT 50.00 COMMENT '布局横坐标0-100',
+  position_y DECIMAL(5,2) NOT NULL DEFAULT 50.00 COMMENT '布局纵坐标0-100',
+  status VARCHAR(16) NOT NULL DEFAULT 'AVAILABLE' COMMENT '状态AVAILABLE空闲OCCUPIED使用中DISABLED停用',
+  qr_version INT NOT NULL DEFAULT 1 COMMENT '二维码版本',
+  qr_sign VARCHAR(64) DEFAULT NULL COMMENT '二维码签名',
+  sort INT NOT NULL DEFAULT 0 COMMENT '同区域排序',
+  create_time DATETIME DEFAULT NULL,
+  update_time DATETIME DEFAULT NULL,
+  create_user BIGINT DEFAULT NULL,
+  update_user BIGINT DEFAULT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_seat_code (seat_code),
+  KEY idx_area_name (area_name),
+  KEY idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='座位表';
+
+CREATE TABLE IF NOT EXISTS dining_session (
+  id BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
+  seat_id BIGINT NOT NULL COMMENT '座位ID',
+  status VARCHAR(16) NOT NULL DEFAULT 'OPEN' COMMENT 'OPEN开放CLOSED已关闭',
+  start_time DATETIME NOT NULL,
+  close_time DATETIME DEFAULT NULL,
+  create_time DATETIME DEFAULT NULL,
+  update_time DATETIME DEFAULT NULL,
+  PRIMARY KEY (id),
+  KEY idx_seat_id (seat_id),
+  KEY idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用餐会话表';

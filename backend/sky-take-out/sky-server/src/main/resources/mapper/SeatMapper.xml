@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.SeatMapper">
+
+    <sql id="seatColumns">
+        id, seat_code, seat_name, area_name, capacity, position_x, position_y,
+        status, qr_version, qr_sign, sort, create_time, update_time, create_user, update_user
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into seat(seat_code, seat_name, area_name, capacity, position_x, position_y,
+                         status, qr_version, qr_sign, sort, create_time, update_time, create_user, update_user)
+        values (#{seatCode}, #{seatName}, #{areaName}, #{capacity}, #{positionX}, #{positionY},
+                #{status}, #{qrVersion}, #{qrSign}, #{sort}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
+    </insert>
+
+    <select id="pageQuery" resultType="com.sky.entity.Seat">
+        select <include refid="seatColumns"/>
+        from seat
+        <where>
+            <if test="areaName != null and areaName != ''">
+                and area_name like concat('%', #{areaName}, '%')
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="seatCode != null and seatCode != ''">
+                and seat_code like concat('%', #{seatCode}, '%')
+            </if>
+        </where>
+        order by area_name, sort asc, create_time desc
+    </select>
+
+    <select id="getById" resultType="com.sky.entity.Seat">
+        select <include refid="seatColumns"/> from seat where id = #{id}
+    </select>
+
+    <select id="getBySeatCode" resultType="com.sky.entity.Seat">
+        select <include refid="seatColumns"/> from seat where seat_code = #{seatCode}
+    </select>
+
+    <update id="update">
+        update seat
+        <set>
+            <if test="seatName != null">seat_name = #{seatName},</if>
+            <if test="areaName != null">area_name = #{areaName},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="positionX != null">position_x = #{positionX},</if>
+            <if test="positionY != null">position_y = #{positionY},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from seat where id = #{id}
+    </delete>
+
+    <update id="updateStatus">
+        update seat set status = #{status}, update_time = now() where id = #{id}
+    </update>
+
+    <update id="updateQrInfo">
+        update seat set qr_version = #{qrVersion}, qr_sign = #{qrSign}, update_time = now() where id = #{id}
+    </update>
+
+    <select id="listAll" resultType="com.sky.entity.Seat">
+        select <include refid="seatColumns"/> from seat order by area_name, sort asc
+    </select>
+
+    <select id="listByArea" resultType="com.sky.entity.Seat">
+        select <include refid="seatColumns"/> from seat where area_name = #{areaName} order by sort asc
+    </select>
+
+    <select id="getStatistics" resultType="com.sky.vo.SeatStatisticsVO">
+        SELECT
+            (SELECT COUNT(*) FROM seat) AS totalSeats,
+            (SELECT COUNT(*) FROM seat WHERE status = 'AVAILABLE') AS availableSeats,
+            (SELECT COUNT(*) FROM seat WHERE status = 'OCCUPIED') AS occupiedSeats,
+            (SELECT COUNT(*) FROM seat WHERE status = 'DISABLED') AS disabledSeats
+    </select>
+
+    <select id="getOpenSessionBySeat" resultType="com.sky.entity.DiningSession">
+        select id, seat_id, status, start_time, close_time, create_time, update_time
+        from dining_session
+        where seat_id = #{seatId} and status = 'OPEN'
+        order by start_time desc
+        limit 1
+    </select>
+
+    <insert id="insertSession" useGeneratedKeys="true" keyProperty="id">
+        insert into dining_session(seat_id, status, start_time, create_time, update_time)
+        values (#{seatId}, #{status}, #{startTime}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="closeSession">
+        update dining_session set status = 'CLOSED', close_time = now(), update_time = now() where id = #{id}
+    </update>
+
+</mapper>

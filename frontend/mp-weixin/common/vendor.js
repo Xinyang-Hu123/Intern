@@ -21877,6 +21877,7 @@ var _default = {
       tablewareData: '无需餐具',
       tableware: '',
       packAmount: 0,
+      deliveryFee: 6,
       value: [0, 0],
       timeValue: [0, 0],
       indicatorStyle: "height: 44px;color:#333",
@@ -22099,7 +22100,7 @@ var _default = {
         _this6.orderDishPrice += n.number * n.amount;
         _this6.orderDishNumber += n.number;
       });
-      this.orderDishPrice = this.orderDishPrice + 6 + this.orderDishNumber;
+      this.orderDishPrice = this.orderDishPrice + this.deliveryFee;
     },
     // 返回上一级
     goBack: function goBack() {
@@ -22135,7 +22136,7 @@ var _default = {
       this.remark), _defineProperty(_params, "tablewareStatus",
       this.status), _defineProperty(_params, "tablewareNumber",
       this.num), _defineProperty(_params, "packAmount",
-      this.orderDishNumber), _defineProperty(_params, "amount",
+      this.deliveryFee), _defineProperty(_params, "amount",
       this.orderDishPrice), _params);
 
       console.log(this.arrivalTime, params);

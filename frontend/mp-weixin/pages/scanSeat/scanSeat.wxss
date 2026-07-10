@@ -1,0 +1,68 @@
+.scan-seat-page {
+  padding: 20rpx;
+  text-align: center;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.seat-info {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 40rpx;
+  margin: 40rpx 0;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+}
+
+.area-name {
+  font-size: 28rpx;
+  color: #999;
+  margin-bottom: 10rpx;
+}
+
+.seat-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.seat-code {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.error-msg {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 40rpx;
+  margin: 40rpx 0;
+  color: #e74c3c;
+  font-size: 28rpx;
+}
+
+.loading {
+  padding: 60rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.actions {
+  margin-top: 60rpx;
+}
+
+.scan-btn {
+  background: #0B5F48;
+  color: #fff;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  margin: 20rpx 0;
+}
+
+.re-scan-btn {
+  background: #fff;
+  color: #666;
+  border-radius: 48rpx;
+  font-size: 28rpx;
+  margin: 20rpx 0;
+  border: 1rpx solid #ddd;
+}

@@ -28,6 +28,9 @@ public class WorkSpaceController {
     @Autowired
     private WorkspaceService workspaceService;
 
+    @Autowired
+    private com.sky.service.SeatService seatService;
+
     /**
      * 工作台今日数据查询
      * @return

@@ -47,4 +47,7 @@ public class ShoppingCart implements Serializable {
     private String image;
 
     private LocalDateTime createTime;
+
+    // 用餐会话ID（堂食购物车隔离）
+    private Long diningSessionId;
 }

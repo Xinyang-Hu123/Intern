@@ -1,4 +1,4 @@
-import Vue from 'vue';
+﻿import Vue from 'vue';
 import Router from 'vue-router';
 import Layout from '@/layout/index.vue';
 import {
@@ -70,6 +70,15 @@ const router = new Router({
           meta: {
             title: '分类管理',
             icon: 'icon-category'
+          }
+        },
+        {
+          path: 'seat',
+          component: () =>
+            import(/* webpackChunkName: "seat" */ '@/views/seat/index.vue'),
+          meta: {
+            title: '座位管理',
+            icon: 'e-sitting'
           }
         },
         {

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="navbar">
     <div class="statusBox">
       <hamburger id="hamburger-container"
@@ -231,6 +231,17 @@ export default class extends Vue {
         } else if (jsonMsg.type === 2) {
           that.$refs.audioVo2.play()
         }
+        // 处理座位状态变更事件
+        if (jsonMsg.type === "SEAT_STATUS_CHANGE") {
+          that.$notify({
+            title: "座位状态变更",
+            message: "座位 " + jsonMsg.seatCode + " 状态变更为: " + jsonMsg.newStatus,
+            type: "info",
+            duration: 3000
+          });
+          return;
+        }
+
         that.$notify({
           title: jsonMsg.type === 1 ? '待接单' : '催单',
           duration: 0,

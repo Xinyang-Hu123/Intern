@@ -217,7 +217,7 @@ CREATE TABLE IF NOT EXISTS shopping_cart (
     dish_id BIGINT COMMENT '菜品ID',
     setmeal_id BIGINT COMMENT '套餐ID',
     dish_flavor VARCHAR(255) COMMENT '口味',
-    number INT COMMENT '数量',
+    number INT NOT NULL DEFAULT 1 COMMENT '数量',
     amount DECIMAL(10,2) COMMENT '金额',
     image VARCHAR(255) COMMENT '图片',
     create_time DATETIME COMMENT '创建时间'

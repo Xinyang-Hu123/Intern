@@ -66,6 +66,12 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private WebSocketServer webSocketServer;
 
+    @Autowired
+    private com.sky.service.SeatService seatService;
+
+    @Autowired
+    private SeatMapper seatMapper;
+
     /**
      * 用户下单
      * @param ordersSubmitDTO

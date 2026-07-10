@@ -46,7 +46,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         if (shoppingCartsList != null && shoppingCartsList.size() > 0) {
 //            如果存在，就更新数量，+1
             shoppingCart = shoppingCartsList.get(0);
-            shoppingCart.setNumber(shoppingCart.getNumber() + 1);
+            Integer currentNumber = shoppingCart.getNumber();
+            shoppingCart.setNumber((currentNumber == null ? 1 : currentNumber) + 1);
             shoppingCartMapper.updateNumberById(shoppingCart);
         } else {
 //            如果不存在，插入数据
@@ -104,7 +105,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             shoppingCart = list.get(0);
 
             Integer number = shoppingCart.getNumber();
-            if (number == 1) {
+            if (number == null || number <= 1) {
 //                当前商品在购物车中份数为1，直接删除当前记录
                 shoppingCartMapper.deleteById(shoppingCart.getId());
             } else {
