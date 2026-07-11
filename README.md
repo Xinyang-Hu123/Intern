@@ -1,4 +1,4 @@
-# 团队协同开发规范
+﻿# 团队协同开发规范
 
 > 技术栈：JDK 17（团队统一运行时版本；CI 使用 JDK 17）+ Spring Boot 2.7.3 + MyBatis + MySQL 8.0 + Redis + Vue 2 + 微信小程序
 
@@ -737,3 +737,52 @@ cd deploy/nginx-1.20.2
 - [ ] 走完一次完整流程：建分支 → commit → push → 发 PR → 请人 Review → 合并
 - [ ] 确认自己在仓库的 Settings → Collaborators 里有权限
 
+
+---
+
+## 新增功能：座位管理与扫码点餐（Issue #28-#37）
+
+### 启动前准备
+
+1. **安装依赖**：首次运行需在 ackend/sky-take-out/ 目录下执行
+   `powershell
+   mvn clean install -DskipTests
+   `
+
+2. **数据库迁移**：执行 ackend/sky-take-out/migration-seat-management.sql 创建座位相关表
+
+3. **配置文件**：pplication.yml 中已添加座位二维码密钥配置
+
+### 启动后端
+
+`powershell
+cd backend\sky-take-out\sky-server
+mvn spring-boot:run
+`
+
+默认端口：8088，接口文档：http://localhost:8088/doc.html
+
+### 启动管理端前端
+
+`powershell
+cd frontend\admin-vue
+npm run serve
+`
+
+默认端口：8082，访问：http://localhost:8082
+
+### 新增接口
+
+| 接口 | 说明 |
+|------|------|
+| POST /admin/seat | 新增座位 |
+| GET /admin/seat/page | 座位分页查询 |
+| PUT /admin/seat | 编辑座位 |
+| DELETE /admin/seat | 停用座位 |
+| PUT /admin/seat/status | 修改座位状态 |
+| GET /admin/seat/list | 查询所有座位 |
+| GET /admin/seat/statistics | 座位统计 |
+| POST /admin/seat/regenerate-qr/{id} | 重新生成二维码 |
+| GET /admin/qr/download/{id} | 下载二维码图片 |
+| POST /user/seat/scan | 扫码解析座位 |
+| GET /admin/workspace/overviewSeats | 工作台座位概览 |
