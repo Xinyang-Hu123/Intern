@@ -1,4 +1,4 @@
-﻿{
+{
   "pages": [
     "pages/index/index",
     "pages/order/index",
@@ -10,7 +10,8 @@
     "pages/remark/index",
     "pages/my/my",
     "pages/addOrEditAddress/addOrEditAddress",
-    "pages/historyOrder/historyOrder",`r`n    "pages/scanSeat/scanSeat"
+    "pages/historyOrder/historyOrder",
+    "pages/scanSeat/scanSeat"
   ],
   "subPackages": [],
   "window": {

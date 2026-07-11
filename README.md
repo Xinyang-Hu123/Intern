@@ -54,7 +54,7 @@ mvn spring-boot:run "-Dspring-boot.run.arguments=--server.port=8088"
 # 管理后台前端，默认端口 8082
 ```powershell
 cd frontend/admin-vue
-npm run serve
+$env:NODE_OPTIONS="--openssl-legacy-provider"`r`nnpm run serve
 ```
 
 浏览器访问：
@@ -766,7 +766,7 @@ mvn spring-boot:run
 
 `powershell
 cd frontend\admin-vue
-npm run serve
+$env:NODE_OPTIONS="--openssl-legacy-provider"`r`nnpm run serve
 `
 
 默认端口：8082，访问：http://localhost:8082
