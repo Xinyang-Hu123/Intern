@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.SeatMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into seat (seat_number, name, capacity, area, qr_code, status, remark,
+                          create_time, update_time, create_user, update_user)
+        values (#{seatNumber}, #{name}, #{capacity}, #{area}, #{qrCode}, #{status}, #{remark},
+                #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
+    </insert>
+
+    <update id="update">
+        update seat
+        <set>
+            <if test="seatNumber != null">seat_number = #{seatNumber},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="area != null">area = #{area},</if>
+            <if test="qrCode != null">qr_code = #{qrCode},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        update seat set status = #{status}, update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from seat where id = #{id}
+    </delete>
+
+    <select id="pageQuery" resultType="com.sky.entity.Seat">
+        select * from seat
+        <where>
+            <if test="seatNumber != null and seatNumber != ''">
+                and seat_number like concat('%', #{seatNumber}, '%')
+            </if>
+            <if test="area != null and area != ''">
+                and area = #{area}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by seat_number asc
+    </select>
+
+    <select id="getById" resultType="com.sky.entity.Seat">
+        select * from seat where id = #{id}
+    </select>
+
+    <select id="getBySeatNumber" resultType="com.sky.entity.Seat">
+        select * from seat where seat_number = #{seatNumber}
+    </select>
+
+    <select id="list" resultType="com.sky.entity.Seat">
+        select * from seat
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="area != null and area != ''">
+                and area = #{area}
+            </if>
+        </where>
+        order by seat_number asc
+    </select>
+
+    <select id="countByStatus" resultType="java.util.HashMap">
+        select status, count(*) as cnt from seat group by status
+    </select>
+
+</mapper>
