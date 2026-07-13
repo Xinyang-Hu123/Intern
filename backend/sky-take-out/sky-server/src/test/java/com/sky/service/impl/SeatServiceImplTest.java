@@ -17,6 +17,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -81,6 +83,31 @@ class SeatServiceImplTest {
 
         assertEquals(reloadedSeat, savedSeat);
         verify(seatMapper).updateQrInfo(eq(SEAT_ID), eq(1), eq(signature("A01", 1)));
+    }
+
+    @Test
+    void saveRejectsNullCapacity() {
+        SeatDTO seatDTO = new SeatDTO();
+        seatDTO.setCapacity(null);
+
+        SeatBusinessException exception = assertThrows(SeatBusinessException.class,
+                () -> seatService.save(seatDTO));
+
+        assertEquals("容纳人数必须大于0", exception.getMessage());
+        verifyNoInteractions(seatMapper);
+    }
+
+    @Test
+    void updateRejectsNonPositiveCapacity() {
+        SeatDTO seatDTO = new SeatDTO();
+        seatDTO.setId(SEAT_ID);
+        seatDTO.setCapacity(0);
+
+        SeatBusinessException exception = assertThrows(SeatBusinessException.class,
+                () -> seatService.update(seatDTO));
+
+        assertEquals("容纳人数必须大于0", exception.getMessage());
+        verifyNoInteractions(seatMapper);
     }
 
     @Test
@@ -158,6 +185,25 @@ class SeatServiceImplTest {
     }
 
     @Test
+    void confirmSessionSucceedsForExistingParticipantWhenSeatIsFullWithoutDuplicateWrite() {
+        Seat seat = availableSeat(2);
+        DiningSession session = openSession();
+        when(seatMapper.getByIdForUpdate(SEAT_ID)).thenReturn(seat);
+        when(seatMapper.getOpenSessionBySeat(SEAT_ID)).thenReturn(session);
+        when(seatMapper.countParticipants(SESSION_ID)).thenReturn(2);
+        when(seatMapper.countParticipantBySessionAndUser(SESSION_ID, 101L)).thenReturn(1);
+
+        SeatScanResultVO result = seatService.confirmSession(SEAT_ID);
+
+        assertTrue(result.getSuccess());
+        assertTrue(result.getJoined());
+        assertFalse(result.getFull());
+        assertEquals(2, result.getParticipantCount());
+        verify(seatMapper, never()).insertParticipant(any(DiningSessionParticipant.class));
+        verify(seatMapper, never()).updateStatus(any(Long.class), any(String.class));
+    }
+
+    @Test
     void confirmSessionRejectsNewParticipantWhenSeatIsFullWithoutWritingParticipant() {
         BaseContext.setCurrentId(102L);
         Seat seat = availableSeat(2);
@@ -178,6 +224,23 @@ class SeatServiceImplTest {
         InOrder inOrder = inOrder(seatMapper);
         inOrder.verify(seatMapper).getByIdForUpdate(SEAT_ID);
         inOrder.verify(seatMapper).getOpenSessionBySeat(SEAT_ID);
+    }
+
+    @Test
+    void closeSessionAndReleaseLocksSeatBeforeClosingSessionAndReleasingSeat() throws NoSuchMethodException {
+        DiningSession session = openSession();
+        when(seatMapper.getOpenSessionBySeat(SEAT_ID)).thenReturn(session);
+
+        seatService.closeSessionAndRelease(SEAT_ID);
+
+        assertTrue(SeatServiceImpl.class
+                .getMethod("closeSessionAndRelease", Long.class)
+                .isAnnotationPresent(Transactional.class));
+        InOrder inOrder = inOrder(seatMapper);
+        inOrder.verify(seatMapper).getByIdForUpdate(SEAT_ID);
+        inOrder.verify(seatMapper).getOpenSessionBySeat(SEAT_ID);
+        inOrder.verify(seatMapper).closeSession(SESSION_ID);
+        inOrder.verify(seatMapper).updateStatus(SEAT_ID, "AVAILABLE");
     }
 
     private Seat availableSeat(int capacity) {

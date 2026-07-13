@@ -42,6 +42,7 @@ public class SeatServiceImpl implements SeatService {
 
     @Override
     public Seat save(SeatDTO seatDTO) {
+        validateCapacity(seatDTO.getCapacity());
         Seat existSeat = seatMapper.getBySeatCode(seatDTO.getSeatCode());
         if (existSeat != null) {
             throw new SeatBusinessException("座位编码已存在: " + seatDTO.getSeatCode());
@@ -68,6 +69,7 @@ public class SeatServiceImpl implements SeatService {
 
     @Override
     public void update(SeatDTO seatDTO) {
+        validateCapacity(seatDTO.getCapacity());
         Seat existSeat = seatMapper.getById(seatDTO.getId());
         if (existSeat == null) {
             throw new SeatBusinessException("座位不存在");
@@ -207,7 +209,9 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
+    @Transactional
     public void closeSessionAndRelease(Long seatId) {
+        seatMapper.getByIdForUpdate(seatId);
         DiningSession session = seatMapper.getOpenSessionBySeat(seatId);
         if (session != null) {
             seatMapper.closeSession(session.getId());
@@ -246,6 +250,12 @@ public class SeatServiceImpl implements SeatService {
         String data = seatCode + ":" + qrVersion + ":" + qrSecretKey;
         String hash = DigestUtils.md5DigestAsHex(data.getBytes(StandardCharsets.UTF_8));
         return hash.substring(0, Math.min(32, hash.length()));
+    }
+
+    private void validateCapacity(Integer capacity) {
+        if (capacity == null || capacity < 1) {
+            throw new SeatBusinessException("容纳人数必须大于0");
+        }
     }
 
     private void generateAndSaveQrSign(Long seatId) {
