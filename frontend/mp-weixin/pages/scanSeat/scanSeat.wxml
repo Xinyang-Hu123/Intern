@@ -1,24 +1,35 @@
 <view class="scan-seat-page">
-  <!-- 座位信息展示 -->
   <view class="seat-info" wx:if="{{seatInfo}}">
-    <view class="area-name">{{seatInfo.areaName}}</view>
-    <view class="seat-name">{{seatInfo.seatName}}</view>
+    <view class="seat-location">你当前在 {{seatInfo.areaName}} {{seatInfo.seatName}}</view>
     <view class="seat-code">座位号：{{seatInfo.seatCode}}</view>
+    <view class="participant-count">当前已确认 {{seatInfo.participantCount}} / {{seatInfo.capacity}} 人</view>
+    <view class="joined-tip" wx:if="{{seatInfo.joined}}">你已在该座位中</view>
   </view>
 
-  <!-- 错误提示 -->
-  <view class="error-msg" wx:if="{{errorMsg}}">
+  <view class="error-msg {{full ? 'full-msg' : ''}}" wx:if="{{errorMsg}}">
     <text>{{errorMsg}}</text>
   </view>
 
-  <!-- 加载中 -->
   <view class="loading" wx:if="{{loading}}">
     <text>正在识别座位...</text>
   </view>
 
-  <!-- 操作按钮 -->
-  <view class="actions" wx:if="{{seatInfo && !loading}}">
-    <button class="scan-btn" bindtap="goToOrder">开始点餐</button>
-    <button class="re-scan-btn" bindtap="reScan">重新扫码</button>
+  <view class="confirming-msg" wx:if="{{confirming}}">
+    <text>正在确认座位...</text>
+  </view>
+
+  <view class="actions">
+    <button
+      wx:if="{{seatInfo && !full}}"
+      class="confirm-btn"
+      bindtap="confirmStartOrder"
+      disabled="{{loading || confirming}}"
+      loading="{{confirming}}"
+    >确认开始点餐</button>
+    <button
+      class="re-scan-btn"
+      bindtap="reScan"
+      disabled="{{loading || confirming}}"
+    >重新扫码</button>
   </view>
 </view>

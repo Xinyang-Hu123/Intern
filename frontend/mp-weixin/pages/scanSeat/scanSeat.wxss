@@ -1,5 +1,6 @@
 .scan-seat-page {
-  padding: 20rpx;
+  box-sizing: border-box;
+  padding: 32rpx 24rpx;
   text-align: center;
   min-height: 100vh;
   background: #f5f5f5;
@@ -7,62 +8,107 @@
 
 .seat-info {
   background: #fff;
-  border-radius: 16rpx;
-  padding: 40rpx;
-  margin: 40rpx 0;
+  border-radius: 8rpx;
+  padding: 32rpx 28rpx;
+  margin: 24rpx 0;
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
 }
 
-.area-name {
-  font-size: 28rpx;
-  color: #999;
-  margin-bottom: 10rpx;
-}
-
-.seat-name {
-  font-size: 40rpx;
+.seat-location {
+  font-size: 34rpx;
   font-weight: bold;
   color: #333;
-  margin-bottom: 10rpx;
+  line-height: 1.5;
+  margin-bottom: 16rpx;
 }
 
 .seat-code {
   font-size: 26rpx;
   color: #666;
+  line-height: 1.5;
+}
+
+.participant-count {
+  margin-top: 12rpx;
+  color: #0B5F48;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.joined-tip {
+  margin-top: 12rpx;
+  color: #666;
+  font-size: 24rpx;
 }
 
 .error-msg {
-  background: #fff;
-  border-radius: 16rpx;
-  padding: 40rpx;
-  margin: 40rpx 0;
+  box-sizing: border-box;
+  min-height: 84rpx;
+  padding: 22rpx 24rpx;
+  margin: 24rpx 0;
+  border-radius: 8rpx;
+  background: #fff1f0;
+  border: 1rpx solid #ffccc7;
   color: #e74c3c;
-  font-size: 28rpx;
+  font-size: 26rpx;
+  line-height: 40rpx;
+}
+
+.full-msg {
+  background: #fff7e6;
+  border-color: #ffd591;
+  color: #ad6800;
 }
 
 .loading {
-  padding: 60rpx 0;
+  min-height: 88rpx;
+  padding: 28rpx 0;
   color: #999;
-  font-size: 28rpx;
+  font-size: 26rpx;
+  line-height: 32rpx;
+}
+
+.confirming-msg {
+  min-height: 40rpx;
+  margin: 16rpx 0;
+  color: #0B5F48;
+  font-size: 26rpx;
+  line-height: 40rpx;
 }
 
 .actions {
-  margin-top: 60rpx;
+  margin-top: 32rpx;
 }
 
-.scan-btn {
+.confirm-btn,
+.re-scan-btn {
+  box-sizing: border-box;
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 8rpx;
+  font-size: 30rpx;
+  margin: 16rpx 0 0;
+}
+
+.confirm-btn {
   background: #0B5F48;
   color: #fff;
-  border-radius: 48rpx;
-  font-size: 32rpx;
-  margin: 20rpx 0;
+}
+
+.confirm-btn[disabled] {
+  background: #79a99b;
+  color: #fff;
 }
 
 .re-scan-btn {
   background: #fff;
   color: #666;
-  border-radius: 48rpx;
-  font-size: 28rpx;
-  margin: 20rpx 0;
-  border: 1rpx solid #ddd;
+  border: 1rpx solid #d9d9d9;
+}
+
+.re-scan-btn[disabled] {
+  background: #f5f5f5;
+  color: #aaa;
+  border-color: #e8e8e8;
 }
