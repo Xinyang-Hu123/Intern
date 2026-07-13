@@ -30,10 +30,9 @@ public class SeatController {
 
     @PostMapping
     @ApiOperation("新增座位")
-    public Result save(@RequestBody SeatDTO seatDTO) {
+    public Result<Seat> save(@RequestBody SeatDTO seatDTO) {
         log.info("新增座位: {}", seatDTO);
-        seatService.save(seatDTO);
-        return Result.success();
+        return Result.success(seatService.save(seatDTO));
     }
 
     @GetMapping("/page")

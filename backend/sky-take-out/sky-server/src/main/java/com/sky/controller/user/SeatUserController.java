@@ -33,13 +33,12 @@ public class SeatUserController {
     }
 
     /**
-     * 创建或获取用餐会话
+     * 确认加入座位用餐会话
      */
-    @PostMapping("/session/create")
-    @ApiOperation("创建或获取用餐会话")
-    public Result<Long> createSession(@RequestParam Long seatId) {
-        Long sessionId = seatService.createOrGetSession(seatId);
-        return Result.success(sessionId);
+    @PostMapping("/session/confirm")
+    @ApiOperation("确认加入座位用餐会话")
+    public Result<SeatScanResultVO> confirmSession(@RequestParam Long seatId) {
+        return Result.success(seatService.confirmSession(seatId));
     }
 
     /**
