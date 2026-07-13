@@ -15,7 +15,7 @@ public interface SeatService {
     /**
      * 新增座位
      */
-    void save(SeatDTO seatDTO);
+    Seat save(SeatDTO seatDTO);
 
     /**
      * 分页查询座位
@@ -58,9 +58,9 @@ public interface SeatService {
     SeatScanResultVO parseSeatByScene(String scene);
 
     /**
-     * 创建或获取用餐会话
+     * 确认加入座位用餐会话
      */
-    Long createOrGetSession(Long seatId);
+    SeatScanResultVO confirmSession(Long seatId);
 
     /**
      * 关闭用餐会话并释放座位

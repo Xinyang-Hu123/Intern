@@ -7,6 +7,7 @@ import com.sky.dto.SeatDTO;
 import com.sky.dto.SeatPageQueryDTO;
 import com.sky.dto.SeatStatusDTO;
 import com.sky.entity.DiningSession;
+import com.sky.entity.DiningSessionParticipant;
 import com.sky.entity.Seat;
 import com.sky.exception.SeatBusinessException;
 import com.sky.mapper.SeatMapper;
@@ -19,6 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -39,7 +41,7 @@ public class SeatServiceImpl implements SeatService {
     private String qrSecretKey;
 
     @Override
-    public void save(SeatDTO seatDTO) {
+    public Seat save(SeatDTO seatDTO) {
         Seat existSeat = seatMapper.getBySeatCode(seatDTO.getSeatCode());
         if (existSeat != null) {
             throw new SeatBusinessException("座位编码已存在: " + seatDTO.getSeatCode());
@@ -54,6 +56,7 @@ public class SeatServiceImpl implements SeatService {
         seat.setUpdateUser(BaseContext.getCurrentId());
         seatMapper.insert(seat);
         generateAndSaveQrSign(seat.getId());
+        return seatMapper.getById(seat.getId());
     }
 
     @Override
@@ -138,12 +141,23 @@ public class SeatServiceImpl implements SeatService {
             if (!expectedSign.equals(sign)) {
                 return SeatScanResultVO.builder().success(false).message("二维码签名验证失败").build();
             }
-            Long sessionId = createOrGetSession(seat.getId());
+            DiningSession session = seatMapper.getOpenSessionBySeat(seat.getId());
+            int participantCount = session == null ? 0 : seatMapper.countParticipants(session.getId());
+            Long currentUserId = BaseContext.getCurrentId();
+            boolean joined = session != null
+                    && currentUserId != null
+                    && seatMapper.countParticipantBySessionAndUser(session.getId(), currentUserId) > 0;
+            boolean full = !joined && participantCount >= seat.getCapacity();
             return SeatScanResultVO.builder()
-                    .success(true).message("扫码成功")
+                    .success(true).message(full ? "该座位已被占用，请联系店员" : "扫码成功")
                     .seatId(seat.getId()).seatCode(seat.getSeatCode())
                     .seatName(seat.getSeatName()).areaName(seat.getAreaName())
-                    .diningSessionId(sessionId).build();
+                    .diningSessionId(joined ? session.getId() : null)
+                    .capacity(seat.getCapacity())
+                    .participantCount(participantCount)
+                    .joined(joined)
+                    .full(full)
+                    .build();
         } catch (Exception e) {
             log.error("扫码解析失败", e);
             return SeatScanResultVO.builder().success(false).message("扫码解析异常").build();
@@ -151,19 +165,45 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public Long createOrGetSession(Long seatId) {
-        DiningSession existingSession = seatMapper.getOpenSessionBySeat(seatId);
-        if (existingSession != null) {
-            return existingSession.getId();
+    @Transactional
+    public SeatScanResultVO confirmSession(Long seatId) {
+        Seat seat = seatMapper.getByIdForUpdate(seatId);
+        if (seat == null) {
+            throw new SeatBusinessException("座位不存在");
         }
-        Seat seat = seatMapper.getById(seatId);
-        DiningSession session = DiningSession.builder()
-                .seatId(seatId).status("OPEN")
-                .startTime(LocalDateTime.now())
-                .createTime(LocalDateTime.now()).updateTime(LocalDateTime.now()).build();
-        seatMapper.insertSession(session);
+        if ("DISABLED".equals(seat.getStatus())) {
+            throw new SeatBusinessException("该座位暂不可用");
+        }
+
+        DiningSession session = seatMapper.getOpenSessionBySeat(seatId);
+        if (session == null) {
+            LocalDateTime now = LocalDateTime.now();
+            session = DiningSession.builder()
+                    .seatId(seatId)
+                    .status("OPEN")
+                    .startTime(now)
+                    .createTime(now)
+                    .updateTime(now)
+                    .build();
+            seatMapper.insertSession(session);
+        }
+
+        Long currentUserId = BaseContext.getCurrentId();
+        int participantCount = seatMapper.countParticipants(session.getId());
+        if (seatMapper.countParticipantBySessionAndUser(session.getId(), currentUserId) > 0) {
+            return buildSuccessResult(seat, session.getId(), participantCount);
+        }
+        if (participantCount >= seat.getCapacity()) {
+            throw new SeatBusinessException("该座位已被占用，请联系店员");
+        }
+
+        seatMapper.insertParticipant(DiningSessionParticipant.builder()
+                .diningSessionId(session.getId())
+                .userId(currentUserId)
+                .createTime(LocalDateTime.now())
+                .build());
         seatMapper.updateStatus(seatId, "OCCUPIED");
-        return session.getId();
+        return buildSuccessResult(seat, session.getId(), participantCount + 1);
     }
 
     @Override
@@ -213,5 +253,21 @@ public class SeatServiceImpl implements SeatService {
         if (seat == null) return;
         String sign = calculateSign(seat.getSeatCode(), seat.getQrVersion());
         seatMapper.updateQrInfo(seatId, seat.getQrVersion(), sign);
+    }
+
+    private SeatScanResultVO buildSuccessResult(Seat seat, Long sessionId, int participantCount) {
+        return SeatScanResultVO.builder()
+                .success(true)
+                .message("扫码成功")
+                .seatId(seat.getId())
+                .seatCode(seat.getSeatCode())
+                .seatName(seat.getSeatName())
+                .areaName(seat.getAreaName())
+                .diningSessionId(sessionId)
+                .capacity(seat.getCapacity())
+                .participantCount(participantCount)
+                .joined(true)
+                .full(false)
+                .build();
     }
 }
