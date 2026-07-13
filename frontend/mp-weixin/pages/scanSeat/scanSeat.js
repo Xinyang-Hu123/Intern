@@ -70,6 +70,9 @@ Page({
               seatCode: data.seatCode,
               seatName: data.seatName,
               areaName: data.areaName,
+              locationName: data.seatName.indexOf(data.areaName) === 0
+                ? data.seatName
+                : data.areaName + ' ' + data.seatName,
               capacity: data.capacity,
               participantCount: data.participantCount,
               joined: data.joined

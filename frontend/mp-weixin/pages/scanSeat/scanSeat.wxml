@@ -1,6 +1,6 @@
 <view class="scan-seat-page">
   <view class="seat-info" wx:if="{{seatInfo}}">
-    <view class="seat-location">你当前在 {{seatInfo.areaName}} {{seatInfo.seatName}}</view>
+    <view class="seat-location">你当前在 {{seatInfo.locationName}}</view>
     <view class="seat-code">座位号：{{seatInfo.seatCode}}</view>
     <view class="participant-count">当前已确认 {{seatInfo.participantCount}} / {{seatInfo.capacity}} 人</view>
     <view class="joined-tip" wx:if="{{seatInfo.joined}}">你已在该座位中</view>
