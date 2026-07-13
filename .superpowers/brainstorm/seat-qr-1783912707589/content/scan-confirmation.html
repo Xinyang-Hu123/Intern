@@ -1,0 +1,41 @@
+<h2>小程序扫码确认页</h2>
+<p class="subtitle">扫码只识别座位；点击“确认开始点餐”后才正式绑定并占用名额。</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">可确认状态</div>
+    <div class="mockup-body" style="text-align:center;padding:32px">
+      <div class="label">你当前在</div>
+      <h2 style="margin:10px 0 4px">A 区 01 号桌</h2>
+      <p>座位编码：A01</p>
+      <div class="placeholder" style="margin:24px auto;max-width:300px">
+        可容纳 4 人<br>
+        当前已确认 2 人<br>
+        还可确认 2 人
+      </div>
+      <button class="mock-button" style="width:100%;margin-top:8px">确认开始点餐</button>
+      <button class="mock-button" style="width:100%;margin-top:12px;background:#fff;color:#444;border:1px solid #ddd">重新扫码</button>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">满员状态</div>
+    <div class="mockup-body" style="text-align:center;padding:32px">
+      <div class="label">你当前在</div>
+      <h2 style="margin:10px 0 4px">A 区 01 号桌</h2>
+      <p>座位编码：A01</p>
+      <div class="placeholder" style="margin:24px auto;max-width:300px">
+        可容纳 4 人<br>
+        当前已确认 4 人<br>
+        该座位已被占用，请联系店员
+      </div>
+      <button class="mock-button" style="width:100%;margin-top:8px;background:#aaa">确认开始点餐</button>
+      <button class="mock-button" style="width:100%;margin-top:12px;background:#fff;color:#444;border:1px solid #ddd">重新扫码</button>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>管理员新增座位</h3>
+  <p>保存成功后，管理端显示该座位的二维码预览，并提供“下载二维码”按钮；二维码中仍使用带签名和版本号的座位信息。</p>
+</div>

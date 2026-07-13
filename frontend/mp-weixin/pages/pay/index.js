@@ -223,6 +223,9 @@ var _api = __webpack_require__(/*! @/pages/api/api.js */ 24);function ownKeys(ob
 
         (0, _api.paymentOrder)(params).then(function (res) {
           if (res.code === 1) {
+            wx.removeStorageSync('diningSessionId');
+            wx.removeStorageSync('seatId');
+            wx.removeStorageSync('seatCode');
             wx.showModal({
               title: '提示',
               content: '支付成功',

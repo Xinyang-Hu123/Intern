@@ -75,6 +75,11 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response: any) => {
     // console.log(response, 'response')
+    // 请求完成后立即释放请求锁，二维码图片也需要允许重复预览。
+    response.config.url = response.config.url.replace('/api', '')
+    const key = getRequestKey(response.config);
+    removePending(key);
+
     if (response.config.responseType === 'blob') {
       return response
     }
@@ -84,11 +89,6 @@ service.interceptors.response.use(
       router.push('/login')
       return Promise.reject(new Error('Unauthorized'))
     }
-    //请求响应中的config的url会带上代理的api需要去掉
-    response.config.url = response.config.url.replace('/api', '')
-    // 请求完成，删除请求中状态
-    const key = getRequestKey(response.config);
-    removePending(key);
     // if (response.data.code === 0) {
     //   Message.error(response.data.msg)
     //   // if(response.data.msg === 'NOTLOGIN' || response.data.msg === '未登录'){

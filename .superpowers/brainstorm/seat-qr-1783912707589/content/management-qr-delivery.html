@@ -1,0 +1,54 @@
+<h2>新增座位后，二维码怎样交给店员？</h2>
+<p class="subtitle">座位已创建并生成二维码后，选择管理端最顺手的后续动作。</p>
+
+<div class="cards">
+  <div class="card" data-choice="preview" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">新增座位</div>
+        <div class="mockup-body">
+          <div class="mock-input">A 区 01 号桌</div>
+          <button class="mock-button">确定</button>
+          <div class="placeholder" style="margin-top:12px">二维码预览<br><br>[ QR ]<br><br>下载二维码</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 弹窗预览并下载</h3>
+      <p>推荐。新增成功后立即显示二维码，店员可直接下载或关闭后再从列表下载。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="download" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">新增座位</div>
+        <div class="mockup-body">
+          <div class="mock-input">A 区 01 号桌</div>
+          <button class="mock-button">确定并下载二维码</button>
+          <p style="margin-top:18px">浏览器直接下载 PNG 文件</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 创建后直接下载</h3>
+      <p>操作最快，但店员看不到二维码预览，下载被浏览器拦截时不易发现。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="list" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">座位列表</div>
+        <div class="mockup-body">
+          <p>A01　A 区 01 号桌　[下载二维码]</p>
+          <p>A02　A 区 02 号桌　[下载二维码]</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 仅回到列表</h3>
+      <p>界面改动最少，二维码仍会生成，但店员还要额外点击一次下载。</p>
+    </div>
+  </div>
+</div>

@@ -65,3 +65,5 @@ sky:
     address: 湖北省武汉市洪山区徐东大街18号
   baidu:
     ak: your-baidu-ak
+  seat:
+    qr-secret-key: seat-qr-secret-key-2026-default

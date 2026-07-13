@@ -6,6 +6,10 @@
       <text class="brand-sub">极速鲜食 · 智慧配送</text>
     </view>
   </view>
+  <view data-event-opts="{{[['tap',[['scanSeatFun',['$event']]]]]}}" class="scan-box" style="{{'top:'+(ht+'px')+';'}}" bindtap="__e">
+    <image class="scan_image" src="../../../static/center.png"></image>
+    <label class="scan-title _span">扫码</label>
+  </view>
   <view data-event-opts="{{[['tap',[['myCenterFun',['$event']]]]]}}" class="person-box" style="{{'top:'+(ht+'px')+';'}}" bindtap="__e">
     <image class="test_image" src="../../../static/center.png"></image>
     <label class="person-title _span">我的</label>

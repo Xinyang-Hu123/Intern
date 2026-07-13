@@ -19,8 +19,8 @@
         </el-button>
       </div>
 
-      <el-empty v-if="!layoutMode && !seatList.length && !loading" 
-        description="暂无座位数据，请先登录或使用查询功能" 
+      <el-empty v-if="!layoutMode && !seatList.length && !loading"
+        description="暂无座位数据，请先登录或使用查询功能"
         style="margin: 40px 0">
       </el-empty>
       <el-table v-if="!layoutMode && seatList.length" :data="seatList" stripe class="tableBox">
@@ -135,7 +135,7 @@ export default class extends Vue {
   private qrPreviewSeat: any = {}
 
   private loading = true
-  
+
   created() {
     this.fetchData()
     this.loadAllSeats()
@@ -160,33 +160,33 @@ export default class extends Vue {
 
   async fetchData() {
     try {
-      const res: any = await getSeatList(this.query)
-      if (res && res.code === 1) {
-        this.seatList = res.data.records || []
-        this.total = res.data.total || 0
+      const result = this.getResult(await getSeatList(this.query))
+      if (result && result.code === 1) {
+        this.seatList = result.data.records || []
+        this.total = result.data.total || 0
         this.loading = false
       }
     } catch (err) {
-      console.error("获取座位列表失败:", err)
-      this.$message.error("获取座位列表失败，请检查登录状态")
+      console.error('获取座位列表失败:', err)
+      this.$message.error('获取座位列表失败，请检查登录状态')
     }
   }
 
   async loadAllSeats() {
     try {
-      const res: any = await getAllSeats()
-      if (res && res.code === 1) this.allSeats = res.data || []
+      const result = this.getResult(await getAllSeats())
+      if (result && result.code === 1) this.allSeats = result.data || []
     } catch (err) {
-      console.error("获取座位数据失败:", err)
+      console.error('获取座位数据失败:', err)
     }
   }
 
   async loadStats() {
     try {
-      const res: any = await getSeatStatistics()
-      if (res && res.code === 1) this.stats = res.data
+      const result = this.getResult(await getSeatStatistics())
+      if (result && result.code === 1) this.stats = result.data
     } catch (err) {
-      console.error("获取统计数据失败:", err)
+      console.error('获取统计数据失败:', err)
     }
   }
 
@@ -211,17 +211,18 @@ export default class extends Vue {
       if (!valid) return
       try {
         const response: any = this.form.id ? await editSeat(this.form) : await addSeat(this.form)
+        const result = this.getResult(response)
         this.$message.success('操作成功')
         this.dialogVisible = false
         this.fetchData()
         this.loadAllSeats()
         this.loadStats()
-        if (!this.form.id && response && response.data && response.data.code === 1) {
-          await this.openQrPreview(response.data.data)
+        if (!this.form.id && result && result.code === 1 && result.data && result.data.id) {
+          await this.openQrPreview(result.data)
         }
       } catch (err) {
-      console.error("座位操作失败:", err)
-      this.$message.error((err && err.response && err.response.data && err.response.data.msg) || (err && err.message) || "操作失败，请检查登录状态")
+        console.error('座位操作失败:', err)
+        this.$message.error((err && err.response && err.response.data && err.response.data.msg) || (err && err.message) || '操作失败，请检查登录状态')
       }
     })
   }
@@ -251,8 +252,8 @@ export default class extends Vue {
         this.loadAllSeats()
         this.loadStats()
       } catch (err) {
-      console.error("座位操作失败:", err)
-      this.$message.error((err && err.response && err.response.data && err.response.data.msg) || (err && err.message) || "操作失败，请检查登录状态")
+        console.error('座位操作失败:', err)
+        this.$message.error((err && err.response && err.response.data && err.response.data.msg) || (err && err.message) || '操作失败，请检查登录状态')
       }
     }).catch(() => {})
   }
@@ -303,6 +304,12 @@ export default class extends Vue {
       URL.revokeObjectURL(this.qrPreviewUrl)
       this.qrPreviewUrl = ''
     }
+  }
+
+  private getResult(response: any) {
+    return response && response.data && typeof response.data.code !== 'undefined'
+      ? response.data
+      : response
   }
 
   toggleLayout() { this.layoutMode = !this.layoutMode }

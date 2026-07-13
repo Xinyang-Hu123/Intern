@@ -79,20 +79,29 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO) {
-//        异常情况的处理（收货地址为空、超出配送氛围、购物车为空）
-        AddressBook addressBook = addressBookMapper.getById(ordersSubmitDTO.getAddressBookId());
-        if (addressBook == null) {
-            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
-        }
-
-//        检查用户的收货地址是否超出配送范围（暂时跳过，百度地图 AK 未配置）
-//        checkOutOfRange(addressBook.getCityName() + addressBook.getDistrictName() + addressBook.getDetail());
-
         Long currentId = BaseContext.getCurrentId();
+        boolean diningOrder = Integer.valueOf(3).equals(ordersSubmitDTO.getOrderType());
+        AddressBook addressBook = null;
+
+        if (diningOrder) {
+            validateDiningSession(ordersSubmitDTO, currentId);
+        } else {
+//            异常情况的处理（收货地址为空、超出配送范围、购物车为空）
+            addressBook = addressBookMapper.getById(ordersSubmitDTO.getAddressBookId());
+            if (addressBook == null) {
+                throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
+            }
+
+//            检查用户的收货地址是否超出配送范围（暂时跳过，百度地图 AK 未配置）
+//            checkOutOfRange(addressBook.getCityName() + addressBook.getDistrictName() + addressBook.getDetail());
+        }
 
         ShoppingCart shoppingCart = new ShoppingCart();
 //        只能查询当前用户数据
         shoppingCart.setUserId(currentId);
+        if (diningOrder) {
+            shoppingCart.setDiningSessionId(ordersSubmitDTO.getDiningSessionId());
+        }
 
 //        查询当前用户的购物车数据
         List<ShoppingCart> shoppingCartList = shoppingCartMapper.list(shoppingCart);
@@ -101,11 +110,26 @@ public class OrderServiceImpl implements OrderService {
         }
 
         //构造订单数据
+        if (ordersSubmitDTO.getPackAmount() == null) {
+            ordersSubmitDTO.setPackAmount(0);
+        }
+        if (ordersSubmitDTO.getTablewareNumber() == null) {
+            ordersSubmitDTO.setTablewareNumber(0);
+        }
+        if (ordersSubmitDTO.getTablewareStatus() == null) {
+            ordersSubmitDTO.setTablewareStatus(0);
+        }
         Orders order = new Orders();
         BeanUtils.copyProperties(ordersSubmitDTO,order);
-        order.setPhone(addressBook.getPhone());
-        order.setAddress(addressBook.getDetail());
-        order.setConsignee(addressBook.getConsignee());
+        order.setOrderType(diningOrder ? 3 :
+                (ordersSubmitDTO.getOrderType() == null ? 1 : ordersSubmitDTO.getOrderType()));
+        order.setDeliveryMethod(diningOrder ? "DINING" :
+                (ordersSubmitDTO.getDeliveryMethod() == null ? "DELIVERY" : ordersSubmitDTO.getDeliveryMethod()));
+        if (!diningOrder) {
+            order.setPhone(addressBook.getPhone());
+            order.setAddress(addressBook.getDetail());
+            order.setConsignee(addressBook.getConsignee());
+        }
         order.setNumber(String.valueOf(System.currentTimeMillis()));
         order.setUserId(currentId);
         order.setStatus(Orders.PENDING_PAYMENT);
@@ -126,7 +150,11 @@ public class OrderServiceImpl implements OrderService {
         orderDetailMapper.insertBatch(orderDetailList);
 
 //        清理购物车中的数据
-        shoppingCartMapper.deleteByUserId(currentId);
+        if (diningOrder) {
+            shoppingCartMapper.deleteByUserIdAndDiningSessionId(currentId, ordersSubmitDTO.getDiningSessionId());
+        } else {
+            shoppingCartMapper.deleteByUserId(currentId);
+        }
 
 //        封装返回结果
         OrderSubmitVO submitVO = OrderSubmitVO.builder()
@@ -137,6 +165,22 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         return submitVO;
+    }
+
+    private void validateDiningSession(OrdersSubmitDTO ordersSubmitDTO, Long userId) {
+        if (ordersSubmitDTO.getSeatId() == null || ordersSubmitDTO.getDiningSessionId() == null) {
+            throw new OrderBusinessException("堂食订单缺少座位信息，请重新扫码");
+        }
+        if (seatMapper.getById(ordersSubmitDTO.getSeatId()) == null) {
+            throw new OrderBusinessException("座位不存在，请重新扫码");
+        }
+        DiningSession session = seatMapper.getOpenSessionBySeat(ordersSubmitDTO.getSeatId());
+        if (session == null || !ordersSubmitDTO.getDiningSessionId().equals(session.getId())) {
+            throw new OrderBusinessException("座位会话已失效，请重新扫码");
+        }
+        if (seatMapper.countParticipantBySessionAndUser(session.getId(), userId) == 0) {
+            throw new OrderBusinessException("请先确认开始点餐");
+        }
     }
 
     /**

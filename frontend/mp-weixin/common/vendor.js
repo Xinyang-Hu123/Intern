@@ -4273,7 +4273,12 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
           success: function success(loginRes) {
             if (loginRes.errMsg === 'login:ok') {
               resolve(loginRes.code);
+            } else {
+              reject(new Error('微信登录失败'));
             }
+          },
+          fail: function fail() {
+            reject(new Error('微信登录失败'));
           } });
 
       });
@@ -4292,40 +4297,41 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
           showCancel: false,
           success: function success(res) {
             if (res.confirm) {
-              var jsCode = '';
-              uni.login({
-                provider: 'weixin',
-                success: function success(loginRes) {
-                  if (loginRes.errMsg === 'login:ok') {
-                    console.log('-=-=-=-=loginRes-=-=-=', loginRes);
-                    jsCode = loginRes.code;
-                  }
-                } });
+              _this.loginSync().then(function (jsCode) {
+                // 授权
+                uni.getUserProfile({
+                  desc: '登录',
+                  success: function success(userInfo) {
+                    _this.setBaseUserInfo(userInfo.userInfo);
+                    var params = {
+                      code: jsCode };
 
-              // 授权
-              uni.getUserProfile({
-                desc: '登录',
-                success: function success(userInfo) {
-                  _this.setBaseUserInfo(userInfo.userInfo);
-                  var params = {
-                    // phone: jsCode,
-                    // avatar: userInfo.userInfo.avatarUrl,
-                    // name: userInfo.userInfo.nickName,
-                    // sex: userInfo.userInfo.gender,
-                    code: jsCode };
-
-                  console.log(userInfo.userInfo, 11);
-                  (0, _api.userLogin)(params).then(function (success) {
-                    if (success.code === 1) {
-
-                      _this.setToken(success.data.token);
-                      _this.init();
-                    }
-                  }).catch(function (err) {});
-                },
-                fail: function fail(err) {
-
-                } });
+                    (0, _api.userLogin)(params).then(function (success) {
+                      if (success.code === 1 && success.data && success.data.token) {
+                        uni.setStorageSync('token', success.data.token);
+                        _this.setToken(success.data.token);
+                        _this.init();
+                      } else {
+                        uni.showToast({
+                          title: success.msg || '登录失败，请重试',
+                          icon: 'none' });
+                      }
+                    }).catch(function () {
+                      uni.showToast({
+                        title: '登录失败，请检查网络',
+                        icon: 'none' });
+                    });
+                  },
+                  fail: function fail() {
+                    uni.showToast({
+                      title: '未授权微信登录，暂不能点餐',
+                      icon: 'none' });
+                  } });
+              }).catch(function () {
+                uni.showToast({
+                  title: '微信登录失败，请重试',
+                  icon: 'none' });
+              });
 
             }
           } });
@@ -4493,9 +4499,10 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
       return "".concat(_env.baseUrl, "/common/download?name=").concat(image);
     },
     // 获取购物车订单列表
-    getTableOrderDishListes: function getTableOrderDishListes() {var _this10 = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee7() {return _regenerator.default.wrap(function _callee7$(_context7) {while (1) {switch (_context7.prev = _context7.next) {case 0:_context7.next = 2;return (
+    getTableOrderDishListes: function getTableOrderDishListes() {var _this10 = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee7() {var diningSessionId;return _regenerator.default.wrap(function _callee7$(_context7) {while (1) {switch (_context7.prev = _context7.next) {case 0:diningSessionId = uni.getStorageSync('diningSessionId');_context7.next = 2;return (
 
-                  (0, _api.getShoppingCartList)({}).then(function (res) {
+                  (0, _api.getShoppingCartList)(diningSessionId ? {
+                    diningSessionId: diningSessionId } : {}).then(function (res) {
                     if (res.code === 1) {
                       _this10.initdishListMut(res.data);
                       console.log(res.data);
@@ -4504,7 +4511,48 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
                   }).catch(function (err) {}));case 2:case "end":return _context7.stop();}}}, _callee7);}))();
     },
     // 去订单页面
-    goOrder: function goOrder() {
+    goOrder: function goOrder() {var _this11 = this;
+      var diningSessionId = uni.getStorageSync('diningSessionId');
+      var seatId = uni.getStorageSync('seatId');
+      if (diningSessionId && seatId) {
+        if (this.isSubmittingDiningOrder) {
+          return;
+        }
+        this.isSubmittingDiningOrder = true;
+        uni.showLoading({
+          title: '正在创建订单' });
+        (0, _api.submitOrderSubmit)({
+          payMethod: 1,
+          orderType: 3,
+          deliveryMethod: 'DINING',
+          seatId: seatId,
+          diningSessionId: diningSessionId,
+          deliveryStatus: 1,
+          packAmount: 0,
+          tablewareNumber: 0,
+          tablewareStatus: 0,
+          amount: this.orderDishPrice }).
+        then(function (res) {
+          if (res.code === 1) {
+            _this11.setOrderData(res.data);
+            _this11.setRemark('');
+            uni.redirectTo({
+              url: '/pages/pay/index?orderId=' + res.data.id });
+            return;
+          }
+          uni.showToast({
+            title: res.msg || '创建堂食订单失败',
+            icon: 'none' });
+        }).catch(function () {
+          uni.showToast({
+            title: '创建堂食订单失败，请重试',
+            icon: 'none' });
+        }).then(function () {
+          _this11.isSubmittingDiningOrder = false;
+          uni.hideLoading();
+        });
+        return;
+      }
       uni.navigateTo({
         url: '/pages/order/index' });
 
@@ -4513,14 +4561,20 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
     addDishAction: function addDishAction(item, form) {var _this11 = this;return _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee8() {var dishFlavorDatas, flavorRemark, params;return _regenerator.default.wrap(function _callee8$(_context8) {while (1) {switch (_context8.prev = _context8.next) {case 0:
                 console.log(item);
 
+                if (_this11.token()) {_context8.next = 3;break;}
+                uni.showToast({
+                  title: '请先授权微信登录后再点餐',
+                  icon: 'none' });return _context8.abrupt("return",
+
+                false);case 3:
 
                 // 规格
-                if (!(_this11.openMoreNormPop && (!_this11.flavorDataes || _this11.flavorDataes.length <= 0))) {_context8.next = 4;break;}
+                if (!(_this11.openMoreNormPop && (!_this11.flavorDataes || _this11.flavorDataes.length <= 0))) {_context8.next = 7;break;}
                 uni.showToast({
                   title: '请选择规格',
                   icon: 'none' });return _context8.abrupt("return",
 
-                false);case 4:
+                false);case 7:
 
                 // this.openDetailPop = false
                 _this11.openMoreNormPop = false;
@@ -4577,6 +4631,10 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
                   }
 
                 }
+                var diningSessionId = uni.getStorageSync('diningSessionId');
+                if (diningSessionId) {
+                  params.diningSessionId = diningSessionId;
+                }
                 (0, _api.newAddShoppingCartAdd)(params).then(function (res) {
                   if (res.code === 1) {
                     // this.computOrderInfo()
@@ -4589,7 +4647,11 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
                     _this11.getDishListDataes(_this11.rightIdAndType);
                     _this11.flavorDataes = [];
                   }
-                }).catch(function (err) {});case 15:case "end":return _context8.stop();}}}, _callee8);}))();
+                }).catch(function () {
+                  uni.showToast({
+                    title: '加入购物车失败，请重试',
+                    icon: 'none' });
+                });case 18:case "end":return _context8.stop();}}}, _callee8);}))();
     },
     // 加入购物车
     addShop: function addShop(item) {
@@ -4647,6 +4709,7 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
                   }
 
                 }_context9.next = 10;return (
+                  params.diningSessionId = uni.getStorageSync('diningSessionId') || null,
                   (0, _api.newShoppingCartSub)(params).then(function (res) {
                     if (res.code === 1) {
                       // this.computOrderInfo()
@@ -4660,7 +4723,9 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
     },
     // 清空购物车
     clearCardOrder: function clearCardOrder() {var _this13 = this;
-      (0, _api.delShoppingCart)().then(function (res) {
+      var diningSessionId = uni.getStorageSync('diningSessionId');
+      (0, _api.delShoppingCart)(diningSessionId ? {
+        diningSessionId: diningSessionId } : {}).then(function (res) {
         // this.computOrderInfo()
         // this.setOrderNum()
         _this13.openOrderCartList = false;
@@ -20525,8 +20590,14 @@ Object.defineProperty(exports, "__esModule", { value: true });exports.baseUrl = 
 // 服务器地址，优先从缓存读取。debugger控制台执行 wx.setStorageSync('serverUrl', 'http://你的IP:8080') 即可切换
 var baseUrl = '';
 try{baseUrl=wx.getStorageSync('serverUrl')||''}catch(e){}
-if(baseUrl==='http://localhost:8080') baseUrl='http://localhost:8088';
-if(!baseUrl) baseUrl='http://localhost:8088';
+if(baseUrl==='http://localhost:8080') baseUrl='';
+if(baseUrl==='http://localhost:8088') baseUrl='';
+if(baseUrl==='http://127.0.0.1:8088') baseUrl='';
+if(baseUrl==='http://192.168.31.16:8088') baseUrl='';
+if(baseUrl==='http://172.16.61.184:8088') baseUrl='';
+if(baseUrl==='https://angry-pandas-stick.loca.lt') baseUrl='';
+if(baseUrl==='https://chilly-ducks-double.loca.lt') baseUrl='';
+if(!baseUrl) baseUrl='http://10.143.6.18:8088';
 //var baseUrl = 'https://c223c79.r2.cpolar.top';
 
 exports.baseUrl = baseUrl;

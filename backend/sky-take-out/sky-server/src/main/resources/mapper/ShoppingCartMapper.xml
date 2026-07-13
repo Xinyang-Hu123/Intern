@@ -4,13 +4,13 @@
 <mapper namespace="com.sky.mapper.ShoppingCartMapper">
 <!--    插入购物车数据-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        insert into shopping_cart (name, image, user_id, dish_id, setmeal_id, dish_flavor, amount, create_time)
+        insert into shopping_cart (name, image, user_id, dish_id, setmeal_id, dish_flavor, amount, create_time, dining_session_id)
         values (#{name}, #{image}, #{userId}, #{dishId}, #{setmealId}, #{dishFlavor}, #{amount}, #{createTime}, #{diningSessionId});
     </insert>
 
 <!--    将购物车对象批量添加到购物车-->
     <insert id="insertBatch">
-        insert into shopping_cart (name, image, user_id, dish_id, setmeal_id, dish_flavor, amount, create_time)
+        insert into shopping_cart (name, image, user_id, dish_id, setmeal_id, dish_flavor, amount, create_time, dining_session_id)
         values 
         <foreach collection="shoppingCartList" separator="," item="sc">
             (#{sc.name},#{sc.image},#{sc.userId},#{sc.dishId},#{sc.setmealId},#{sc.dishFlavor},#{sc.amount},#{sc.createTime}, #{sc.diningSessionId})
@@ -20,14 +20,22 @@
     <!--    更新商品数量-->
     <update id="updateNumberById">
         update shopping_cart
-        set amount = #{amount}
+        set number = #{number}
         where id=#{id};
     </update>
 <!--    清空购物车商品-->
     <delete id="deleteByUserId">
         delete
         from shopping_cart
-        where user_id=#{id};
+        where user_id=#{userId}
+          and dining_session_id is null;
+    </delete>
+    <!--清空指定堂食会话购物车-->
+    <delete id="deleteByUserIdAndDiningSessionId">
+        delete
+        from shopping_cart
+        where user_id=#{userId}
+          and dining_session_id=#{diningSessionId};
     </delete>
 <!--    根据id删除商品-->
     <delete id="deleteById">
@@ -45,7 +53,10 @@
             <if test="dishId!=null">and dish_id=#{dishId}</if>
             <if test="setmealId!=null">and setmeal_id=#{setmealId}</if>
             <if test="dishFlavor!=null">and dish_flavor=#{dishFlavor}</if>
-            <if test="diningSessionId!=null">and dining_session_id=#{diningSessionId}</if>
+            <choose>
+                <when test="diningSessionId!=null">and dining_session_id=#{diningSessionId}</when>
+                <otherwise>and dining_session_id is null</otherwise>
+            </choose>
         </where>
         order by create_time desc
     </select>

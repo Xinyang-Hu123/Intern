@@ -18,10 +18,14 @@ public interface ShoppingCartService {
      */
     List<ShoppingCart> showShoppingCart();
 
+    List<ShoppingCart> showShoppingCart(Long diningSessionId);
+
     /**
      * 清空购物车商品
      */
     void cleanShoppingCart();
+
+    void cleanShoppingCart(Long diningSessionId);
 
     /**
      * 删除购物车中一个商品

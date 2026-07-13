@@ -151,6 +151,17 @@ var _default =
       uni.navigateTo({
         url: '/pages/my/my' });
 
+    },
+    scanSeatFun: function scanSeatFun() {
+      wx.scanCode({
+        scanType: 'qrCode',
+        success: function (res) {
+          console.log('扫码结果:', res);
+          uni.navigateTo({
+            url: '/pages/scanSeat/scanSeat?scene=' + encodeURIComponent(res.result)
+          });
+        }
+      });
     } } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

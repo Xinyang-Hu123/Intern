@@ -1,4 +1,5 @@
-var app = getApp();
+var serverConfig = require('../../common/server-config.js');
+var seatScene = require('../../common/seat-scene.js');
 Page({
   data: {
     seatInfo: null,
@@ -26,7 +27,8 @@ Page({
 
   parseScene: function (scene) {
     var that = this;
-    var parts = typeof scene === 'string' ? scene.split(':') : [];
+    var normalizedScene = seatScene.normalizeSeatScene(scene);
+    var parts = normalizedScene ? normalizedScene.split(':') : [];
 
     if (
       parts.length !== 3 ||
@@ -40,7 +42,7 @@ Page({
         errorMsg: '二维码格式无效，请联系店员',
         loading: false,
         full: false,
-        scene: scene || ''
+        scene: normalizedScene
       });
       return;
     }
@@ -50,18 +52,19 @@ Page({
       errorMsg: '',
       loading: true,
       full: false,
-      scene: scene
+      scene: normalizedScene
     });
 
     wx.request({
-      url: app.globalData.baseUrl + '/user/seat/scan',
+      url: serverConfig.getBaseUrl() + '/user/seat/scan',
       method: 'POST',
-      data: scene,
+      data: normalizedScene,
       header: {
+        'content-type': 'text/plain;charset=UTF-8',
         'authentication': wx.getStorageSync('token') || ''
       },
       success: function (res) {
-        if (res.data.code === 1 && res.data.data && res.data.data.success) {
+        if (res.data && res.data.code === 1 && res.data.data && res.data.data.success) {
           var data = res.data.data;
           var full = data.full === true;
           that.setData({
@@ -80,12 +83,14 @@ Page({
             full: full,
             errorMsg: full ? '该座位已被占用，请联系店员' : '',
             loading: false,
-            scene: scene
+            scene: normalizedScene
           });
         } else {
           that.setData({
             loading: false,
-            errorMsg: res.data.msg || (res.data.data && res.data.data.message) || '扫码失败，请联系店员'
+            errorMsg: (res.data && res.data.msg) ||
+              (res.data && res.data.data && res.data.data.message) ||
+              '扫码失败，请联系店员'
           });
         }
       },
@@ -112,24 +117,26 @@ Page({
     });
 
     wx.request({
-      url: app.globalData.baseUrl + '/user/seat/session/confirm?seatId=' + encodeURIComponent(seatInfo.seatId),
+      url: serverConfig.getBaseUrl() + '/user/seat/session/confirm?seatId=' + encodeURIComponent(seatInfo.seatId),
       method: 'POST',
       header: {
         'authentication': wx.getStorageSync('token') || ''
       },
       success: function (res) {
-        if (res.data.code === 1 && res.data.data && res.data.data.success) {
+        if (res.data && res.data.code === 1 && res.data.data && res.data.data.success) {
           var data = res.data.data;
           wx.setStorageSync('diningSessionId', data.diningSessionId);
           wx.setStorageSync('seatId', data.seatId);
           wx.setStorageSync('seatCode', data.seatCode);
-          wx.switchTab({
+          wx.redirectTo({
             url: '/pages/index/index'
           });
           return;
         }
 
-        var message = res.data.msg || (res.data.data && res.data.data.message) || '确认座位失败，请重试';
+        var message = (res.data && res.data.msg) ||
+          (res.data && res.data.data && res.data.data.message) ||
+          '确认座位失败，请重试';
         that.setData({
           errorMsg: message,
           full: message === '该座位已被占用，请联系店员'

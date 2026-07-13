@@ -51,16 +51,29 @@ mvn spring-boot:run
 mvn spring-boot:run "-Dspring-boot.run.arguments=--server.port=8088"
 ```
 
-# 管理后台前端，默认端口 8082
+### 管理后台前端，默认端口 8082
+
+首次启动时，先安装前端依赖：
+
 ```powershell
-cd frontend/admin-vue
-$env:NODE_OPTIONS="--openssl-legacy-provider"`r`nnpm run serve
+cd frontend\admin-vue
+npm install
+```
+
+启动管理后台：
+
+```powershell
+cd frontend\admin-vue
+$env:NODE_OPTIONS = '--openssl-legacy-provider'
+npm run serve
 ```
 
 浏览器访问：
 
 - 管理后台页面：http://localhost:8082
 - 后端接口文档：http://localhost:8088/doc.html
+
+开发环境中的 `/api` 请求会自动代理到 `http://localhost:8088`，因此联调前需先启动后端服务。
 
 ---
 
@@ -750,6 +763,7 @@ cd deploy/nginx-1.20.2
    `
 
 2. **数据库迁移**：执行 ackend/sky-take-out/migration-seat-management.sql 创建座位相关表
+   - 再执行 `backend/sky-take-out/migration-seat-capacity.sql`，创建就餐会话参与者表。
 
 3. **配置文件**：pplication.yml 中已添加座位二维码密钥配置
 
@@ -764,12 +778,39 @@ mvn spring-boot:run
 
 ### 启动管理端前端
 
-`powershell
+```powershell
 cd frontend\admin-vue
-$env:NODE_OPTIONS="--openssl-legacy-provider"`r`nnpm run serve
-`
+$env:NODE_OPTIONS = '--openssl-legacy-provider'
+npm run serve
+```
 
 默认端口：8082，访问：http://localhost:8082
+
+
+
+### 启动小程序前端（微信开发者工具）
+
+1. 打开**微信开发者工具**
+2. 导入项目：选择 rontend/mp-weixin 目录
+3. **重要：勾选"不校验合法域名、web-view（业务域名）、TLS 版本以及 HTTPS 证书"**
+   - 路径：详情 → 本地设置 → 勾选"不校验合法域名..."
+4. 小程序会自动请求后端 API，默认地址为 http://192.168.31.16:8088
+5. 如果后端运行在其他机器或端口，修改 rontend/mp-weixin/common/vendor.js 中的 baseUrl 变量
+
+### 完整启动顺序
+
+1. 启动 MySQL + Redis
+2. 执行数据库迁移脚本 ackend/sky-take-out/migration-seat-management.sql
+3. 启动后端：cd backend\sky-take-out\sky-server && mvn spring-boot:run（端口 8088）
+4. 启动管理后台：cd frontend\admin-vue && npm run serve（端口 8082）
+5. 用微信开发者工具打开 rontend/mp-weixin（勾选不校验域名）
+
+### 扫码点餐规则
+
+- 后台新增座位后会自动生成二维码，可在弹窗中预览或下载。
+- 用户扫码后只会识别当前位置，例如“你当前在 A 区 01 号桌”。
+- 用户点击“确认开始点餐”后才会绑定座位并进入点餐。
+- 座位容量按已确认的不同用户计算；人数已满时会提示“该座位已被占用，请联系店员”。
 
 ### 新增接口
 

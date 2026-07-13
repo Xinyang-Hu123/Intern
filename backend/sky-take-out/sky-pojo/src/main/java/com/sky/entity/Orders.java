@@ -47,6 +47,18 @@ public class Orders implements Serializable {
     //订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消 7退款
     private Integer status;
 
+    //订单类型 1外卖 2自取 3堂食
+    private Integer orderType;
+
+    //堂食座位ID
+    private Long seatId;
+
+    //堂食用餐会话ID
+    private Long diningSessionId;
+
+    //履约方式 DELIVERY配送 PICKUP自取 DINING堂食
+    private String deliveryMethod;
+
     //下单用户id
     private Long userId;
 

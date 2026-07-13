@@ -77,7 +77,15 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      */
     @Override
     public List<ShoppingCart> showShoppingCart() {
-        return shoppingCartMapper.list(ShoppingCart.builder().userId(BaseContext.getCurrentId()).build());
+        return showShoppingCart(null);
+    }
+
+    @Override
+    public List<ShoppingCart> showShoppingCart(Long diningSessionId) {
+        return shoppingCartMapper.list(ShoppingCart.builder()
+                .userId(BaseContext.getCurrentId())
+                .diningSessionId(diningSessionId)
+                .build());
     }
 
     /**
@@ -85,7 +93,17 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      */
     @Override
     public void cleanShoppingCart() {
-        shoppingCartMapper.deleteByUserId(BaseContext.getCurrentId());
+        cleanShoppingCart(null);
+    }
+
+    @Override
+    public void cleanShoppingCart(Long diningSessionId) {
+        Long userId = BaseContext.getCurrentId();
+        if (diningSessionId == null) {
+            shoppingCartMapper.deleteByUserId(userId);
+            return;
+        }
+        shoppingCartMapper.deleteByUserIdAndDiningSessionId(userId, diningSessionId);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.sky.mapper;
 
 import com.sky.entity.ShoppingCart;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -30,7 +31,13 @@ public interface ShoppingCartMapper {
      * 清空购物车商品
      * @param currentId
      */
-    void deleteByUserId(Long currentId);
+    void deleteByUserId(@Param("userId") Long userId);
+
+    /**
+     * 清空指定堂食会话的购物车商品
+     */
+    void deleteByUserIdAndDiningSessionId(@Param("userId") Long userId,
+                                          @Param("diningSessionId") Long diningSessionId);
 
     /**
      * 根据id删除商品

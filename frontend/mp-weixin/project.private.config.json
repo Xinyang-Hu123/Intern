@@ -11,7 +11,7 @@
     "useApiHook": true,
     "showShadowRootInWxmlPanel": true,
     "useStaticServer": true,
-    "useLanDebug": false,
+    "useLanDebug": true,
     "showES6CompileOption": false,
     "checkInvalidKey": true,
     "ignoreDevUnusedFiles": true,

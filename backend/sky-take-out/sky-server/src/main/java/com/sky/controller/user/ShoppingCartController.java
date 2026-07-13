@@ -43,8 +43,8 @@ public class ShoppingCartController {
      */
     @GetMapping("/list")
     @ApiOperation("查看购物车")
-    public Result<List<ShoppingCart>> list(){
-        return Result.success(shoppingCartService.showShoppingCart());
+    public Result<List<ShoppingCart>> list(@RequestParam(required = false) Long diningSessionId){
+        return Result.success(shoppingCartService.showShoppingCart(diningSessionId));
     }
 
     /**
@@ -53,8 +53,8 @@ public class ShoppingCartController {
      */
     @DeleteMapping("/clean")
     @ApiOperation("清空购物车商品")
-    public Result<String> clean(){
-        shoppingCartService.cleanShoppingCart();
+    public Result<String> clean(@RequestParam(required = false) Long diningSessionId){
+        shoppingCartService.cleanShoppingCart(diningSessionId);
         return Result.success();
     }
 

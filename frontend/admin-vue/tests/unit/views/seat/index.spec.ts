@@ -86,4 +86,57 @@ describe('SeatManagement', () => {
     expect(vm.qrPreviewUrl).toBe('blob:seat-a01')
     expect(vm.qrPreviewSeat).toEqual({ id: 12, seatCode: 'A01', seatName: 'A区 01号桌' })
   })
+
+  it('shows a QR preview when the create API returns the result body directly', async () => {
+    ;(addSeat as jest.Mock).mockResolvedValue({
+      code: 1,
+      data: { id: 13, seatCode: 'A02', seatName: 'A区 02号桌' }
+    })
+    const wrapper = shallowMount(SeatManagement, {
+      localVue,
+      stubs,
+      mocks: {
+        $message: { error: jest.fn(), success: jest.fn() }
+      }
+    })
+    const vm: any = wrapper.vm
+    vm.$refs.seatForm = {
+      validate: (callback: (valid: boolean) => void) => callback(true)
+    }
+    vm.form = { seatCode: 'A02', seatName: 'A区 02号桌', areaName: 'A区', capacity: 4, sort: 0 }
+
+    vm.submitForm()
+    await flushPromises()
+    await Vue.nextTick()
+
+    expect(downloadQrCode).toHaveBeenCalledWith(13)
+    expect(vm.qrPreviewVisible).toBe(true)
+    expect(vm.qrPreviewSeat).toEqual({ id: 13, seatCode: 'A02', seatName: 'A区 02号桌' })
+  })
+
+  it('refreshes the seat list when the API returns an Axios response', async () => {
+    ;(getSeatList as jest.Mock).mockResolvedValue({
+      data: {
+        code: 1,
+        data: {
+          records: [{ id: 14, seatCode: 'A03', seatName: 'A区 03号桌' }],
+          total: 1
+        }
+      }
+    })
+    const wrapper = shallowMount(SeatManagement, {
+      localVue,
+      stubs,
+      mocks: {
+        $message: { error: jest.fn(), success: jest.fn() }
+      }
+    })
+    const vm: any = wrapper.vm
+
+    await flushPromises()
+    await Vue.nextTick()
+
+    expect(vm.seatList).toEqual([{ id: 14, seatCode: 'A03', seatName: 'A区 03号桌' }])
+    expect(vm.total).toBe(1)
+  })
 })

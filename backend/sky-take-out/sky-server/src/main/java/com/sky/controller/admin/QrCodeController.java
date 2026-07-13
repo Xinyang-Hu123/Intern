@@ -31,6 +31,11 @@ public class QrCodeController {
             return;
         }
 
+        if (seat.getQrSign() == null || seat.getQrSign().trim().isEmpty()) {
+            seatService.regenerateQrCode(id);
+            seat = seatService.getById(id);
+        }
+
         // scene格式: seatCode:qrVersion:sign
         String scene = seat.getSeatCode() + ":" + seat.getQrVersion() + ":" + seat.getQrSign();
         String title = seat.getSeatName();
