@@ -23,4 +23,8 @@ public class SeatScanResultVO implements Serializable {
     private String seatName;
     private String areaName;
     private Long diningSessionId;
+    private Integer capacity;
+    private Integer participantCount;
+    private Boolean joined;
+    private Boolean full;
 }

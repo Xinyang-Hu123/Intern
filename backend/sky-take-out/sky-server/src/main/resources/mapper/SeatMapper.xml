@@ -36,6 +36,10 @@
         select <include refid="seatColumns"/> from seat where id = #{id}
     </select>
 
+    <select id="getByIdForUpdate" resultType="com.sky.entity.Seat">
+        select <include refid="seatColumns"/> from seat where id = #{id} for update
+    </select>
+
     <select id="getBySeatCode" resultType="com.sky.entity.Seat">
         select <include refid="seatColumns"/> from seat where seat_code = #{seatCode}
     </select>
@@ -99,5 +103,20 @@
     <update id="closeSession">
         update dining_session set status = 'CLOSED', close_time = now(), update_time = now() where id = #{id}
     </update>
+
+    <select id="countParticipants" resultType="int">
+        select count(*) from dining_session_participant
+        where dining_session_id = #{diningSessionId}
+    </select>
+
+    <select id="countParticipantBySessionAndUser" resultType="int">
+        select count(*) from dining_session_participant
+        where dining_session_id = #{diningSessionId} and user_id = #{userId}
+    </select>
+
+    <insert id="insertParticipant" useGeneratedKeys="true" keyProperty="id">
+        insert into dining_session_participant(dining_session_id, user_id, create_time)
+        values (#{diningSessionId}, #{userId}, #{createTime})
+    </insert>
 
 </mapper>

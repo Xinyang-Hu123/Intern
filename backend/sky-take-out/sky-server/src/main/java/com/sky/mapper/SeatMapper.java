@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.sky.annotation.AutoFill;
 import com.sky.enumeration.OperationType;
 import com.sky.dto.SeatPageQueryDTO;
+import com.sky.entity.DiningSessionParticipant;
 import com.sky.entity.Seat;
 import com.sky.vo.SeatStatisticsVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -72,11 +73,6 @@ public interface SeatMapper {
     SeatStatisticsVO getStatistics();
 
     /**
-     * 查询当前开放的用餐会话
-     */
-    Long getOpenSessionBySeatId(@Param("seatId") Long seatId);
-
-    /**
      * 插入用餐会话
      */
     @AutoFill(OperationType.INSERT)
@@ -91,4 +87,25 @@ public interface SeatMapper {
      * 根据座位id查询开放会话
      */
     com.sky.entity.DiningSession getOpenSessionBySeat(@Param("seatId") Long seatId);
+
+    /**
+     * 根据id锁定座位
+     */
+    Seat getByIdForUpdate(@Param("id") Long id);
+
+    /**
+     * 统计用餐会话参与人数
+     */
+    int countParticipants(@Param("diningSessionId") Long diningSessionId);
+
+    /**
+     * 查询用户是否已加入用餐会话
+     */
+    int countParticipantBySessionAndUser(@Param("diningSessionId") Long diningSessionId,
+                                         @Param("userId") Long userId);
+
+    /**
+     * 插入用餐会话参与者
+     */
+    void insertParticipant(DiningSessionParticipant participant);
 }
