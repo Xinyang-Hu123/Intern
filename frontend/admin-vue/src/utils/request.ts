@@ -75,10 +75,14 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response: any) => {
     // console.log(response, 'response')
-    if (response.data.status === 401) {
+    if (response.config.responseType === 'blob') {
+      return response
+    }
+    // 处理 401 未授权响应
+    if (response.status === 401 || (response.data && response.data.status) === 401) {
+      Message.error('请先登录')
       router.push('/login')
-      // const res = response.data
-      // return response
+      return Promise.reject(new Error('Unauthorized'))
     }
     //请求响应中的config的url会带上代理的api需要去掉
     response.config.url = response.config.url.replace('/api', '')

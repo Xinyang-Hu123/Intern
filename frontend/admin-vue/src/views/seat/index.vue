@@ -19,6 +19,10 @@
         </el-button>
       </div>
 
+      <el-empty v-if="!layoutMode && !seatList.length && !loading" 
+        description="暂无座位数据，请先登录或使用查询功能" 
+        style="margin: 40px 0">
+      </el-empty>
       <el-table v-if="!layoutMode && seatList.length" :data="seatList" stripe class="tableBox">
         <el-table-column prop="seatCode" label="座位编码" />
         <el-table-column prop="seatName" label="座位名称" />
@@ -36,7 +40,7 @@
             <el-button size="mini" :type="scope.row.status==='DISABLED'?'success':'warning'"
               @click="toggleStatus(scope.row)">{{ scope.row.status==='DISABLED'?'启用':'停用' }}</el-button>
             <el-button size="mini" type="warning" @click="regenerateQr(scope.row)">重发二维码</el-button>
-            <el-button size="mini" type="info" @click="downloadQr(scope.row)">下载二维码</el-button>
+            <el-button size="mini" type="info" @click="openQrPreview(scope.row)">二维码预览</el-button>
             <el-button size="mini" type="danger" @click="confirmDelete(scope.row)">停用</el-button>
           </template>
         </el-table-column>
@@ -88,13 +92,27 @@
         <el-button type="primary" @click="submitForm">确定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="座位二维码" :visible.sync="qrPreviewVisible" width="360px" @close="closeQrPreview">
+      <div class="qr-preview">
+        <div class="qr-preview-name">{{ qrPreviewSeat.seatName }}</div>
+        <img v-if="qrPreviewUrl" :src="qrPreviewUrl" :alt="qrPreviewSeat.seatName + '二维码'" class="qr-preview-image" />
+      </div>
+      <div slot="footer">
+        <el-button @click="closeQrPreview">关闭</el-button>
+        <el-button type="primary" :disabled="!qrPreviewUrl" @click="downloadQr">下载</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { getSeatList, addSeat, editSeat, deleteSeat, changeSeatStatus, getAllSeats, getSeatStatistics, regenerateQrCode } from '@/api/seat'
+import { Component, Vue } from 'vue-property-decorator'
+import { getSeatList, addSeat, editSeat, deleteSeat, changeSeatStatus, getAllSeats, getSeatStatistics, regenerateQrCode, downloadQrCode } from '@/api/seat'
 
+@Component({
+  name: 'SeatManagement'
+})
 export default class extends Vue {
   private query: any = { areaName: '', seatCode: '', status: '', page: 1, pageSize: 10 }
   private seatList: any[] = []
@@ -112,11 +130,20 @@ export default class extends Vue {
   private layoutMode = false
   private stats: any = null
   private draggingSeat: any = null
+  private qrPreviewVisible = false
+  private qrPreviewUrl = ''
+  private qrPreviewSeat: any = {}
 
+  private loading = true
+  
   created() {
     this.fetchData()
     this.loadAllSeats()
     this.loadStats()
+  }
+
+  beforeDestroy() {
+    this.revokeQrPreviewUrl()
   }
 
   getStatusType(s: string) {
@@ -132,21 +159,35 @@ export default class extends Vue {
   }
 
   async fetchData() {
-    const res: any = await getSeatList(this.query)
-    if (res.code === 1) {
-      this.seatList = res.data.records || []
-      this.total = res.data.total || 0
+    try {
+      const res: any = await getSeatList(this.query)
+      if (res && res.code === 1) {
+        this.seatList = res.data.records || []
+        this.total = res.data.total || 0
+        this.loading = false
+      }
+    } catch (err) {
+      console.error("获取座位列表失败:", err)
+      this.$message.error("获取座位列表失败，请检查登录状态")
     }
   }
 
   async loadAllSeats() {
-    const res: any = await getAllSeats()
-    if (res.code === 1) this.allSeats = res.data || []
+    try {
+      const res: any = await getAllSeats()
+      if (res && res.code === 1) this.allSeats = res.data || []
+    } catch (err) {
+      console.error("获取座位数据失败:", err)
+    }
   }
 
   async loadStats() {
-    const res: any = await getSeatStatistics()
-    if (res.code === 1) this.stats = res.data
+    try {
+      const res: any = await getSeatStatistics()
+      if (res && res.code === 1) this.stats = res.data
+    } catch (err) {
+      console.error("获取统计数据失败:", err)
+    }
   }
 
   handleSizeChange(size: number) { this.query.pageSize = size; this.fetchData() }
@@ -169,13 +210,19 @@ export default class extends Vue {
     (this.$refs.seatForm as any).validate(async (valid: boolean) => {
       if (!valid) return
       try {
-        if (this.form.id) { await editSeat(this.form) } else { await addSeat(this.form) }
+        const response: any = this.form.id ? await editSeat(this.form) : await addSeat(this.form)
         this.$message.success('操作成功')
         this.dialogVisible = false
         this.fetchData()
         this.loadAllSeats()
         this.loadStats()
-      } catch { }
+        if (!this.form.id && response && response.data && response.data.code === 1) {
+          await this.openQrPreview(response.data.data)
+        }
+      } catch (err) {
+      console.error("座位操作失败:", err)
+      this.$message.error((err && err.response && err.response.data && err.response.data.msg) || (err && err.message) || "操作失败，请检查登录状态")
+      }
     })
   }
 
@@ -188,7 +235,10 @@ export default class extends Vue {
       this.fetchData()
       this.loadAllSeats()
       this.loadStats()
-    } catch { }
+    } catch (err) {
+      console.error('\xe4\xbd\xa7\xe4\xbd\x8d\xe6\x93\x8d\xe4\xbd\x9c\xe5\xa4\xb1\xe8\xb4\xb1:', err)
+      this.$message.error('\xe6\x93\x8d\xe4\xbd\x9c\xe5\xa4\xb1\xe8\xb4\xb1\xef\xbc\x8c\xe8\xaf\xb7\xe6\xa3\x80\xe6\x9f\xa5\xe7\xb9\xbb\xe5\xbd\x95\xe7\x8a\xb6\xe6\x80\x81')
+      }
   }
 
   confirmDelete(row: any) {
@@ -200,7 +250,10 @@ export default class extends Vue {
         this.fetchData()
         this.loadAllSeats()
         this.loadStats()
-      } catch { }
+      } catch (err) {
+      console.error("座位操作失败:", err)
+      this.$message.error((err && err.response && err.response.data && err.response.data.msg) || (err && err.message) || "操作失败，请检查登录状态")
+      }
     }).catch(() => {})
   }
 
@@ -210,11 +263,46 @@ export default class extends Vue {
       await regenerateQrCode(row.id)
       this.$message.success('二维码已重新生成')
       this.fetchData()
-    } catch { }
+    } catch (err) {
+      console.error('\xe4\xbd\xa7\xe4\xbd\x8d\xe6\x93\x8d\xe4\xbd\x9c\xe5\xa4\xb1\xe8\xb4\xb1:', err)
+      this.$message.error('\xe6\x93\x8d\xe4\xbd\x9c\xe5\xa4\xb1\xe8\xb4\xb1\xef\xbc\x8c\xe8\xaf\xb7\xe6\xa3\x80\xe6\x9f\xa5\xe7\xb9\xbb\xe5\xbd\x95\xe7\x8a\xb6\xe6\x80\x81')
+      }
   }
 
-  downloadQr(row: any) {
-    window.open('/admin/qr/download/' + row.id, '_blank')
+  async openQrPreview(row: any) {
+    try {
+      this.revokeQrPreviewUrl()
+      const response: any = await downloadQrCode(row.id)
+      this.qrPreviewSeat = Object.assign({}, row)
+      this.qrPreviewUrl = URL.createObjectURL(response.data)
+      this.qrPreviewVisible = true
+    } catch (err) {
+      console.error('获取座位二维码失败:', err)
+      this.$message.error('获取座位二维码失败')
+    }
+  }
+
+  closeQrPreview() {
+    this.qrPreviewVisible = false
+    this.revokeQrPreviewUrl()
+    this.qrPreviewSeat = {}
+  }
+
+  downloadQr() {
+    if (!this.qrPreviewUrl) return
+    const link = document.createElement('a')
+    link.href = this.qrPreviewUrl
+    link.download = this.qrPreviewSeat.seatCode + '-二维码.png'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  private revokeQrPreviewUrl() {
+    if (this.qrPreviewUrl) {
+      URL.revokeObjectURL(this.qrPreviewUrl)
+      this.qrPreviewUrl = ''
+    }
   }
 
   toggleLayout() { this.layoutMode = !this.layoutMode }
@@ -262,4 +350,7 @@ export default class extends Vue {
 .s-code { font-weight: bold; font-size: 14px; }
 .s-name { font-size: 11px; color: #666; }
 .layout-actions { margin-top: 10px; text-align: right; }
+.qr-preview { text-align: center; }
+.qr-preview-name { margin-bottom: 12px; }
+.qr-preview-image { display: block; max-width: 100%; margin: 0 auto; }
 </style>
