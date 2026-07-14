@@ -48,6 +48,11 @@ public interface SeatMapper {
     void updateStatus(Seat seat);
 
     /**
+     * 原子占用空闲座位，返回 0 表示座位已被占用或状态不可用。
+     */
+    int occupyIfAvailable(Long id);
+
+    /**
      * 查询所有座位（用于统计和小程序端）
      */
     List<Seat> list(Seat seat);

@@ -15,6 +15,7 @@ import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
+import com.sky.service.SeatService;
 import com.sky.utils.HttpClientUtil;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -66,13 +68,24 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private WebSocketServer webSocketServer;
 
+    @Autowired
+    private SeatService seatService;
+
     /**
      * 用户下单
      * @param ordersSubmitDTO
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public OrderSubmitVO submitOrder(OrdersSubmitDTO ordersSubmitDTO) {
+        // Integer DTO fields map to primitive order fields; normalize omitted values first.
+        if (ordersSubmitDTO.getPackAmount() == null) {
+            ordersSubmitDTO.setPackAmount(0);
+        }
+        if (ordersSubmitDTO.getTablewareNumber() == null) {
+            ordersSubmitDTO.setTablewareNumber(0);
+        }
 //        异常情况的处理（收货地址为空、超出配送氛围、购物车为空）
         AddressBook addressBook = addressBookMapper.getById(ordersSubmitDTO.getAddressBookId());
         if (addressBook == null) {
@@ -97,6 +110,7 @@ public class OrderServiceImpl implements OrderService {
         //构造订单数据
         Orders order = new Orders();
         BeanUtils.copyProperties(ordersSubmitDTO,order);
+        bindSeat(order, ordersSubmitDTO);
         order.setPhone(addressBook.getPhone());
         order.setAddress(addressBook.getDetail());
         order.setConsignee(addressBook.getConsignee());
@@ -268,6 +282,7 @@ public class OrderServiceImpl implements OrderService {
      * @param id
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void userCancelById(Long id) throws Exception {
 //        根据id查询订单
         Orders orderDB = orderMapper.getById(id);
@@ -304,6 +319,7 @@ public class OrderServiceImpl implements OrderService {
         orders.setCancelReason("用户取消");
         orders.setCancelTime(LocalDateTime.now());
         orderMapper.update(orders);
+        seatService.release(orderDB.getSeatId());
     }
 
     /**
@@ -392,6 +408,7 @@ public class OrderServiceImpl implements OrderService {
      * @param ordersRejectionDTO
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void rejection(OrdersRejectionDTO ordersRejectionDTO) throws Exception {
 //        根据id查询订单
         Orders ordersDB = orderMapper.getById(ordersRejectionDTO.getId());
@@ -426,6 +443,7 @@ public class OrderServiceImpl implements OrderService {
         orders.setCancelTime(LocalDateTime.now());
 
         orderMapper.update(orders);
+        seatService.release(ordersDB.getSeatId());
     }
 
     /**
@@ -433,6 +451,7 @@ public class OrderServiceImpl implements OrderService {
      * @param ordersCancelDTO
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void cancel(OrdersCancelDTO ordersCancelDTO) throws Exception {
 //        根据id查询订单
         Orders orderDB = orderMapper.getById(ordersCancelDTO.getId());
@@ -461,6 +480,7 @@ public class OrderServiceImpl implements OrderService {
         orders.setCancelReason(ordersCancelDTO.getCancelReason());
         orders.setCancelTime(LocalDateTime.now());
         orderMapper.update(orders);
+        seatService.release(orderDB.getSeatId());
     }
 
     /**
@@ -491,6 +511,7 @@ public class OrderServiceImpl implements OrderService {
      * @param id
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void complete(Long id) {
 //        根据id查询订单
         Orders orderDB = orderMapper.getById(id);
@@ -508,6 +529,7 @@ public class OrderServiceImpl implements OrderService {
         orders.setDeliveryTime(LocalDateTime.now());
 
         orderMapper.update(orders);
+        seatService.release(orderDB.getSeatId());
     }
 
     /**
@@ -620,6 +642,22 @@ public class OrderServiceImpl implements OrderService {
         orderVO.setActualAmount(actualAmount);
         orderVO.setDiscountAmount(discountAmount);
         orderVO.setPlannedAmount(actualAmount.add(discountAmount));
+    }
+
+    private void bindSeat(Orders order, OrdersSubmitDTO submitDTO) {
+        Seat seat = null;
+        if (submitDTO.getSeatNumber() != null && !submitDTO.getSeatNumber().trim().isEmpty()) {
+            seat = seatService.getAvailableBySeatNumber(submitDTO.getSeatNumber());
+        } else if (submitDTO.getSeatId() != null) {
+            seat = seatService.getById(submitDTO.getSeatId());
+            if (!Integer.valueOf(0).equals(seat.getStatus())) {
+                throw new OrderBusinessException("该座位当前不可用");
+            }
+        }
+        if (seat != null) {
+            seatService.occupy(seat.getId());
+            order.setSeatId(seat.getId());
+        }
     }
 
     private String getAcceptanceStatus(Integer status) {

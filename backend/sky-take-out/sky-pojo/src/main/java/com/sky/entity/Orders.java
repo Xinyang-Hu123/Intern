@@ -50,6 +50,9 @@ public class Orders implements Serializable {
     //下单用户id
     private Long userId;
 
+    //堂食座位id，由扫码点餐时绑定
+    private Long seatId;
+
     //地址id
     private Long addressBookId;
 
