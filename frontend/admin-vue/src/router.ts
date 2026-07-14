@@ -83,30 +83,37 @@ const router = new Router({
         },
         {
           path: 'member',
-          component: () =>
-            import(/* webpackChunkName: "shopTable" */ '@/views/member/index.vue'),
+          component: RouterView,
           meta: {
             title: '会员管理',
-            icon: 'vip'
-          }
-        },
-        {
-          path: 'member/comment',
-          component: () =>
-            import(/* webpackChunkName: "shopTable" */ '@/views/member/comments.vue'),
-          meta: {
-            title: '会员评论',
-            icon: 'inform'
-          }
-        },
-        {
-          path: 'member/favorite',
-          component: () =>
-            import(/* webpackChunkName: "shopTable" */ '@/views/member/favorites.vue'),
-          meta: {
-            title: '会员收藏',
-            icon: 'shop'
-          }
+            icon: 'icon-user'
+          },
+          children: [
+            {
+              path: 'list',
+              component: () =>
+                import(/* webpackChunkName: "shopTable" */ '@/views/member/index.vue'),
+              meta: {
+                title: '会员列表'
+              }
+            },
+            {
+              path: 'comment',
+              component: () =>
+                import(/* webpackChunkName: "shopTable" */ '@/views/member/comments.vue'),
+              meta: {
+                title: '会员评论'
+              }
+            },
+            {
+              path: 'favorite',
+              component: () =>
+                import(/* webpackChunkName: "shopTable" */ '@/views/member/favorites.vue'),
+              meta: {
+                title: '会员收藏'
+              }
+            }
+          ]
         },
         {
           path: '/dish/add',
@@ -115,24 +122,6 @@ const router = new Router({
           meta: {
             title: '添加菜品',
             hidden: true
-          }
-        },
-        {
-          path: 'setmeal',
-          component: () =>
-            import(/* webpackChunkName: "shopTable" */ '@/views/setmeal/index.vue'),
-          meta: {
-            title: '套餐管理',
-            icon: 'icon-combo'
-          }
-        },
-        {
-          path: 'coupon',
-          component: () =>
-            import(/* webpackChunkName: "shopTable" */ '@/views/coupon/index.vue'),
-          meta: {
-            title: '优惠券管理',
-            icon: 'icon-coupon'
           }
         },
         {
@@ -168,6 +157,22 @@ const router = new Router({
               meta: {
                 title: '营销管理',
                 resource: 'marketing'
+              }
+            },
+            {
+              path: 'setmeal',
+              component: () =>
+                import(/* webpackChunkName: "shopTable" */ '@/views/setmeal/index.vue'),
+              meta: {
+                title: '套餐管理'
+              }
+            },
+            {
+              path: 'coupon',
+              component: () =>
+                import(/* webpackChunkName: "shopTable" */ '@/views/coupon/index.vue'),
+              meta: {
+                title: '优惠券管理'
               }
             }
           ]
