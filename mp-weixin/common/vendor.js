@@ -4286,6 +4286,15 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
       this.getShopInfo();
       this.selectHeight = res.height;
       if (this.token() === '') {
+        if (_env.developmentLoginEnabled) {
+          (0, _api.userLogin)({ code: 'local-acceptance-user' }).then(function (success) {
+            if (success.code === 1 && success.data && success.data.token) {
+              _this.setToken(success.data.token);
+              _this.init();
+            }
+          });
+          return;
+        }
         uni.showModal({
           title: '温馨提示',
           content: '授权微信登录后才能点餐！',
@@ -20524,16 +20533,18 @@ function createAnimation(option, _this) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.baseUrl = void 0;
+Object.defineProperty(exports, "__esModule", { value: true });exports.developmentLoginEnabled = exports.baseUrl = void 0;
 
 // 服务器地址，优先从缓存读取。debugger控制台执行 wx.setStorageSync('serverUrl', 'http://你的IP:8080') 即可切换
 var baseUrl = '';
 try{baseUrl=wx.getStorageSync('serverUrl')||''}catch(e){}
 if(baseUrl==='http://localhost:8080') baseUrl='http://localhost:8088';
 if(!baseUrl) baseUrl='http://localhost:8088';
+var developmentLoginEnabled = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(?:\/|$)/.test(baseUrl);
 //var baseUrl = 'https://c223c79.r2.cpolar.top';
 
 exports.baseUrl = baseUrl;
+exports.developmentLoginEnabled = developmentLoginEnabled;
 
 /***/ }),
 
