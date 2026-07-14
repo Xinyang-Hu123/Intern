@@ -220,6 +220,7 @@ CREATE TABLE IF NOT EXISTS orders (
     number VARCHAR(64) COMMENT '订单号',
     status INT DEFAULT 1 COMMENT '订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消',
     user_id BIGINT COMMENT '用户ID',
+    seat_id BIGINT COMMENT '扫码点餐关联座位ID',
     address_book_id BIGINT COMMENT '地址簿ID',
     order_time DATETIME COMMENT '下单时间',
     checkout_time DATETIME COMMENT '结账时间',

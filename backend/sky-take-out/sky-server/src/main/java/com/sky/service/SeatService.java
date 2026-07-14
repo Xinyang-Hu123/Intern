@@ -51,4 +51,13 @@ public interface SeatService {
      * 座位状态统计
      */
     List<Map<String, Object>> statusCount();
+
+    /** 校验并返回可用于扫码点餐的空闲座位。 */
+    Seat getAvailableBySeatNumber(String seatNumber);
+
+    /** 原子占用座位，防止多个顾客同时提交同一桌订单。 */
+    void occupy(Long id);
+
+    /** 释放订单占用的座位。 */
+    void release(Long id);
 }

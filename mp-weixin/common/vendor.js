@@ -20329,6 +20329,10 @@ exports.paymentOrder = paymentOrder;var repetitionOrder = function repetitionOrd
 var _env = __webpack_require__(/*! ./env */ 26);function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
 // 参数： url:请求地址  param：请求参数  method：请求方式 callBack：回调函数
 function request(_ref) {var _ref$url = _ref.url,url = _ref$url === void 0 ? '' : _ref$url,_ref$params = _ref.params,params = _ref$params === void 0 ? {} : _ref$params,_ref$method = _ref.method,method = _ref$method === void 0 ? 'GET' : _ref$method;
+  if (url === '/user/order/submit') {
+    var seatNumber = uni.getStorageSync('seatNumber');
+    if (seatNumber) {params = Object.assign({}, params, { seatNumber: seatNumber });}
+  }
   uni.getStorage({
     key: '' });
 

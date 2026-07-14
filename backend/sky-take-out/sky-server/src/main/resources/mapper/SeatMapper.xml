@@ -31,6 +31,11 @@
         where id = #{id}
     </update>
 
+    <update id="occupyIfAvailable">
+        update seat set status = 1, update_time = now()
+        where id = #{id} and status = 0
+    </update>
+
     <delete id="deleteById">
         delete from seat where id = #{id}
     </delete>
