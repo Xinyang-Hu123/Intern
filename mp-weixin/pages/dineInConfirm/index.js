@@ -13,6 +13,10 @@ function resolveApiBase() {
 
 const API_BASE = resolveApiBase()
 
+function isLocalBackend() {
+  return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(?:\/|$)/.test(API_BASE)
+}
+
 Page({
   data: {
     loading: true,
@@ -33,16 +37,25 @@ Page({
       this.setData({ loading: false, error: '未识别到桌号，请重新扫码后点餐。' })
       return
     }
+    if (isLocalBackend()) {
+      this.loginForCartAccess().then(() => this.loadCart()).catch(error => {
+        this.setData({ loading: false, error: error.message })
+      })
+      return
+    }
     this.loadCart()
   },
 
   loginForCartAccess() {
-    return new Promise(resolve => {
+    const loginCode = isLocalBackend() ? 'local-acceptance-user' : ''
+    const codePromise = loginCode ? Promise.resolve(loginCode) : new Promise(resolve => {
       wx.login({
         success: loginResult => resolve(loginResult.code || 'local-acceptance-user'),
         fail: () => resolve('local-acceptance-user')
       })
-    }).then(code => new Promise((resolve, reject) => {
+    })
+
+    return codePromise.then(code => new Promise((resolve, reject) => {
       wx.request({
         url: `${API_BASE}/user/user/login`,
         method: 'POST',

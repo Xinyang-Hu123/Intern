@@ -2645,7 +2645,7 @@ var store = new _vuex.default.Store({
     shopPhone: '', //店铺电话
     shopStatus: {}, //店铺状态
     orderData: {},
-    token: '',
+    token: (function () { try { return wx.getStorageSync('token') || ''; } catch (e) { return ''; } })(),
     arrivals: '',
     remarkData: '', //备注
     addressData: {} //地址选择
@@ -2688,6 +2688,7 @@ var store = new _vuex.default.Store({
     },
     setToken: function setToken(state, provider) {
       state.token = provider;
+      try { wx.setStorageSync('token', provider || ''); } catch (e) {}
     },
     setArrivalTime: function setArrivalTime(state, provider) {
       state.arrivals = provider;
@@ -4288,16 +4289,16 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
       // 获取店铺状态
       this.getShopInfo();
       this.selectHeight = res.height;
+      if (_env.developmentLoginEnabled) {
+        (0, _api.userLogin)({ code: 'local-acceptance-user' }).then(function (success) {
+          if (success.code === 1 && success.data && success.data.token) {
+            _this.setToken(success.data.token);
+            _this.init();
+          }
+        });
+        return;
+      }
       if (this.token() === '') {
-        if (_env.developmentLoginEnabled) {
-          (0, _api.userLogin)({ code: 'local-acceptance-user' }).then(function (success) {
-            if (success.code === 1 && success.data && success.data.token) {
-              _this.setToken(success.data.token);
-              _this.init();
-            }
-          });
-          return;
-        }
         uni.showModal({
           title: '温馨提示',
           content: '授权微信登录后才能点餐！',
