@@ -11,7 +11,9 @@
     "pages/my/my",
     "pages/addOrEditAddress/addOrEditAddress",
     "pages/historyOrder/historyOrder",
-    "pages/seat/index"
+    "pages/seat/index",
+    "pages/dineInConfirm/index",
+    "pages/dineInSuccess/index"
   ],
   "subPackages": [],
   "window": {

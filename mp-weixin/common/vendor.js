@@ -4149,6 +4149,7 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
   data: function data() {
     return {
       title: 'Hello',
+      dineInSeatNumber: '',
       // 去结算部分
       openOrderCartList: false,
       // 存放左侧滚动区域菜品分类数组
@@ -4232,6 +4233,8 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
     this.getMenuItemTop();
   },
   onLoad: function onLoad(options) {
+
+    this.dineInSeatNumber = uni.getStorageSync('seatNumber') || '';
 
     uni.onNetworkStatusChange(function (res) {
       if (res.isConnected == false) {
@@ -4515,7 +4518,7 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
     // 去订单页面
     goOrder: function goOrder() {
       uni.navigateTo({
-        url: '/pages/order/index' });
+        url: this.dineInSeatNumber ? '/pages/dineInConfirm/index' : '/pages/order/index' });
 
     },
     // 加菜 - 添加菜品

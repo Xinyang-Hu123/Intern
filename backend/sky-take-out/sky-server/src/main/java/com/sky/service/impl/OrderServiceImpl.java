@@ -86,15 +86,6 @@ public class OrderServiceImpl implements OrderService {
         if (ordersSubmitDTO.getTablewareNumber() == null) {
             ordersSubmitDTO.setTablewareNumber(0);
         }
-//        异常情况的处理（收货地址为空、超出配送氛围、购物车为空）
-        AddressBook addressBook = addressBookMapper.getById(ordersSubmitDTO.getAddressBookId());
-        if (addressBook == null) {
-            throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
-        }
-
-//        检查用户的收货地址是否超出配送范围（暂时跳过，百度地图 AK 未配置）
-//        checkOutOfRange(addressBook.getCityName() + addressBook.getDistrictName() + addressBook.getDetail());
-
         Long currentId = BaseContext.getCurrentId();
 
         ShoppingCart shoppingCart = new ShoppingCart();
@@ -111,13 +102,32 @@ public class OrderServiceImpl implements OrderService {
         Orders order = new Orders();
         BeanUtils.copyProperties(ordersSubmitDTO,order);
         bindSeat(order, ordersSubmitDTO);
-        order.setPhone(addressBook.getPhone());
-        order.setAddress(addressBook.getDetail());
-        order.setConsignee(addressBook.getConsignee());
+        boolean dineIn = order.getSeatId() != null;
+
+        if (dineIn) {
+            order.setStatus(Orders.TO_BE_CONFIRMED);
+            order.setPayStatus(Orders.PAID);
+            order.setCheckoutTime(LocalDateTime.now());
+            // The legacy column is non-null even though dine-in orders are not delivered.
+            order.setDeliveryStatus(1);
+            order.setPackAmount(0);
+        } else {
+            // 外卖订单仍需要收货地址，并沿用原有待支付流程。
+            AddressBook addressBook = addressBookMapper.getById(ordersSubmitDTO.getAddressBookId());
+            if (addressBook == null) {
+                throw new AddressBookBusinessException(MessageConstant.ADDRESS_BOOK_IS_NULL);
+            }
+
+//        检查用户的收货地址是否超出配送范围（暂时跳过，百度地图 AK 未配置）
+//        checkOutOfRange(addressBook.getCityName() + addressBook.getDistrictName() + addressBook.getDetail());
+            order.setPhone(addressBook.getPhone());
+            order.setAddress(addressBook.getDetail());
+            order.setConsignee(addressBook.getConsignee());
+            order.setStatus(Orders.PENDING_PAYMENT);
+            order.setPayStatus(Orders.UN_PAID);
+        }
         order.setNumber(String.valueOf(System.currentTimeMillis()));
         order.setUserId(currentId);
-        order.setStatus(Orders.PENDING_PAYMENT);
-        order.setPayStatus(Orders.UN_PAID);
         order.setOrderTime(LocalDateTime.now());
         orderMapper.insert(order);
 
