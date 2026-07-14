@@ -54,6 +54,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/user/dish/list", "anon");
         filterChainDefinitionMap.put("/user/dish/recommend", "anon");
         filterChainDefinitionMap.put("/user/dish/column", "anon");
+        // 扫码进入点餐页时，用户尚未登录；只读座位查询应允许匿名访问。
+        filterChainDefinitionMap.put("/user/seat/layout", "anon");
+        filterChainDefinitionMap.put("/user/seat/scan/**", "anon");
         filterChainDefinitionMap.put("/doc.html", "anon");
         filterChainDefinitionMap.put("/webjars/**", "anon");
         filterChainDefinitionMap.put("/swagger-resources/**", "anon");

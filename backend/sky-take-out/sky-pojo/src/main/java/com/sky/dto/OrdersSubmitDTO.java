@@ -9,6 +9,10 @@ import java.time.LocalDateTime;
 
 @Data
 public class OrdersSubmitDTO implements Serializable {
+    /** 扫码获得的桌号，服务端会校验后转换为 seatId */
+    private String seatNumber;
+    /** 已知座位 ID 时可直接传入，优先级低于 seatNumber */
+    private Long seatId;
     //地址簿id
     private Long addressBookId;
     //付款方式

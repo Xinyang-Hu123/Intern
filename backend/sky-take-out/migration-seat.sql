@@ -31,4 +31,4 @@ INSERT INTO seat (seat_number, name, capacity, area, status, create_time, update
 ('B2', 'B2桌', 8, '包间', 0, NOW(), NOW(), 1, 1);
 
 -- 订单表添加座位关联（如果不存在）
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS seat_id BIGINT COMMENT '关联座位ID' AFTER table_no;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS seat_id BIGINT COMMENT '关联座位ID' AFTER user_id;

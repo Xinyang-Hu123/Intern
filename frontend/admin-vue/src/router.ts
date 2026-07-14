@@ -64,6 +64,15 @@ const router = new Router({
           }
         },
         {
+          path: 'seat',
+          component: () =>
+            import(/* webpackChunkName: "shopTable" */ '@/views/seat/index.vue'),
+          meta: {
+            title: '座位管理',
+            icon: 'icon-order'
+          }
+        },
+        {
           path: 'category',
           component: () =>
             import(/* webpackChunkName: "shopTable" */ '@/views/category/index.vue'),
