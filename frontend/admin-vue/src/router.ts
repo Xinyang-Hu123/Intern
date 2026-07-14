@@ -69,7 +69,7 @@ const router = new Router({
             import(/* webpackChunkName: "shopTable" */ '@/views/seat/index.vue'),
           meta: {
             title: '座位管理',
-            icon: 'icon-order'
+            icon: 'icon-open'
           }
         },
         {
@@ -191,7 +191,7 @@ const router = new Router({
           component: RouterView,
           meta: {
             title: '系统管理',
-            icon: 'icon-employee'
+            icon: 'icon-lock'
           },
           children: [
             {
