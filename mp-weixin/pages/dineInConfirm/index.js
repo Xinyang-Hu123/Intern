@@ -1,8 +1,17 @@
-let API_BASE = 'http://localhost:8088'
-try {
-  API_BASE = wx.getStorageSync('serverUrl') || API_BASE
-  if (API_BASE === 'http://localhost:8080') API_BASE = 'http://localhost:8088'
-} catch (_) {}
+function resolveApiBase() {
+  let base = 'http://localhost:8088'
+  try {
+    base = wx.getStorageSync('serverUrl') || base
+  } catch (_) {}
+
+  base = String(base).replace(/\/+$/, '')
+  if (base === 'http://localhost:8080' || base === 'http://127.0.0.1:8080') {
+    return base.replace(':8080', ':8088')
+  }
+  return base || 'http://localhost:8088'
+}
+
+const API_BASE = resolveApiBase()
 
 Page({
   data: {
@@ -27,8 +36,38 @@ Page({
     this.loadCart()
   },
 
-  request(url, method, data) {
+  loginForCartAccess() {
+    return new Promise(resolve => {
+      wx.login({
+        success: loginResult => resolve(loginResult.code || 'local-acceptance-user'),
+        fail: () => resolve('local-acceptance-user')
+      })
+    }).then(code => new Promise((resolve, reject) => {
+      wx.request({
+        url: `${API_BASE}/user/user/login`,
+        method: 'POST',
+        data: { code },
+        success: response => {
+          const result = response.data || {}
+          const token = result.data && result.data.token
+          if (result.code === 1 && token) {
+            wx.setStorageSync('token', token)
+            resolve(token)
+            return
+          }
+          reject(new Error(result.msg || '登录初始化失败，请返回菜单后重试。'))
+        },
+        fail: () => reject(new Error('无法连接服务，请确认本地后端已启动。'))
+      })
+    }))
+  },
+
+  request(url, method, data, retried) {
     const token = wx.getStorageSync('token') || ''
+    if (!token && !retried) {
+      return this.loginForCartAccess().then(() => this.request(url, method, data, true))
+    }
+
     return new Promise((resolve, reject) => {
       wx.request({
         url: `${API_BASE}${url}`,
@@ -36,6 +75,14 @@ Page({
         data,
         header: token ? { authentication: token } : {},
         success: response => {
+          if (response.statusCode === 401 && !retried) {
+            wx.removeStorageSync('token')
+            this.loginForCartAccess()
+              .then(() => this.request(url, method, data, true))
+              .then(resolve)
+              .catch(reject)
+            return
+          }
           const result = response.data || {}
           if (result.code === 1) {
             resolve(result)

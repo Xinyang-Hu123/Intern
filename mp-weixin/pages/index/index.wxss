@@ -44,7 +44,7 @@
   border-radius: 8rpx;
   color: #ffffff;
 }
-.home_content .dine_in_banner .dine_in_label.data-v-57280228 {
+.home_content .dine_in_banner .dine_in_title.data-v-57280228 {
   color: #9ee8c6;
   font-size: 22rpx;
   font-weight: 600;
@@ -58,6 +58,19 @@
   margin-top: 6rpx;
   color: #c8e8d8;
   font-size: 24rpx;
+}
+.home_content.dine_in_mode.data-v-57280228 {
+  align-items: stretch;
+  justify-content: flex-start;
+  padding-top: 300rpx !important;
+}
+.home_content.dine_in_mode .restaurant_menu_list.data-v-57280228 {
+  height: calc(100vh - 420rpx);
+  margin-top: 0;
+}
+.home_content.dine_in_mode .restaurant_menu_list .type_list.data-v-57280228,
+.home_content.dine_in_mode .restaurant_menu_list .vegetable_order_list.data-v-57280228 {
+  padding-top: 0;
 }
 .home_content .restaurant_info_box.data-v-57280228 {
   position: relative;
