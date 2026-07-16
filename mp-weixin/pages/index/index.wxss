@@ -35,6 +35,43 @@
     linear-gradient(180deg, #eafbf4 0%, #f7f8fa 380rpx),
     #f7f8fa;
 }
+.home_content .dine_in_banner.data-v-57280228 {
+  width: calc(100% - 60rpx);
+  margin: 14rpx 30rpx 20rpx;
+  padding: 24rpx;
+  box-sizing: border-box;
+  background: #0f4c3a;
+  border-radius: 8rpx;
+  color: #ffffff;
+}
+.home_content .dine_in_banner .dine_in_title.data-v-57280228 {
+  color: #9ee8c6;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+.home_content .dine_in_banner .dine_in_seat.data-v-57280228 {
+  margin-top: 6rpx;
+  font-size: 38rpx;
+  font-weight: 700;
+}
+.home_content .dine_in_banner .dine_in_hint.data-v-57280228 {
+  margin-top: 6rpx;
+  color: #c8e8d8;
+  font-size: 24rpx;
+}
+.home_content.dine_in_mode.data-v-57280228 {
+  align-items: stretch;
+  justify-content: flex-start;
+  padding-top: 300rpx !important;
+}
+.home_content.dine_in_mode .restaurant_menu_list.data-v-57280228 {
+  height: calc(100vh - 420rpx);
+  margin-top: 0;
+}
+.home_content.dine_in_mode .restaurant_menu_list .type_list.data-v-57280228,
+.home_content.dine_in_mode .restaurant_menu_list .vegetable_order_list.data-v-57280228 {
+  padding-top: 0;
+}
 .home_content .restaurant_info_box.data-v-57280228 {
   position: relative;
   color: #20232a;

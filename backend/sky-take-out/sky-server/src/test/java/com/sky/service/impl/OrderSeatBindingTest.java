@@ -2,7 +2,6 @@ package com.sky.service.impl;
 
 import com.sky.context.BaseContext;
 import com.sky.dto.OrdersSubmitDTO;
-import com.sky.entity.AddressBook;
 import com.sky.entity.Orders;
 import com.sky.entity.Seat;
 import com.sky.entity.ShoppingCart;
@@ -27,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -55,7 +55,6 @@ class OrderSeatBindingTest {
         request.setAddressBookId(1L);
         request.setSeatNumber("A1");
         request.setAmount(new BigDecimal("38.00"));
-        when(addressBookMapper.getById(1L)).thenReturn(AddressBook.builder().phone("13800000000").detail("店内").consignee("顾客").build());
         when(shoppingCartMapper.list(any(ShoppingCart.class))).thenReturn(Collections.singletonList(ShoppingCart.builder().name("炒饭").number(1).amount(new BigDecimal("38.00")).build()));
         when(seatService.getAvailableBySeatNumber("A1")).thenReturn(Seat.builder().id(11L).seatNumber("A1").status(0).build());
         doAnswer(invocation -> { invocation.getArgument(0, Orders.class).setId(100L); return null; }).when(orderMapper).insert(any(Orders.class));
@@ -68,6 +67,33 @@ class OrderSeatBindingTest {
         assertEquals(100L, response.getId());
         verify(seatService).occupy(11L);
         verify(shoppingCartMapper).deleteByUserId(7L);
+    }
+
+    @Test
+    void submitDineInOrderSkipsAddressAndCreatesPaidPendingOrder() {
+        BaseContext.setCurrentId(7L);
+        OrdersSubmitDTO request = new OrdersSubmitDTO();
+        request.setSeatNumber("A1");
+        request.setAmount(new BigDecimal("38.00"));
+        when(shoppingCartMapper.list(any(ShoppingCart.class))).thenReturn(Collections.singletonList(
+                ShoppingCart.builder().name("Fried rice").number(1).amount(new BigDecimal("38.00")).build()));
+        when(seatService.getAvailableBySeatNumber("A1")).thenReturn(Seat.builder().id(11L).seatNumber("A1").status(0).build());
+        doAnswer(invocation -> {
+            invocation.getArgument(0, Orders.class).setId(100L);
+            return null;
+        }).when(orderMapper).insert(any(Orders.class));
+
+        orderService.submitOrder(request);
+
+        ArgumentCaptor<Orders> orderCaptor = ArgumentCaptor.forClass(Orders.class);
+        verify(orderMapper).insert(orderCaptor.capture());
+        assertEquals(11L, orderCaptor.getValue().getSeatId());
+        assertEquals(Orders.TO_BE_CONFIRMED, orderCaptor.getValue().getStatus());
+        assertEquals(Orders.PAID, orderCaptor.getValue().getPayStatus());
+        assertEquals(1, orderCaptor.getValue().getDeliveryStatus());
+        assertEquals(0, orderCaptor.getValue().getPackAmount());
+        assertNull(orderCaptor.getValue().getAddressBookId());
+        verify(addressBookMapper, never()).getById(any());
     }
 
     @Test

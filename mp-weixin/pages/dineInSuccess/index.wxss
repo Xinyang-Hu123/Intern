@@ -1,0 +1,13 @@
+page { background: #f4f7f5; color: #14251f; }
+.page { min-height: 100vh; padding: 120rpx 44rpx 40rpx; text-align: center; box-sizing: border-box; }
+.result-mark { display: flex; align-items: center; justify-content: center; width: 120rpx; height: 120rpx; margin: 0 auto 32rpx; border-radius: 60rpx; background: #0f4c3a; color: #fff; font-size: 68rpx; font-weight: 700; }
+.title { font-size: 42rpx; font-weight: 700; }
+.subtitle { margin-top: 18rpx; color: #607168; font-size: 27rpx; line-height: 1.6; }
+.order-card { margin-top: 56rpx; padding: 32rpx; text-align: left; background: #fff; border: 1rpx solid #dbe6df; border-radius: 8rpx; }
+.card-label { color: #728178; font-size: 24rpx; }
+.order-number { margin-top: 12rpx; font-size: 31rpx; font-weight: 600; word-break: break-all; }
+.seat-line { margin-top: 24rpx; padding-top: 24rpx; border-top: 1rpx solid #edf1ee; color: #405048; font-size: 27rpx; }
+.actions { margin-top: 48rpx; }
+.primary-button, .secondary-button { border-radius: 8rpx; font-size: 30rpx; }
+.primary-button { background: #0f4c3a; color: #fff; }
+.secondary-button { margin-top: 20rpx; background: #fff; color: #0f4c3a; border: 1rpx solid #0f4c3a; }

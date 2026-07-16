@@ -1,0 +1,62 @@
+<view class="page">
+  <view class="hero">
+    <view class="hero-kicker">DINE-IN ORDER</view>
+    <view class="hero-row">
+      <view>
+        <view class="hero-title">堂食确认</view>
+        <view class="hero-subtitle">确认后将直接提交到后厨</view>
+      </view>
+      <view class="seat-badge">{{seatNumber}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="state">正在读取购物车...</view>
+  <view wx:elif="{{error}}" class="state error-state">
+    <text>{{error}}</text>
+    <button class="secondary-button" bindtap="goBack">返回菜单</button>
+  </view>
+  <view wx:else class="content">
+    <view class="section-head">
+      <text>本桌菜品</text>
+      <text class="muted">共 {{totalQuantity}} 件</text>
+    </view>
+    <view class="items">
+      <view wx:for="{{cartItems}}" wx:key="id" class="item">
+        <image class="item-image" src="{{item.image}}" mode="aspectFill" />
+        <view class="item-main">
+          <view class="item-name">{{item.name}}</view>
+          <view wx:if="{{item.dishFlavor}}" class="item-flavor">{{item.dishFlavor}}</view>
+        </view>
+        <view class="item-side">
+          <text>×{{item.number}}</text>
+          <text class="item-price">￥{{item.amount}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="field-label">口味备注</view>
+      <textarea class="remark" placeholder="例如：少辣、不要香菜" maxlength="80" value="{{remark}}" bindinput="updateRemark" />
+    </view>
+
+    <view class="form-section tableware-row">
+      <view>
+        <view class="field-label">餐具数量</view>
+        <view class="field-help">按需选择，0 表示无需餐具</view>
+      </view>
+      <view class="stepper">
+        <button class="stepper-button" bindtap="decreaseTableware">-</button>
+        <text class="stepper-value">{{tablewareNumber}}</text>
+        <button class="stepper-button" bindtap="increaseTableware">+</button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{!loading && !error}}" class="footer">
+    <view>
+      <view class="footer-label">堂食合计</view>
+      <view class="total">￥{{totalAmount}}</view>
+    </view>
+    <button class="submit-button" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submitOrder">确认下单</button>
+  </view>
+</view>

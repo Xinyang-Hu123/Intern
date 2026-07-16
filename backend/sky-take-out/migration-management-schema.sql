@@ -42,6 +42,18 @@ CREATE TABLE IF NOT EXISTS dish_category (
     UNIQUE KEY idx_type_name (type, name)
 );
 
+-- Delivery orders require an address, while seat-bound dine-in orders do not.
+SET @sql = (
+    SELECT IF(is_nullable = 'NO',
+        'ALTER TABLE orders MODIFY COLUMN address_book_id BIGINT NULL',
+        'SELECT 1')
+    FROM information_schema.columns
+    WHERE table_schema = DATABASE() AND table_name = 'orders' AND column_name = 'address_book_id'
+);
+PREPARE statement FROM @sql;
+EXECUTE statement;
+DEALLOCATE PREPARE statement;
+
 SET @sql = (
     SELECT IF(COUNT(*) = 0,
         'ALTER TABLE dish ADD COLUMN detail_image VARCHAR(255) NULL',

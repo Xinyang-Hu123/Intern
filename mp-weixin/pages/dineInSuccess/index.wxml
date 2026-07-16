@@ -1,0 +1,14 @@
+<view class="page">
+  <view class="result-mark">✓</view>
+  <view class="title">堂食订单已提交</view>
+  <view class="subtitle">{{seatNumber}} 桌的订单已发送，等待商家接单</view>
+  <view class="order-card">
+    <view class="card-label">订单编号</view>
+    <view class="order-number">{{orderNumber || '订单创建成功'}}</view>
+    <view class="seat-line">就餐桌号：{{seatNumber}}</view>
+  </view>
+  <view class="actions">
+    <button class="primary-button" bindtap="viewOrders">查看订单</button>
+    <button class="secondary-button" bindtap="continueOrdering">继续点餐</button>
+  </view>
+</view>
