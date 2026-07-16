@@ -39,6 +39,13 @@ const router = new Router({
       meta: { title: '老宋速达后台管理系统', hidden: true, notNeedAuth: true }
     },
     {
+      path: '/seat/embed',
+      component: () =>
+        import(/* webpackChunkName: "seat-embed" */ '@/views/seat/embed.vue'),
+      name: 'SeatEmbed',
+      meta: { title: '餐厅座位状态', hidden: true, notNeedAuth: true }
+    },
+    {
       path: '/',
       component: Layout,
       redirect: '/dashboard',

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>座位嵌入效果演示</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #e8ecea; color: #263b34; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .host-bar { display: flex; min-height: 58px; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 22px; border-bottom: 1px solid #d2dad6; background: #fff; }
+      .host-bar strong { display: block; font-size: 15px; }.host-bar span { color: #718079; font-size: 12px; }
+      .selection { min-width: 210px; padding: 7px 10px; border-left: 3px solid #287557; background: #f1f7f4; color: #496058; }.selection b { color: #20362e; }
+      .frame-wrap { padding: 18px; }.frame-shell { overflow: hidden; border: 1px solid #cfd8d4; border-radius: 6px; background: #fff; box-shadow: 0 8px 28px rgba(34, 55, 47, .12); }
+      iframe { display: block; width: 100%; height: 680px; border: 0; }
+      @media (max-width: 640px) { .host-bar { align-items: flex-start; flex-direction: column; }.selection { width: 100%; }.frame-wrap { padding: 8px; } }
+    </style>
+  </head>
+  <body>
+    <header class="host-bar">
+      <div><strong>运营门户</strong><span>下方座位图由独立前端路由通过 iframe 嵌入</span></div>
+      <div id="selection" class="selection">点击座位后，主页面将收到选中事件</div>
+    </header>
+    <div class="frame-wrap">
+      <div class="frame-shell">
+        <iframe id="seat-frame" src="./index.html#/seat/embed?demo=1&amp;theme=light" title="餐厅座位状态" loading="eager"></iframe>
+      </div>
+    </div>
+    <script>
+      var frame = document.getElementById('seat-frame')
+      var selection = document.getElementById('selection')
+      window.addEventListener('message', function (event) {
+        if (event.origin !== window.location.origin || event.source !== frame.contentWindow) return
+        var message = event.data || {}
+        if (message.source !== 'sky-take-out-seat-embed') return
+        if (message.type === 'seat-selected' && message.payload && message.payload.seat) {
+          var seat = message.payload.seat
+          selection.innerHTML = '已选中 <b>' + seat.seatNumber + '</b> · ' + (seat.name || '未命名座位')
+        }
+        if (message.type === 'seat-embed-resize' && message.payload && message.payload.height) {
+          frame.style.height = Math.max(520, Math.min(900, message.payload.height)) + 'px'
+        }
+      })
+    </script>
+  </body>
+</html>

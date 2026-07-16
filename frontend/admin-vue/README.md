@@ -143,6 +143,26 @@ yarn build/npm run build
 yarn build:uat/npm run build:uat
 ```
 
+### 座位布局与网页嵌入
+
+- 管理页：`/#/seat`，支持区域和状态筛选、拖拽布局、列表视图与座位详情。
+- 只读嵌入页：`/#/seat/embed?area=A区&theme=light`。
+- iframe 演示宿主页：`/seat-embed-demo.html`，使用 `demo=1` 明确展示演示数据。
+- 真实嵌入页读取匿名接口 `GET /user/seat/layout`，不会在 URL 中传递 token。
+- 拖拽坐标目前保存在当前浏览器；后端增加坐标和批量保存接口后，再替换 `layoutStorage.ts`。
+- 跨域嵌入时，用 `VUE_APP_EMBED_ORIGINS` 配置允许的父页来源，多个来源用逗号分隔。
+
+```html
+<iframe
+  src="https://example.com/index.html#/seat/embed?area=A区"
+  title="餐厅座位状态"
+  style="width: 100%; height: 680px; border: 0"
+></iframe>
+```
+
+Nginx 跨域嵌入应使用明确的 CSP 白名单，例如
+`Content-Security-Policy: frame-ancestors 'self' https://portal.example.com`，不要配置为 `*`。
+
 ## 5 相关资料
 
 前端
