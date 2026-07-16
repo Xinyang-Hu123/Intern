@@ -5,6 +5,7 @@ import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.SetmealService;
+import com.sky.utils.ImageUrlResolver;
 import com.sky.vo.SetmealVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,14 +34,7 @@ public class SetmealController {
     private HttpServletRequest request;
 
     private String getImageUrl(String image) {
-        if (image == null || image.isEmpty()) return image;
-        if (image.contains("download?name=")) {
-            image = image.substring(image.lastIndexOf("=") + 1);
-        } else if (image.contains("/")) {
-            image = image.substring(image.lastIndexOf("/") + 1);
-        }
-        String base = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        return base + "/common/download?name=" + image;
+        return ImageUrlResolver.resolve(request, image);
     }
 
     /**

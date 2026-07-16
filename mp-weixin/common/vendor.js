@@ -4503,6 +4503,9 @@ var _index = __webpack_require__(/*! ../../utils/index.js */ 29);function _inter
     },
     // 重新拼装image
     getNewImage: function getNewImage(image) {
+      if (/^https?:\/\//i.test(image)) {
+        return image;
+      }
       return "".concat(_env.baseUrl, "/common/download?name=").concat(image);
     },
     // 获取购物车订单列表
@@ -22106,6 +22109,9 @@ var _default = {
     },
     // // 重新拼装image
     getNewImage: function getNewImage(image) {
+      if (/^https?:\/\//i.test(image)) {
+        return image;
+      }
       return "".concat(_env.baseUrl, "/common/download?name=").concat(image);
     },
     // 订单里和总订单价格计算
@@ -28680,6 +28686,9 @@ var _default = {
 
     // 重新拼装image
     getNewImage: function getNewImage(image) {
+      if (/^https?:\/\//i.test(image)) {
+        return image;
+      }
       return "".concat(_env.baseUrl, "/common/download?name=").concat(image);
     },
     // 返回上一级

@@ -7,6 +7,7 @@ import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
+import com.sky.utils.ImageUrlResolver;
 import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,14 +39,7 @@ public class DishController {
     private HttpServletRequest request;
 
     private String getImageUrl(String image) {
-        if (image == null || image.isEmpty()) return image;
-        if (image.contains("download?name=")) {
-            image = image.substring(image.lastIndexOf("=") + 1);
-        } else if (image.contains("/")) {
-            image = image.substring(image.lastIndexOf("/") + 1);
-        }
-        String base = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        return base + "/common/download?name=" + image;
+        return ImageUrlResolver.resolve(request, image);
     }
 
     /**
