@@ -119,14 +119,16 @@ v1.3
 
 ##### 安装依赖
 
+统一使用 Node.js 20.x 与 npm 10.x；仓库唯一依赖锁文件为 `package-lock.json`。
+
 ```bash
-yarn install/npm install
+npm ci
 ```
 
 ##### 启动本地开发环境（自带热启动）
 
 ```bash
-yarn serve/npm run serve
+npm run serve
 ```
 
 ##### 压缩打包 <打包生成文件为 dist 文件夹>
@@ -134,13 +136,22 @@ yarn serve/npm run serve
 ##### 线上 去掉删除功能
 
 ```bash
-yarn build/npm run build
+npm run build
 ```
 
 ##### 测试 保留删除功能
 
 ```bash
-yarn build:uat/npm run build:uat
+npm run build:uat
+```
+
+##### 提交前质量门禁
+
+```bash
+npm run audit:prod
+npm run test:unit -- --runInBand
+npm run lint -- --no-fix
+npm run build
 ```
 
 ## 5 相关资料

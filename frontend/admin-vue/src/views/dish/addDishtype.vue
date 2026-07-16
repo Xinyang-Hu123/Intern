@@ -280,7 +280,7 @@ export default class extends Vue {
   //过滤已选择的口味下拉框无法再次选择
   getLeftDishFlavors() {
     let arr = []
-    this.dishFlavorsData.map(item => {
+    this.dishFlavorsData.forEach(item => {
       if (
         this.dishFlavors.findIndex(item1 => item.name === item1.name) === -1
       ) {

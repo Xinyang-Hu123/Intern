@@ -1,6 +1,15 @@
 <template>
   <div :class="[{'is-active': isActive}]" @click="toggleClick">
-    <svg-icon name="hamburger" width="20" height="20" />
+    <svg
+      class="hamburger-icon"
+      width="20"
+      height="20"
+      viewBox="0 0 1024 1024"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M128 213.3h768v85.4H128zM128 469.3h768v85.4H128zM128 725.3h768v85.4H128z" />
+    </svg>
   </div>
 </template>
 
@@ -21,8 +30,9 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.svg-icon {
+.hamburger-icon {
   vertical-align: middle;
+  fill: currentColor;
 }
 
 .is-active {

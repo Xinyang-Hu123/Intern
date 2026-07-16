@@ -407,7 +407,7 @@ export default class extends Vue {
           let yData: number[] = []
           if (this.typeA === 1) {
             data.series.length > 0 &&
-              data.series.map((n: number) => {
+              data.series.forEach((n: number) => {
                 yData.push(n / 100)
               })
           } else {
@@ -432,7 +432,7 @@ export default class extends Vue {
           let chartData = []
           if (this.typeB === 1) {
             data.length > 0 &&
-              data.map((n: { name: string; percent: any; value: number }) => {
+              data.forEach((n: { name: string; percent: any; value: number }) => {
                 chartData.push({ ...n, value: n.value / 100 })
               })
           } else {
@@ -467,7 +467,7 @@ export default class extends Vue {
           let chartData = []
           if (this.typeB === 1) {
             data.length > 0 &&
-              data.map((n: { name: string; percent: any; value: number }) => {
+              data.forEach((n: { name: string; percent: any; value: number }) => {
                 chartData.push({ ...n, value: n.value / 100 })
               })
           } else {
@@ -595,7 +595,7 @@ export default class extends Vue {
         let yData: number[] = []
         if (this.typeA === 1) {
           data.series.length > 0 &&
-            data.series.map((n: number) => {
+            data.series.forEach((n: number) => {
               yData.push(n / 100)
             })
         } else {
@@ -617,7 +617,7 @@ export default class extends Vue {
           let chartData = []
           if (this.typeB === 1) {
             data.length > 0 &&
-              data.map((n: { name: string; percent: any; value: number }) => {
+              data.forEach((n: { name: string; percent: any; value: number }) => {
                 chartData.push({ ...n, value: n.value / 100 })
               })
           } else {
@@ -657,7 +657,7 @@ export default class extends Vue {
           let chartData = []
           if (this.typeB === 1) {
             data.length > 0 &&
-              data.map((n: { name: string; percent: any; value: number }) => {
+              data.forEach((n: { name: string; percent: any; value: number }) => {
                 chartData.push({ ...n, value: n.value / 100 })
               })
           } else {
@@ -690,7 +690,7 @@ export default class extends Vue {
           const { data } = res.data
           let yData: number[] = []
           data.series.length > 0 &&
-            data.series.map((n: number) => {
+            data.series.forEach((n: number) => {
               yData.push(n / 100)
             })
           const charts = { xData: data.xaxis, yData: yData }

@@ -20,14 +20,14 @@ module.exports = {
   // 开启代理
   devServer: {
     host:'0.0.0.0',
-    public: '0.0.0.0:8082', // 本地的ip:端口号
+    allowedHosts: 'all',
     port: 8082,
     open: true,
-    disableHostCheck:true,
-    hot:true,//自动保存
-    overlay: {
-      warnings: false,
-      errors: true
+    client: {
+      overlay: {
+        warnings: false,
+        errors: true
+      }
     },
     proxy: {
       '/api': {
@@ -45,7 +45,12 @@ module.exports = {
     config.resolve.symlinks(true) // 修复热更新失效
   },
   configureWebpack: {
-    devtool: 'source-map'
+    devtool: 'source-map',
+    resolve: {
+      fallback: {
+        path: require.resolve('path-browserify')
+      }
+    }
   },
 
   css: {
@@ -56,7 +61,5 @@ module.exports = {
     // css预设器配置项
     loaderOptions: {
     },
-    // 启用 CSS modules for all css / pre-processor files.
-    modules: false,
 },
 };

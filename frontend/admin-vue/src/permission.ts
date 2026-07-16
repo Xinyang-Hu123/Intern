@@ -4,13 +4,13 @@ import 'nprogress/nprogress.css'
 import { Message } from 'element-ui'
 import { Route } from 'vue-router'
 import { UserModule } from '@/store/modules/user'
-import Cookies from 'js-cookie'
+import { getToken } from '@/utils/cookies'
 
 NProgress.configure({ 'showSpinner': false })
 
 router.beforeEach(async (to: Route, _: Route, next: any) => {
   NProgress.start()
-  if (Cookies.get('token')) {
+  if (getToken()) {
     next()
   } else {
     if (!to.meta.notNeedAuth) {

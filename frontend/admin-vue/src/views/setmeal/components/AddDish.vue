@@ -202,11 +202,9 @@ export default class extends Vue {
     })
     // 如果是减菜 走这里
     if (value.length < arrData.length) {
-      this.checkedListAll = this.checkedListAll.filter((item: any) => {
-        if (value.some(it => it == item.name)) {
-          return item
-        }
-      })
+      this.checkedListAll = this.checkedListAll.filter((item: any) =>
+        value.some(it => it == item.name)
+      )
     }
     this.$emit('checkList', this.checkedListAll)
     // 数据处理完反转为倒序

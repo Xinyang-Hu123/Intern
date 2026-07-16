@@ -267,7 +267,11 @@ export default class extends Vue {
         // 处理催单、闭店详情数据
         val.arrNew = arrContent
         objNew = { ...val }
-        objNew.details = eval('(' + objNew.details + ')')
+        try {
+          objNew.details = JSON.parse(objNew.details)
+        } catch (_) {
+          objNew.details = {}
+        }
         arrDetails.push(objNew)
       })
 

@@ -38,59 +38,70 @@ const routes = [
         }]
     }];
 
-const router = new VueRouter({
-    routes
-});
-
 describe('Breadcrumb.vue', () => {
-    const wrapper = mount(Breadcrumb, {
-        localVue
+    const createWrapper = () => {
+        const router = new VueRouter({ mode: 'abstract', routes });
+        const wrapper = mount(Breadcrumb, { localVue, router });
+        return { router, wrapper };
+    };
 
+    it('dashboard', async () => {
+        const { router, wrapper } = createWrapper();
+        await router.push('/dashboard');
+        await localVue.nextTick();
+        const len = wrapper.findAll('.el-breadcrumb__inner').length;
+        expect(len).toBe(0);
     });
 
-    it('dashboard', () => {
-        router.push('/dashboard');
+    it('normal route', async () => {
+        const { router, wrapper } = createWrapper();
+        await router.push('/menu/menu1');
+        await localVue.nextTick();
         const len = wrapper.findAll('.el-breadcrumb__inner').length;
         expect(len).toBe(1);
     });
 
-    it('normal route', () => {
-        router.push('/menu/menu1');
-        const len = wrapper.findAll('.el-breadcrumb__inner').length;
-        expect(len).toBe(2);
-    });
-
-    it('nested route', () => {
-        router.push('/menu/menu1/menu1-2/menu1-2-1');
-        const len = wrapper.findAll('.el-breadcrumb__inner').length;
-        expect(len).toBe(4);
-    });
-
-    it('no meta.title', () => {
-        router.push('/menu/menu1/menu1-2/menu1-2-2');
+    it('nested route', async () => {
+        const { router, wrapper } = createWrapper();
+        await router.push('/menu/menu1/menu1-2/menu1-2-1');
+        await localVue.nextTick();
         const len = wrapper.findAll('.el-breadcrumb__inner').length;
         expect(len).toBe(3);
     });
 
-    it('click link', () => {
-        router.push('/menu/menu1/menu1-2/menu1-2-2');
+    it('no meta.title', async () => {
+        const { router, wrapper } = createWrapper();
+        await router.push('/menu/menu1/menu1-2/menu1-2-2');
+        await localVue.nextTick();
+        const len = wrapper.findAll('.el-breadcrumb__inner').length;
+        expect(len).toBe(2);
+    });
+
+    it('click link', async () => {
+        const { router, wrapper } = createWrapper();
+        await router.push('/menu/menu1/menu1-2/menu1-2-2');
+        await localVue.nextTick();
         const breadcrumbArray = wrapper.findAll('.el-breadcrumb__inner');
-        const second = breadcrumbArray.at(1);
-        const href = second.find('a').text();
+        const first = breadcrumbArray.at(0);
+        const href = first.find('a').text();
         expect(href).toBe('menu1');
     });
 
-    it('noredirect', () => {
-        router.push('/menu/menu1/menu1-2/menu1-2-1');
+    it('noredirect', async () => {
+        const { router, wrapper } = createWrapper();
+        await router.push('/menu/menu1/menu1-2/menu1-2-1');
+        await localVue.nextTick();
         const breadcrumbArray = wrapper.findAll('.el-breadcrumb__inner');
-        const redirectBreadcrumb = breadcrumbArray.at(2);
-        expect(redirectBreadcrumb.contains('a')).toBe(false);
+        const redirectBreadcrumb = breadcrumbArray.at(1);
+        expect(redirectBreadcrumb.find('a').exists()).toBe(false);
     });
 
-    it('last breadcrumb', () => {
-        router.push('/menu/menu1/menu1-2/menu1-2-1');
+    it('last breadcrumb', async () => {
+        const { router, wrapper } = createWrapper();
+        await router.push('/menu/menu1/menu1-2/menu1-2-1');
+        await localVue.nextTick();
         const breadcrumbArray = wrapper.findAll('.el-breadcrumb__inner');
-        const redirectBreadcrumb = breadcrumbArray.at(3);
-        expect(redirectBreadcrumb.contains('a')).toBe(false);
+        const redirectBreadcrumb = breadcrumbArray.at(2);
+        expect(redirectBreadcrumb.find('a').exists()).toBe(false);
     });
 });

@@ -114,9 +114,8 @@ import { UserModule } from '@/store/modules/user'
 import Breadcrumb from '@/components/Breadcrumb/index.vue'
 import Hamburger from '@/components/Hamburger/index.vue'
 import { getStatus, setStatus } from '@/api/users'
-import Cookies from 'js-cookie'
 import { debounce, throttle } from '@/utils/common'
-import { setNewData, getNewData } from '@/utils/cookies'
+import { setNewData, getNewData, getUserInfo } from '@/utils/cookies'
 
 // 接口
 import { getCountUnread } from '@/api/inform'
@@ -165,7 +164,7 @@ export default class extends Vue {
   get name() {
     return (UserModule.userInfo as any).name
       ? (UserModule.userInfo as any).name
-      : JSON.parse(Cookies.get('user_info') as any).name
+      : JSON.parse(getUserInfo() || '{}').name
   }
 
   get getStoreId() {

@@ -1,8 +1,7 @@
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
 import { login,userLogout } from '@/api/employee'
-import { getToken, setToken, removeToken,getStoreId, setStoreId, removeStoreId, setUserInfo, getUserInfo, removeUserInfo } from '@/utils/cookies'
+import { getToken, setToken, removeToken,getStoreId, setStoreId, removeStoreId, setUserInfo, getUserInfo, removeUserInfo, getUsername, setUsername, removeUsername } from '@/utils/cookies'
 import store from '@/store'
-import Cookies from 'js-cookie'
 import { Message } from 'element-ui'
 export interface IUserState {
   token: string
@@ -25,7 +24,7 @@ class User extends VuexModule implements IUserState {
   public introduction = ''
   public userInfo = {}
   public roles: string[] = []
-  public username = Cookies.get('username') || ''
+  public username = getUsername() || ''
 
   @Mutation
   private SET_TOKEN(token: string) {
@@ -71,7 +70,7 @@ class User extends VuexModule implements IUserState {
     let { username, password } = userInfo
     username = username.trim()
     this.SET_USERNAME(username)
-    Cookies.set('username', username)
+    setUsername(username)
     const { data } = await login({ username, password })
     if (String(data.code) === '1') {
       // const dataParams = {
@@ -84,7 +83,7 @@ class User extends VuexModule implements IUserState {
       this.SET_TOKEN(data.data.token)
       setToken(data.data.token)
       this.SET_USERINFO(data.data)
-      Cookies.set('user_info', data.data)
+      setUserInfo(data.data)
       return data
     } else {
       return Message.error(data.msg)
@@ -136,8 +135,7 @@ class User extends VuexModule implements IUserState {
     removeToken()
     this.SET_TOKEN('')
     this.SET_ROLES([])
-    Cookies.remove('username')
-    Cookies.remove('user_info')
+    removeUsername()
     removeUserInfo()
   }
 }
