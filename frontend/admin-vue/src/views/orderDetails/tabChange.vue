@@ -26,9 +26,9 @@ import { getOrderDetailPage } from '@/api/order'
 export default class extends Vue {
   @Prop({ default: '' }) orderStatics: any
   @Prop({ default: '' }) defaultActivity: any
-  private activeIndex: number = this.defaultActivity || 0
+  private activeIndex: number = 0
 
-  @Watch('defaultActivity')
+  @Watch('defaultActivity', { immediate: true })
   private onChange(val) {
     this.activeIndex = Number(val)
   }

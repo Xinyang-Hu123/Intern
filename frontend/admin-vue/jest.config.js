@@ -1,4 +1,5 @@
 module.exports = {
+    'testEnvironment': 'jsdom',
     'moduleFileExtensions': [
         'js',
         'jsx',
@@ -8,7 +9,7 @@ module.exports = {
         'tsx'
     ],
     'transform': {
-        '^.+\\.vue$': 'vue-jest',
+        '^.+\\.vue$': '@vue/vue2-jest',
         '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
         '^.+\\.tsx?$': 'ts-jest'
     },
@@ -36,7 +37,9 @@ module.exports = {
         'lcov',
         'text-summary'
     ],
-    'testURL': 'http://localhost/',
+    'testEnvironmentOptions': {
+        'url': 'http://localhost/'
+    },
     'watchPlugins': [
         'jest-watch-typeahead/filename',
         'jest-watch-typeahead/testname'

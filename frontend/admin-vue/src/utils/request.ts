@@ -8,6 +8,7 @@ import {
   removePending
 } from './requestOptimize'
 import router from '@/router'
+import { isAllowedApiUrl } from './urlSecurity'
 const CancelToken = axios.CancelToken;
 
 const service = axios.create({
@@ -18,14 +19,18 @@ const service = axios.create({
 // Request interceptors
 service.interceptors.request.use(
   (config: any) => {
+    if (!isAllowedApiUrl(config.url)) {
+      return Promise.reject(new Error('Blocked unsafe API URL'))
+    }
+
     // console.log(config, 'config')
     // config.data = config.params
     // Add X-Access-Token header to every request, you can add other custom headers here
     if (UserModule.token) {
-      config.headers['token'] = UserModule.token
-    } else if (UserModule.token && config.url != '/login') {
+      config.headers.token = UserModule.token
+    } else if (config.url !== '/login') {
       window.location.href = '/login'
-      return false
+      return Promise.reject(new Error('Authentication required'))
     }
 
     // config.headers['Access-Control-Allow-Origin'] = '*'

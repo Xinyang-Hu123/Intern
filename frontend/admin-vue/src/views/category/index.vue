@@ -206,7 +206,7 @@ export default class extends Vue {
           trigger: 'blur',
           validator: (rule: any, value: string, callback: Function) => {
             // const reg = /[\u4e00-\u9fa5]/
-            var reg = new RegExp('^[A-Za-z\u4e00-\u9fa5]+$')
+            const reg = /^[A-Za-z\u4e00-\u9fa5]+$/
             if (!value) {
               callback(new Error(this.classData.title + '不能为空'))
             } else if (value.length < 2) {
