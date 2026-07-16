@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import axios from 'axios'
 
 export const getSeatPage = (params: any) => request({
   url: '/seat/page',
@@ -34,4 +35,9 @@ export const updateSeatStatus = (id: number, status: number) => request({
   url: `/seat/status/${status}`,
   method: 'put',
   params: { id }
+})
+
+// The public layout endpoint is intentionally outside the admin /api proxy.
+export const getPublicSeatLayout = () => axios.get('/user/seat/layout', {
+  timeout: 15000
 })

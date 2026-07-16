@@ -38,6 +38,12 @@ module.exports = {
         pathRewrite:{
           '^/api':''
         }
+      },
+      // Public read-only endpoints used by the standalone seat embed page.
+      '/user': {
+        target: process.env.VUE_APP_USER_API || 'http://localhost:8088',
+        secure: false,
+        changeOrigin: true
       }
     }
   },
